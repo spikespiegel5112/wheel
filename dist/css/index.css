@@ -134,6 +134,7 @@
 			color: #FEFEFE;
 			font-size: 0.4rem;
 			letter-spacing: 1px;
-			position: absolute;
-			bottom: 5px;
+			margin-top: 5px;
+			/*position: absolute;
+			bottom: 5px;*/
 		}
