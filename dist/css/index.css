@@ -1,0 +1,148 @@
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		
+		body {
+			font-family: PingFang-SC-Medium;
+		}
+		
+		.warp {
+			width: 10rem;
+			height: 100%;
+			background: url(../img/bg.png) no-repeat;
+			background-size: 100% 100%;
+			display: flex;
+			display: -webkit-flex; 
+			justify-content: center;
+			-webkit-justify-content: center;
+			align-items:center;
+			-webkit-align-items: center;
+			position: relative;
+		}
+		
+		.box {
+			width: 8rem;
+			height: 3.76rem;
+			padding: 0.773333rem 0.6rem 0;
+			border-radius: 0.266666rem;
+			border-radius: 0.266666rem;
+			background-color: #FFFFFF;
+			box-shadow: 0px 0px 21px #888686;
+		}
+		
+		.tel-wrap {
+			display: flex;
+			display: -webkit-flex; 
+			justify-content: space-around;
+			-webkit-justify-content: space-around;
+			align-items:center;
+			-webkit-align-items: center;
+		}
+		
+		.tel-wrap label {
+			font-size: 0.48rem;
+		}
+		
+		#tel {
+			width: 4.813333rem;
+			height: 0.813333rem;
+			vertical-align: middle;
+			border-radius: 0.266666rem;
+			border-color: #999999;
+			box-shadow: 0px 0px 2px #999999 inset;
+			font-size: 0.48rem;
+			color: #666666;
+			text-align: center;
+		}
+		
+		.prompt {
+			color: #FF0000;
+			text-align: center;
+			font-size: 0.466666rem;
+			padding: 0.413333rem 0;
+			visibility: hidden;
+		}
+		
+		.btn-wrap {
+			display: flex;
+			justify-content: center;
+		}
+		
+		.btn {
+			width: 4rem;
+			height: 0.986666rem;
+			background: url(../img/btn.png) no-repeat;
+			background-size: 100% 100%;
+			font-family: PingFang-SC-Medium;
+			color: #FFFFFF;
+			font-size: 0.48rem;
+			text-align: center;
+			line-height: 0.986666rem;
+			letter-spacing: 1px;
+		}
+		
+		.poster-wrap {
+			width: 10rem;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.8);
+			position: absolute;
+			left: 0;
+			top: 0;
+			display: none;
+		}
+		
+		.temp-wrap{
+			width: 10rem;
+			/*height: 100%;*/
+		}
+		
+		.img-box {
+			position: relative;
+			width: 10rem;
+			z-index: -2;
+		}
+		
+		.img-box img {
+			width: 10rem;
+			/*position: absolute;*/
+		}
+		
+		.img-box span {
+			font-size: 0.56rem;
+			color: #FB7014;
+			position: absolute;
+			left: 2.533333rem;
+			bottom: 2.026666rem;
+		}
+		
+		.save-wrap {
+			position: absolute;
+			left: 3.653333rem;
+			top: 12rem;
+		}
+		
+		.saveImg {
+			display: none;
+			width: 6.053333rem;
+			padding: 0 1.973333rem;
+			padding-top: 0.693333rem;
+		}
+		
+		.save-btn {
+			width: 2.413333rem;
+			height: 2.413333rem;
+			line-height: 2.413333rem;
+			border-radius: 50%;
+			background-color: #FFFFFF;
+			box-shadow: 0px 6px 24px rgba(248, 83, 125, 0.5), 0px -3px 3px #9D9D9D inset;
+			color: #F8537D;
+			font-size: 0.4rem;
+			letter-spacing: 1px;
+			font-weight: bold;
+			text-align: center;
+		}
+		.save-btn a{
+			text-decoration: none;
+			color: #F8537D;
+		}
