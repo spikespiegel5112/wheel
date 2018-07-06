@@ -1,5 +1,6 @@
 $(document).ready(function() {
 			$(".container").css('height', window.innerHeight);
+			$(".poster-wrap").css('min-height', window.innerHeight);
 //			$(".img-box img").css('height', window.innerHeight);
 			
 			var imgW = imgH = 0;
@@ -39,7 +40,7 @@ $(document).ready(function() {
 						ContentType:"application/x-www-form-urlencoded",
 						async:true,
 						success:function(res){
-							console.log(res)
+							//console.log(res)
 							if(res.result){
 								$(".code").text(res.code);
 								$(".prompt").css("visibility","hidden");
