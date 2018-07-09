@@ -24,16 +24,17 @@ $(document).ready(function() {
 				var phone_number = $("#tel").val();
 
 				var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
-				console.log(phone_number)
-				console.log(!myreg.test(phone_number))
+				//console.log(phone_number)
+				//console.log(!myreg.test(phone_number))
 				if(!myreg.test(phone_number)) {
 					$(".prompt").text("请输入正确的手机号");
 					$(".prompt").css("visibility","visible");
 					return false;
 				} else {
+					var req_url = "http://testgate.zan-qian.com/promotion-service/1.0.0/addPromotionCode/"+phone_number;
 					$.ajax({
 						type:"post",
-						url:"http://testgate.zan-qian.com/promotion-service/1.0.0/addPromotionCode/{phone_number}",
+						url: req_url,
 						data:{
 							phone_number:phone_number
 						},
@@ -42,7 +43,7 @@ $(document).ready(function() {
 						success:function(res){
 							//console.log(res)
 							if(res.result){
-								$(".code").text(res.code);
+								$(".code").text(res.code.toUpperCase());
 								$(".prompt").css("visibility","hidden");
 								$(".poster-wrap").show();
 								//生成图片
