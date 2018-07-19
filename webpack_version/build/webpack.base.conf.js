@@ -1,9 +1,12 @@
 'use strict'
+const webpack = require('webpack')
 const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vuxLoader = require('vux-loader')
+// const jQuery = require('jQuery')
+
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -26,6 +29,9 @@ let webpackConfig = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      'localPath': resolve(''),
+      $: 'jquery',
+      jQuery: 'jquery',
     }
   },
   module: {
@@ -88,6 +94,11 @@ module.exports = vuxLoader.merge(webpackConfig, {
           }
         }
       }
-    }
+    },
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      simpleUploader: 'simpleUploader'
+    })
   ]
 })

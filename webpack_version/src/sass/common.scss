@@ -72,7 +72,7 @@ input:-webkit-autofill {
 .common_main_container {
 	width: 100%;
 	height: 100%;
-	background-image: url('../image/share/bg.jpg');
+	background-image: url('./image/share/bg.jpg');
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -175,6 +175,7 @@ input:-webkit-autofill {
 	font-size: 0.5rem;
 	padding: 0 0.3rem;
 	box-sizing: border-box;
+  vertical-align: top;
 }
 
 .common_button_item {

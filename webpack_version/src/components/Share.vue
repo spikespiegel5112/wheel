@@ -142,7 +142,7 @@
         }]
       }
     },
-    mounted: function () {
+    mounted () {
       this.$autoHeight({
         target: '.common_main_container',
       });
@@ -162,7 +162,7 @@
         })
       },
       sendSmsCode: function () {
-        $.get(this.baseUrl + this.sendBindWxMsgRequest + '/' + this.phoneNumber, function (response) {
+        this.$http.get(this.baseUrl + this.sendBindWxMsgRequest + '/' + this.phoneNumber, function (response) {
           console.log(response)
           if (response.alreadySent === true) {
             alert('短信已发出，请查收')
