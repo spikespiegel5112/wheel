@@ -1,0 +1,184 @@
+<template>
+  <div class="common_main_container" id="app">
+    <div class="common_header_wrapper">
+      <div class="left_wrapper">
+        <a class="previous iconfont icon-backward2"></a>
+      </div>
+      <div class="middle_wrapper">
+        趣福利
+      </div>
+    </div>
+    <div class="share_main_wrapper">
+      <div class="carousel">
+        <ul>
+          <li></li>
+        </ul>
+      </div>
+      <div class="form">
+        <div class="title">
+          <h1>好礼即将到账</h1>
+          <h2>验证手机号码领取</h2>
+        </div>
+        <div class="main">
+          <ul>
+            <li>
+              <div class="common_form_item">
+                <input class="common_input_item" type="text" placeholder="请输入手机号码" v-model="phoneNumber"/>
+                <button class="common_button_item" type="text" @click="sendSmsCode">获取验证码</button>
+              </div>
+            </li>
+            <li>
+              <div class="common_form_item">
+                <input class="common_input_item" type="text" placeholder="请输入验证码" v-model="verifyCode" @change.native="checkVerifyCode"/>
+              </div>
+            </li>
+            <li>
+              <div class="common_form_item">
+                <button class="common_button_item">领奖</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="prize_wrapper">
+        <h1>恭喜你，抽中了！</h1>
+        <div class="main">
+          <div class="prizeimage">
+            <img/>
+          </div>
+          <div class="detail">
+            <label>百视通会员卡！</label>
+            <span>奖品已放入您的账户</span>
+            <button>打开趣谷APP</button>
+          </div>
+        </div>
+      </div>
+      <div class="ranklist">
+        <div class='common_blocktitle_item'>
+          <span><i></i></span>
+          <p>手气榜</p>
+          <span><i></i></span>
+        </div>
+        <ul>
+          <li>
+            <div class="avatar">
+              <img src=""/>
+              <span class="query">?</span>
+            </div>
+            <div class="detail">
+              <div class="name">
+                <label>dasdsas</label>
+                <span>07.18</span>
+                <span>15.43</span>
+              </div>
+              <div class="comment">
+                今天天气真好，就像我的手气一样
+              </div>
+            </div>
+            <div class="prizename">
+              百事通会员卡
+            </div>
+          </li>
+
+          <li>
+            <div class="avatar">
+              <img src=""/>
+              <span class="query">?</span>
+            </div>
+            <div class="detail">
+              <div class="name">
+                <label>dasdsas</label>
+                <span>07.18</span>
+                <span>15.43</span>
+              </div>
+              <div class="comment">
+                今天天气真好，就像我的手气一样
+              </div>
+            </div>
+            <div class="prize">
+              百事通会员卡
+            </div>
+          </li>
+        </ul>
+        <p class="hint">
+          只差一点点，大红包就是你的啦~
+        </p>
+      </div>
+      <div class="rules">
+        <div class='common_blocktitle_item'>
+          <span><i></i></span>
+          <p>活动细则</p>
+          <span><i></i></span>
+        </div>
+        <ul>
+          <li>1.每个人每天最多抢五个红包</li>
+          <li>1.每个人每天最多抢五个红包</li>
+          <li>1.每个人每天最多抢五个红包</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+	export default {
+		name: "Promotion",
+    data: function () {
+      return {
+        baseUrl: 'http://gateway.zan-qian.com/',
+        sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
+        verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
+        phoneNumber: '',
+        verifyCode:'',
+        smsTemplate: 3,
+        listData: [{
+          title: 'aaa'
+        }, {
+          title: 'bbb'
+        }, {
+          title: 'ccc'
+        }, {
+          title: 'ddd'
+        }]
+      }
+    },
+    mounted: function () {
+      this.$autoHeight({
+        target: '.common_main_container',
+      });
+      this.$remResizing({
+        fontSize: 20,
+      });
+    },
+    methods: {
+      login: function () {
+        console.log(this.$refs['loginFormData'])
+        console.log(this.loginFormData)
+        this.$refs['loginFormData'].validate(function (valid) {
+          console.log(valid)
+          if (valid) {
+
+          }
+        })
+      },
+      sendSmsCode: function () {
+        $.get(this.baseUrl + this.sendBindWxMsgRequest + '/' + this.phoneNumber, function (response) {
+          console.log(response)
+          if (response.alreadySent === true) {
+            alert('短信已发出，请查收')
+          }
+          if (response.alreadySent === false) {
+            alert(response.message)
+          }
+        })
+      },
+      checkVerifyCode: function () {
+        console.log(this.verifyCode.length)
+      }
+    }
+	}
+</script>
+
+<style scoped>
+
+</style>

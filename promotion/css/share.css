@@ -1,0 +1,124 @@
+.share_main_wrapper {
+  margin: 0 auto;
+  width: 15rem; }
+  .share_main_wrapper .carousel {
+    margin: 0 auto;
+    width: 100%;
+    height: 9rem;
+    box-shadow: 0 0 0.5rem #666;
+    background-color: #fff;
+    border-radius: 0.25rem;
+    overflow: hidden; }
+  .share_main_wrapper .form {
+    margin: 0.5rem auto;
+    width: 100%;
+    height: 9rem;
+    border-radius: 0.25rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden; }
+    .share_main_wrapper .form .title {
+      margin: 0.3rem 0;
+      text-align: center;
+      color: #fff;
+      line-height: 1rem; }
+      .share_main_wrapper .form .title h1 {
+        font-size: 0.8rem;
+        letter-spacing: 0.7rem; }
+      .share_main_wrapper .form .title h2 {
+        font-size: 0.7rem;
+        letter-spacing: 0.05rem; }
+    .share_main_wrapper .form .main li {
+      margin: 0.5rem auto;
+      width: 11rem;
+      text-align: center; }
+  .share_main_wrapper .ranklist li {
+    margin: 1rem 0 0 0;
+    width: 100%;
+    font-size: 0; }
+    .share_main_wrapper .ranklist li .avatar {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      border: 1px dashed #fff;
+      border-radius: 50%;
+      position: relative;
+      vertical-align: top; }
+      .share_main_wrapper .ranklist li .avatar .query {
+        display: inline-block;
+        width: 100%;
+        color: #fff;
+        text-align: center;
+        line-height: 2rem;
+        position: absolute;
+        top: 0;
+        font-size: 1rem; }
+    .share_main_wrapper .ranklist li .detail {
+      display: inline-block;
+      padding: 0 0 0 0.5rem;
+      box-sizing: border-box;
+      width: 10.8rem;
+      color: #fff;
+      vertical-align: top;
+      font-size: 0.7rem; }
+      .share_main_wrapper .ranklist li .detail .name {
+        width: 10rem; }
+        .share_main_wrapper .ranklist li .detail .name label {
+          display: inline-block;
+          color: #ffde02; }
+        .share_main_wrapper .ranklist li .detail .name span {
+          display: inline-block;
+          margin: 0 0 0 0.3rem; }
+      .share_main_wrapper .ranklist li .detail .comment {
+        margin: 0.3rem 0 0 0; }
+    .share_main_wrapper .ranklist li .prizename {
+      display: inline-block;
+      width: 2rem;
+      color: #ffde02;
+      vertical-align: top;
+      font-size: 0.7rem; }
+  .share_main_wrapper .ranklist .hint {
+    margin: 1rem 0;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #ffde02; }
+  .share_main_wrapper .prize_wrapper {
+    background: #fff;
+    overflow: hidden; }
+    .share_main_wrapper .prize_wrapper h1 {
+      margin: 0.3rem 0;
+      text-align: center;
+      color: #FE370E;
+      font-size: 0.8rem; }
+    .share_main_wrapper .prize_wrapper .main {
+      height: 4rem;
+      font-size: 0; }
+      .share_main_wrapper .prize_wrapper .main .prizeimage {
+        display: inline-block;
+        width: 50%;
+        height: 100%;
+        vertical-align: middle; }
+      .share_main_wrapper .prize_wrapper .main .detail {
+        display: inline-block;
+        width: 50%;
+        height: 100%;
+        font-size: 0.3rem;
+        text-align: center;
+        vertical-align: middle; }
+        .share_main_wrapper .prize_wrapper .main .detail label {
+          display: block;
+          font-size: 0.7rem;
+          font-weight: bold; }
+        .share_main_wrapper .prize_wrapper .main .detail span {
+          display: block;
+          margin: 0.3rem 0;
+          font-size: 0.7rem; }
+        .share_main_wrapper .prize_wrapper .main .detail button {
+          background: #f36619;
+          padding: 0.3rem 0.5rem;
+          border-radius: 2rem;
+          color: #fff;
+          font-size: 0.5rem; }
+  .share_main_wrapper .rules li {
+    margin: 0.5rem 0;
+    color: #eee;
+    font-size: 0.7rem; }
