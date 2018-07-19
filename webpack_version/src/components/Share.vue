@@ -23,18 +23,19 @@
           <ul>
             <li>
               <div class="common_form_item">
-                <input class="common_input_item" type="text" placeholder="请输入手机号码" v-model="phoneNumber"/>
+                <input class="common_input_item" type="text" placeholder="请输入手机号码" v-model="loginId"/>
                 <button class="common_button_item" type="text" @click="sendSmsCode">获取验证码</button>
               </div>
             </li>
             <li>
               <div class="common_form_item">
-                <input class="common_input_item" type="text" placeholder="请输入验证码" v-model="verifyCode" @change.native="checkVerifyCode"/>
+                <input class="common_input_item" type="text" placeholder="请输入验证码" v-model="verifyCode"
+                       @change.native="checkVerifyCode"/>
               </div>
             </li>
             <li>
               <div class="common_form_item">
-                <button class="common_button_item">领奖</button>
+                <button class="common_button_item" @click="acceptPrize">领奖</button>
               </div>
             </li>
           </ul>
@@ -121,15 +122,19 @@
 </template>
 
 <script>
-	export default {
-		name: "Promotion",
+  export default {
+    name: "Promotion",
     data: function () {
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
         sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
-        phoneNumber: '',
-        verifyCode:'',
+        acceptShareUserActivityRewardRequest: 'promotion-service/share_activity/acceptShareUserActivityReward',
+        findUserActivityRewardTraceRequest: 'promotion-service/1.0.0/share_activity/findUserActivityRewardTrace',
+        getAdvertiseRequest: 'advertising-service/1.0.0',
+
+        loginId: '',
+        verifyCode: '',
         smsTemplate: 3,
         listData: [{
           title: 'aaa'
@@ -142,13 +147,21 @@
         }]
       }
     },
-    mounted () {
+    computed: {
+      userActivityId() {
+
+        return this.$route.query.id || '2';
+      }
+    },
+    mounted() {
       this.$autoHeight({
         target: '.common_main_container',
       });
       this.$remResizing({
         fontSize: 20,
       });
+      this.getAdvertise();
+      this.getRewardTraceList()
     },
     methods: {
       login: function () {
@@ -162,7 +175,7 @@
         })
       },
       sendSmsCode: function () {
-        this.$http.get(this.baseUrl + this.sendBindWxMsgRequest + '/' + this.phoneNumber, function (response) {
+        this.$http.get(this.$baseUrl + this.sendBindWxMsgRequest + '/' + this.phoneNumber, function (response) {
           console.log(response)
           if (response.alreadySent === true) {
             alert('短信已发出，请查收')
@@ -174,9 +187,42 @@
       },
       checkVerifyCode: function () {
         console.log(this.verifyCode.length)
+      },
+      getRewardTraceList() {
+        this.$http.get(this.$baseUrl + this.findUserActivityRewardTraceRequest + `/${this.userActivityId}`).then(response => {
+          console.log(response)
+        })
+      },
+      getAdvertise() {
+        let deviceData = this.$getDevice();
+        let deviceType;
+        let location = 'qu_welfare';
+        if (deviceData.ios) {
+          deviceType = 'ios'
+        } else if (deviceData.android) {
+          deviceType = 'android'
+        } else {
+          Object.keys(deviceData).forEach((item1, index1) => {
+            if (deviceData[item1] === true) {
+              deviceType = item1
+            }
+          });
+        }
+        deviceType = 'ios';
+
+        this.$http.get(this.$baseUrl + this.getAdvertiseRequest + `/${deviceType}/${location}`).then(response => {
+          console.log(response)
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      acceptPrize() {
+        this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardRequest + `/${this.userActivityId}/${this.loginId}`, {}).then(response => {
+          console.log(response)
+        })
       }
     }
-	}
+  }
 </script>
 
 <style scoped>
