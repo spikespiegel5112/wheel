@@ -1,7 +1,5 @@
 import axios from 'axios'
-// import { MessageBox } from 'element-ui'
 import store from '../store/store'
-
 
 // 创建axios实例
 const service = axios.create({

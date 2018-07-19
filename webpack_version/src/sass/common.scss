@@ -196,6 +196,9 @@ input:-webkit-autofill {
 		background: none;
 		color: #1890ce;
 	}
+  &.active{
+    background: #f36619;
+  }
 }
 
 .common_form_item {
