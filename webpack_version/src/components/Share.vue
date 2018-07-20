@@ -17,7 +17,7 @@
         </ul>
         <div class="swiper-pagination"></div>
       </div>
-      <div class="form">
+      <div class="form" v-if="acceptPrizeFlag===false">
         <div class="title">
           <h1>好礼即将到账</h1>
           <h2>验证手机号码领取</h2>
@@ -75,10 +75,15 @@
           <span><i></i></span>
         </div>
         <ul>
-          <li v-for="item in rewardTraceListData">
+          <li v-for="(item, index) in rewardTraceListData">
+
             <div class="avatar">
-              <img :src="item.rewardUserImage+'-style_100x100'"/>
-              <span class="query">?</span>
+              <div v-if="item.rewardUserImage!==null">
+                <img :src="item.rewardUserImage+'-style_100x100'" />
+              </div>
+              <span class="query">?
+                <!--{{item.availible===true}}-->
+              </span>
             </div>
             <div class="detail">
               <div class="name">
@@ -140,6 +145,7 @@
         prizeStatus: '',
         receiveRewardFlag: false,
         rewardTraceListData: [],
+        acceptPrizeFlag:false,
         prizeData: {
           code: '',
           data: {
@@ -262,6 +268,12 @@
         }).then(response => {
           console.log(response)
           this.rewardTraceListData = response.data;
+          this.rewardTraceListData.forEach((item, index) => {
+            this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
+              availible: true
+            }))
+            // this.rewardTraceListData[index].availible = true;
+          })
         }).catch(error => {
           console.log(error)
         })
@@ -313,6 +325,7 @@
           }).then(response => {
             console.log(response)
             this.prizeData = response;
+            this.acceptPrizeFlag=true;
           }).catch(error => {
             console.log(error)
           })
@@ -320,6 +333,15 @@
           alert('验证码格式不正确')
         }
 
+      },
+      imageError(index) {
+        console.log(this.rewardTraceListData)
+        console.log(index)
+
+        this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
+          availible: false
+        }))
+        // this.rewardTraceListData[index].availible = false;
       }
     }
   }

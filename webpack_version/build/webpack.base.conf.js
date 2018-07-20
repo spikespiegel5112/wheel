@@ -32,6 +32,7 @@ let webpackConfig = {
       'localPath': resolve(''),
       $: 'jquery',
       jQuery: 'jquery',
+      // 'moment$': resolve('/src/assets/js/moment/moment.min.js'),
     }
   },
   module: {
@@ -98,7 +99,11 @@ module.exports = vuxLoader.merge(webpackConfig, {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-      simpleUploader: 'simpleUploader'
-    })
+      // moment:'moment'
+    }),
+    // new webpack.ContextReplacementPlugin(
+    //   /moment[\/\\]locale$/,
+    //   /zh-cn/
+    // ),
   ]
 })

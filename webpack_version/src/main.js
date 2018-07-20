@@ -2,20 +2,20 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import FastClick from 'fastclick'
-import axios from 'axios'
+// import axios from 'axios'
 import moment from 'moment';
 
 import App from './App'
 import router from './router/router'
 import service from './js/request'
 import util from './js/util';
-import store from './store/store'
+// import store from './store/store'
 
 
 
 
 Vue.use(util);
-
+moment.lang("zh-cn")
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false;
@@ -29,7 +29,6 @@ Vue.prototype.$baseUrl = 'http://testgate.zan-qian.com/';
 new Vue({
   el: '#app',
   router,
-  store,
   template: '<App/>',
   components: {App}
 })
