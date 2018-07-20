@@ -5,10 +5,11 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vuxLoader = require('vux-loader')
+
 // const jQuery = require('jQuery')
 
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -32,6 +33,7 @@ let webpackConfig = {
       'localPath': resolve(''),
       $: 'jquery',
       jQuery: 'jquery',
+      swiper: resolve('/src/assets/js/swiper/swiper.esm.bundle.js'),
       // 'moment$': resolve('/src/assets/js/moment/moment.min.js'),
     }
   },
@@ -83,7 +85,7 @@ module.exports = vuxLoader.merge(webpackConfig, {
     {
       name: 'duplicate-style',
       options: {
-        cssProcessorOptions : {
+        cssProcessorOptions: {
           safe: true,
           zindex: false,
           autoprefixer: {
@@ -99,6 +101,7 @@ module.exports = vuxLoader.merge(webpackConfig, {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
+      swiper: 'swiper',
       // moment:'moment'
     }),
     // new webpack.ContextReplacementPlugin(

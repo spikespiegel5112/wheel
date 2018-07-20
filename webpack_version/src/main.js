@@ -9,7 +9,7 @@ import App from './App'
 import router from './router/router'
 import service from './js/request'
 import util from './js/util';
-// import store from './store/store'
+import store from './store/store'
 
 
 
@@ -29,6 +29,7 @@ Vue.prototype.$baseUrl = 'http://testgate.zan-qian.com/';
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: {App}
 })

@@ -17,6 +17,14 @@
         </ul>
         <div class="swiper-pagination"></div>
       </div>
+      <!--<div class="swiper-container">-->
+        <!--<ul class="carousel">-->
+          <!--<li class="swiper-slide" v-for="item in advertiseList">-->
+            <!--<img :src="item.image+`-style_640x380`"/>-->
+          <!--</li>-->
+        <!--</ul>-->
+        <!--<div class="swiper-pagination"></div>-->
+      <!--</div>-->
       <div class="form" v-if="acceptPrizeFlag===false">
         <div class="title">
           <h1>好礼即将到账</h1>
@@ -79,7 +87,7 @@
 
             <div class="avatar">
               <div v-if="item.rewardUserImage!==null">
-                <img :src="item.rewardUserImage+'-style_100x100'" />
+                <img :src="item.rewardUserImage+'-style_100x100'"/>
               </div>
               <span class="query">?
                 <!--{{item.availible===true}}-->
@@ -123,7 +131,9 @@
 
 <script>
   import Swiper from 'swiper'
-  import 'swiper/dist/css/swiper.min.css';
+
+  import Carousel from 'carousel-js'
+
 
   export default {
     name: "Promotion",
@@ -135,8 +145,10 @@
         acceptShareUserActivityRewardRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityReward',
         findUserActivityRewardTraceRequest: 'promotion-service/1.0.0/share_activity/findUserActivityRewardTrace',
         getAdvertiseRequest: 'advertising-service/1.0.0',
-
+        wxLoginRequest: 'http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js',
+        access_tokenRequest:'https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code',
         swiperInstance: {},
+
         loginId: null,
         verifyCode: '',
         smsTemplate: 3,
@@ -145,7 +157,7 @@
         prizeStatus: '',
         receiveRewardFlag: false,
         rewardTraceListData: [],
-        acceptPrizeFlag:false,
+        acceptPrizeFlag: false,
         prizeData: {
           code: '',
           data: {
@@ -157,6 +169,7 @@
           },
           message: ''
         },
+        access_token:'',
         prizeTypeDictionary: [{
           name: '趣豆',
           code: 'coin'
@@ -209,6 +222,9 @@
       identityCode() {
         return this.$route.query.id || '2';
 
+      },
+      wechatAuthCode(){
+        return this.$route.params.code||'071EfE5e2lY9wD0cBx1e2IOj5e2EfE5i'
       }
     },
     created() {
@@ -231,8 +247,19 @@
       });
       this.getAdvertise();
       this.getRewardTraceList();
+      this.initWxLogin();
     },
     methods: {
+      initWxLogin() {
+        this.$http.get(this.access_tokenRequest,{
+          params:{
+            code:this.wechatAuthCode,
+          }
+        }).then(response=>{
+          console.log(response)
+
+        })
+      },
       login: function () {
         console.log(this.$refs['loginFormData'])
         console.log(this.loginFormData)
@@ -253,7 +280,7 @@
             alert(response.message)
           }
         }).catch(errpr => {
-          alert(error)
+          console.log(error)
         })
       },
       checkVerifyCode(value) {
@@ -307,10 +334,8 @@
 
           this.advertiseList = response;
           this.$nextTick(() => {
-            this.swiperInstance = new Swiper('.swiper-container', {
-              autoplay: true,
-              loop: true
-            })
+            this.initSwiper();
+            // this.initCarousel();
           })
         }).catch(error => {
           console.log(error)
@@ -325,7 +350,7 @@
           }).then(response => {
             console.log(response)
             this.prizeData = response;
-            this.acceptPrizeFlag=true;
+            this.acceptPrizeFlag = true;
           }).catch(error => {
             console.log(error)
           })
@@ -342,11 +367,24 @@
           availible: false
         }))
         // this.rewardTraceListData[index].availible = false;
+      },
+      initCarousel(){
+        console.log(Carousel)
+        let carousel = new Carousel({
+          panels: document.getElementsByClassName('carousel')
+        });
+      },
+      initSwiper(){
+        this.swiperInstance = new Swiper('.swiper-container', {
+          autoplay: true,
+          loop: true
+        })
       }
     }
   }
 </script>
 
-<style scoped>
+<style scoped lang="css">
+  @import '../assets/js/swiper/css/swiper.min.css';
 
 </style>

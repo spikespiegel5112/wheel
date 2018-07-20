@@ -39,6 +39,7 @@ service.interceptors.response.use(
     return response.data
   },
   error => {
+    console.log(error)
     const result_response = error.response;
 
     if (result_response.status === 401) {
