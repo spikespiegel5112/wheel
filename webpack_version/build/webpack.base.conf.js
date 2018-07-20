@@ -33,7 +33,7 @@ let webpackConfig = {
       'localPath': resolve(''),
       $: 'jquery',
       jQuery: 'jquery',
-      swiper: resolve('/src/assets/js/swiper/swiper.esm.bundle.js'),
+      'swiper$': resolve('/src/assets/js/swiper/swiper.esm.bundle.js'),
       // 'moment$': resolve('/src/assets/js/moment/moment.min.js'),
     }
   },
