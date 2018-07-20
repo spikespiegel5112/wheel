@@ -18,12 +18,12 @@
         <div class="swiper-pagination"></div>
       </div>
       <!--<div class="swiper-container">-->
-        <!--<ul class="carousel">-->
-          <!--<li class="swiper-slide" v-for="item in advertiseList">-->
-            <!--<img :src="item.image+`-style_640x380`"/>-->
-          <!--</li>-->
-        <!--</ul>-->
-        <!--<div class="swiper-pagination"></div>-->
+      <!--<ul class="carousel">-->
+      <!--<li class="swiper-slide" v-for="item in advertiseList">-->
+      <!--<img :src="item.image+`-style_640x380`"/>-->
+      <!--</li>-->
+      <!--</ul>-->
+      <!--<div class="swiper-pagination"></div>-->
       <!--</div>-->
       <div class="form" v-if="acceptPrizeFlag===false">
         <div class="title">
@@ -35,7 +35,9 @@
             <li>
               <div class="common_form_item">
                 <input class="common_input_item" type="text" placeholder="请输入手机号码" v-model="loginId"/>
-                <button class="common_button_item" type="text" @click="sendSmsCode">获取验证码</button>
+                <button class="common_button_item" type="text" @click="sendSmsCode">
+                  {{smsCodeState?smsCodeCountDown:'获取验证码'}}
+                </button>
               </div>
             </li>
             <li>
@@ -126,17 +128,20 @@
         </ul>
       </div>
     </div>
+    <CommonLoading :loading="loading"/>
   </div>
 </template>
 
 <script>
   import Swiper from 'swiper'
-
-  import Carousel from 'carousel-js'
+  import CommonLoading from './common/CommonLoading.vue'
 
 
   export default {
     name: "Promotion",
+    components: {
+      CommonLoading
+    },
     data: function () {
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
@@ -146,9 +151,10 @@
         findUserActivityRewardTraceRequest: 'promotion-service/1.0.0/share_activity/findUserActivityRewardTrace',
         getAdvertiseRequest: 'advertising-service/1.0.0',
         wxLoginRequest: 'http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js',
-        access_tokenRequest:'https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code',
+        access_tokenRequest: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code',
         swiperInstance: {},
-
+        smsCodeState: false,
+        smsCodeCountDown: 60,
         loginId: null,
         verifyCode: '',
         smsTemplate: 3,
@@ -158,6 +164,7 @@
         receiveRewardFlag: false,
         rewardTraceListData: [],
         acceptPrizeFlag: false,
+        loading: false,
         prizeData: {
           code: '',
           data: {
@@ -169,7 +176,7 @@
           },
           message: ''
         },
-        access_token:'',
+        access_token: '',
         prizeTypeDictionary: [{
           name: '趣豆',
           code: 'coin'
@@ -217,14 +224,14 @@
     },
     computed: {
       userActivityId() {
-        return this.$route.query.id || '2';
+        return this.$route.query.state || '2';
       },
       identityCode() {
-        return this.$route.query.id || '2';
+        return this.$route.query.state || '2';
 
       },
-      wechatAuthCode(){
-        return this.$route.params.code||'071EfE5e2lY9wD0cBx1e2IOj5e2EfE5i'
+      wechatAuthCode() {
+        return this.$route.params.code || '071EfE5e2lY9wD0cBx1e2IOj5e2EfE5i'
       }
     },
     created() {
@@ -247,20 +254,9 @@
       });
       this.getAdvertise();
       this.getRewardTraceList();
-      this.initWxLogin();
     },
     methods: {
-      initWxLogin() {
-        this.$http.get(this.access_tokenRequest,{
-          params:{
-            code:this.wechatAuthCode,
-          }
-        }).then(response=>{
-          console.log(response)
-
-        })
-      },
-      login: function () {
+      login() {
         console.log(this.$refs['loginFormData'])
         console.log(this.loginFormData)
         this.$refs['loginFormData'].validate(function (valid) {
@@ -270,30 +266,49 @@
           }
         })
       },
-      sendSmsCode: function () {
-        this.$http.get(this.$baseUrl + this.sendBindWxMsgRequest + '/' + this.loginId).then(response => {
-          console.log(response)
-          if (response.alreadySent === true) {
-            alert('短信已发出，请查收')
-          }
-          if (response.alreadySent === false) {
-            alert(response.message)
-          }
-        }).catch(errpr => {
-          console.log(error)
-        })
+      sendSmsCode() {
+        if (this.smsCodeState === false) {
+          this.loading = true;
+          this.$http.get(this.$baseUrl + this.sendBindWxMsgRequest + '/' + this.loginId).then(response => {
+              console.log(response)
+              this.loading = false;
+              if (response.alreadySent === true) {
+                alert('短信已发出，请查收')
+                this.smsCodeState = true;
+                if (this.smsCodeCountDown > 0) {
+                  setInterval(() => {
+                    this.smsCodeCountDown--;
+                    if (this.smsCodeCountDown === 0) {
+                      this.smsCodeState = false;
+                    }
+                  }, 1000)
+                } else {
+                  this.smsCodeState = false;
+                }
+              } else {
+                alert(response.message)
+              }
+            }
+          ).catch(error => {
+            console.log(error)
+            this.loading = false;
+
+          })
+        } else {
+          alert('短信已发出，请稍后再试')
+        }
       },
       checkVerifyCode(value) {
         console.log(this.verifyCode.length)
 
       },
       getRewardTraceList() {
-        this.$http.get(this.$baseUrl + this.findUserActivityRewardTraceRequest + `/${this.userActivityId}`, {
-          headers: {
-            // Authorization: 'Bearer b95a6b75-4767-431a-ba4f-b7db8abcbe5e'
-          }
-        }).then(response => {
+        this.loading = true;
+
+        this.$http.get(this.$baseUrl + this.findUserActivityRewardTraceRequest + `/${this.userActivityId}`).then(response => {
           console.log(response)
+          this.loading = false;
+
           this.rewardTraceListData = response.data;
           this.rewardTraceListData.forEach((item, index) => {
             this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
@@ -302,6 +317,7 @@
             // this.rewardTraceListData[index].availible = true;
           })
         }).catch(error => {
+          this.loading = false;
           console.log(error)
         })
       },
@@ -323,6 +339,7 @@
         if (deviceType !== 'ios' && deviceType !== 'android') {
           deviceType = 'ios';
         }
+        this.loading = true;
 
         this.$http.get(this.$baseUrl + this.getAdvertiseRequest + `/${deviceType}/${location}`, {
           headers: {
@@ -331,27 +348,33 @@
           }
         }).then(response => {
           console.log(response)
+          this.loading = false;
 
           this.advertiseList = response;
           this.$nextTick(() => {
             this.initSwiper();
-            // this.initCarousel();
           })
         }).catch(error => {
+          this.loading = false;
+
           console.log(error)
         })
       },
       acceptPrize() {
         if (this.receiveRewardFlag) {
+          this.loading = true;
           this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardRequest + `/${this.userActivityId}/${this.loginId}`, {}, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
           }).then(response => {
             console.log(response)
+            this.loading = false;
             this.prizeData = response;
             this.acceptPrizeFlag = true;
           }).catch(error => {
+            this.loading = false;
+
             console.log(error)
           })
         } else {
@@ -368,13 +391,7 @@
         }))
         // this.rewardTraceListData[index].availible = false;
       },
-      initCarousel(){
-        console.log(Carousel)
-        let carousel = new Carousel({
-          panels: document.getElementsByClassName('carousel')
-        });
-      },
-      initSwiper(){
+      initSwiper() {
         this.swiperInstance = new Swiper('.swiper-container', {
           autoplay: true,
           loop: true

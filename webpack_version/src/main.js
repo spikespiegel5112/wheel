@@ -15,7 +15,7 @@ import store from './store/store'
 
 
 Vue.use(util);
-moment.lang("zh-cn")
+moment.locale("zh-cn")
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false;
