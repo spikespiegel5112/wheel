@@ -141,6 +141,7 @@
       height: 5rem;
       font-size: 0;
       .withpicture {
+        text-align: center;
         .prizeimage {
           display: inline-block;
           width: 40%;
@@ -149,7 +150,7 @@
           text-align: center;
           img{
             display: inline-block;
-            width: 3rem;
+            width: 4rem;
           }
         }
         .detail {
@@ -168,7 +169,7 @@
           span {
             display: block;
             margin: 0.5rem 0;
-            font-size: 0.7rem;
+            font-size: 0.5rem;
           }
           button {
             background: #f36619;
