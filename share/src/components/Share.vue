@@ -8,7 +8,9 @@
         趣福利
       </div>
     </div>
-    <div v-if="isWechat()">
+    <!--<div v-if="true">-->
+      <div v-if="isWechat()">
+
       <div class="share_main_wrapper">
         <div class="carousel swiper-container">
           <ul class="swiper-wrapper">
@@ -35,13 +37,15 @@
               </li>
               <li>
                 <div class="common_form_item">
-                  <input class="common_input_item" type="text" placeholder="请输入验证码" v-model="verifyCode"
+                  <input class="common_input_item" type="text" placeholder="请输入验证码"
+                         v-model="receiveRewardParams.verificationCode"
                          @input="checkVerifyCode"/>
                 </div>
               </li>
               <li>
                 <div class="common_form_item">
-                  <button class="common_button_item" :class="{'active':receiveRewardFlag===true}" @click="acceptPrize">领奖
+                  <button class="common_button_item" :class="{'active':receiveRewardFlag===true}" @click="acceptPrize">
+                    领奖
                   </button>
                 </div>
               </li>
@@ -49,14 +53,18 @@
           </div>
         </div>
         <div v-if="prizeData.code!==''" class="prize_wrapper">
-          <h1>{{prizeData.description}}</h1>
+          <h1>{{prizeData.data.rewardPrompt}}</h1>
           <div class="main">
             <div v-if="prizeData.code===10000" class="withpicture">
               <div class="prizeimage">
-                <img/>
+                <img v-if="prizeData.data.rewardType==='coin'" src="../image/share/coin.png" />
+                <img v-if="prizeData.data.rewardType==='point'" src="../image/share/coin.png" />
+                <img v-if="prizeData.data.rewardType==='bes_tv'" src="../image/share/bestv.png" />
               </div>
               <div class="detail">
-                <label>{{prizeData.rewardType}}</label>
+                <label v-if="prizeData.data.rewardType==='coin'">{{prizeData.data.rewardValue}}趣豆！</label>
+                <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
+                <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
                 <span>奖品已放入您的账户</span>
                 <button>打开趣谷APP</button>
               </div>
@@ -174,6 +182,11 @@
         advertiseList: [],
         activityId: '',
         prizeStatus: '',
+        receiveRewardParams: {
+          openId: '',
+          verificationCode: '',
+        },
+
         receiveRewardFlag: false,
         rewardTraceListData: [],
         acceptPrizeFlag: false,
@@ -181,6 +194,7 @@
         prizeData: {
           code: '',
           data: {
+            rewardPrompt:'',
             description: '',
             loginId: '',
             rewardStr: '',
@@ -250,14 +264,7 @@
     created() {
 
     },
-    watch: {
-      verifyCode(value) {
-        if (value.length >= 5) {
-          this.receiveRewardFlag = true;
-        }
-        console.log(this.receiveRewardFlag)
-      }
-    },
+
     mounted() {
       this.$autoHeight({
         target: '.common_main_container',
@@ -266,8 +273,8 @@
         fontSize: 20,
       });
       this.getAdvertise();
-      this.getRewardTraceList();
       this.getUserInfoAndReceivePrize();
+      this.getRewardTraceList();
     },
     methods: {
       login() {
@@ -312,9 +319,12 @@
           alert('短信已发出，请稍后再试')
         }
       },
-      checkVerifyCode(value) {
-        console.log(this.verifyCode.length)
-
+      checkVerifyCode() {
+        console.log(this.receiveRewardParams.verificationCode.toString().length)
+        if (this.receiveRewardParams.verificationCode.toString().length >= 5) {
+          this.receiveRewardFlag = true;
+        }
+        console.log(this.receiveRewardFlag)
       },
       getUserInfoAndReceivePrize() {
         console.log(this.wechatAuthCode)
@@ -333,6 +343,14 @@
           }],
         }).then(response => {
           console.log(response)
+          if (response.code === 10008) {
+            alert(response.message)
+          } else if (response.code === 10009) {
+            this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
+              openId: response.data.openId,
+              verificationCode: response.data.verificationCode
+            })
+          }
 
         })
       },
@@ -379,7 +397,7 @@
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             // Authorization: 'Bearer b95a6b75-4767-431a-ba4f-b7db8abcbe5e'
-          }
+          },
         }).then(response => {
           console.log(response)
           this.loading = false;
@@ -395,12 +413,12 @@
         })
       },
       acceptPrize() {
+        console.log(this.receiveRewardParams)
         if (this.receiveRewardFlag) {
           this.loading = true;
           this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByPhoneRequest + `/${this.userActivityId}/${this.loginId}`, {
-            openId: '',
-            accessToken: '',
-            verificationCode: ''
+            openId: this.receiveRewardParams.openId,
+            verificationCode: this.receiveRewardParams.verificationCode
           }, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -414,13 +432,19 @@
             }],
           }).then(response => {
             console.log(response)
-            this.loading = false;
-            this.prizeData = response;
-            this.acceptPrizeFlag = true;
-          }).catch(error => {
+            if (response.code === 10010) {
+              alert(response.message)
+            } else {
+              this.prizeData = response;
+              this.acceptPrizeFlag = true;
+            }
+
             this.loading = false;
 
-            console.log(error)
+          }).catch(error => {
+            this.loading = false;
+            alert(error.message)
+            console.log(error.message)
           })
         } else {
           alert('验证码格式不正确')
@@ -442,11 +466,12 @@
           loop: true
         })
       },
-      isWechat(){
-          //window.navigator.userAgent属性包含了浏览器类型、版本、操作系统类型、浏览器引擎类型等信息，这个属性可以用来判断浏览器类型
-          let ua = window.navigator.userAgent.toLowerCase();
-          //通过正则表达式匹配ua中是否含有MicroMessenger字符串
-          return ua.match(/MicroMessenger/i) == 'micromessenger';
+      isWechat() {
+        //window.navigator.userAgent属性包含了浏览器类型、版本、操作系统类型、浏览器引擎类型等信息，这个属性可以用来判断浏览器类型
+        let ua = window.navigator.userAgent.toLowerCase();
+        //通过正则表达式匹配ua中是否含有MicroMessenger字符串
+        // return ua.match(/MicroMessenger/i) == 'micromessenger';
+        return true
       }
     }
   }
