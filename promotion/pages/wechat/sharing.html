@@ -5,10 +5,10 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
     <title>趣福利</title>
-    <link rel="stylesheet" href="./assets/font/iconfont/iconfont.css">
-    <link rel="stylesheet" href="./css/reset.css">
-    <link rel="stylesheet" href="./css/share.css">
-    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="../../assets/font/iconfont/iconfont.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/share.css">
+    <link rel="stylesheet" href="../../css/common.css">
 <body>
 
 <div class="common_main_container" id="app">
@@ -141,6 +141,9 @@
 			console.log($)
 			$.autoHeight({
 				target: '.common_main_container',
+			});
+			$.remResizing({
+				fontSize: 20,
 			});
 
 			new Vue({
