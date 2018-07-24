@@ -1,18 +1,20 @@
 <template>
   <div v-show="loading" class="common_loading_wrapper" :style="{zIndex:zIndex}">
-    <div class="m-load"></div>
-
-    <div class="m-load2">
-      <div class="line">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="m-load">
+      <div class="m-load2">
+        <div class="line">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="circlebg"></div>
       </div>
-      <div class="circlebg"></div>
     </div>
+
+
   </div>
 </template>
 
@@ -45,9 +47,9 @@
   }
 
   .m-load, .m-load2 {
-    width: 36px;
-    height: 36px;
-    margin: 100px auto;
+    width: 70px;
+    height: 70px;
+    margin: 10rem auto;
   }
 
   /*.m-load {*/
@@ -55,7 +57,16 @@
   /*}*/
 
   .m-load2 {
-    background: #535353;
+    background: rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  .m-load2 .line{
+    margin: 17px auto;
+    width: 36px;
+    height: 36px;
+    position: relative;
   }
 
   /** 加载动画的静态样式 **/

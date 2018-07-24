@@ -279,16 +279,6 @@
       this.getUserInfoAndReceivePrize();
     },
     methods: {
-      login() {
-        console.log(this.$refs['loginFormData'])
-        console.log(this.loginFormData)
-        this.$refs['loginFormData'].validate(function (valid) {
-          console.log(valid)
-          if (valid) {
-
-          }
-        })
-      },
       sendSmsCode() {
         if (this.smsCodeState === false) {
           this.loading = true;
@@ -296,7 +286,12 @@
               console.log(response)
               this.loading = false;
               if (response.alreadySent === true) {
-                alert('短信已发出，请查收')
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '短信已发出，请查收',
+                  onConfirm() {
+                  }
+                });
                 this.smsCodeState = true;
                 if (this.smsCodeCountDown > 0) {
                   setInterval(() => {
@@ -309,7 +304,12 @@
                   this.smsCodeState = false;
                 }
               } else {
-                alert(response.message)
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: response.message,
+                  onConfirm() {
+                  }
+                })
               }
             }
           ).catch(error => {
@@ -318,15 +318,12 @@
 
           })
         } else {
-          // this.$vux.confirm.show({
-          //   // 组件除show外的属性
-          //   onCancel () {
-          //     console.log(this) // 非当前 vm
-          //     console.log(_this) // 当前 vm
-          //   },
-          //   onConfirm () {}
-          // })
-          alert('短信已发出，请稍后再试')
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '短信已发出，请稍后再试',
+            onConfirm() {
+            }
+          })
         }
       },
       checkVerifyCode() {
@@ -354,15 +351,22 @@
         }).then(response => {
           console.log(response)
           if (response.code === 10008) {
-            alert(response.message)
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: response.message,
+            })
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
-              openId: response.data,
-              verificationCode: response.data.verificationCode
+              openId: response.data.openId,
+              verificationCode: response.data.verificationCode,
+              accessToken: response.data.accessToken
             })
           } else {
             if (response.code === 10010) {
-              alert(response.message)
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+              })
             } else if (response.data === null) {
               this.prizeData = Object.assign(this.prizeData, {
                 code: response.code,
@@ -445,7 +449,8 @@
           this.loading = true;
           this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByPhoneRequest + `/${this.userActivityId}/${this.loginId}`, {
             openId: this.receiveRewardParams.openId,
-            verificationCode: this.receiveRewardParams.verificationCode
+            verificationCode: this.receiveRewardParams.verificationCode,
+            accessToken: this.receiveRewardParams.accessToken,
           }, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -460,7 +465,12 @@
           }).then(response => {
             console.log(response)
             if (response.code === 10010) {
-              alert(response.message)
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              })
             } else if (response.data === null) {
               this.prizeData = Object.assign(this.prizeData, {
                 code: response.code,
@@ -478,13 +488,22 @@
 
           }).catch(error => {
             this.loading = false;
-            alert(error.message)
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '验证码格式不正确',
+              onConfirm() {
+              }
+            })
             console.log(error.message)
           })
         } else {
-          alert('验证码格式不正确')
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码格式不正确',
+            onConfirm() {
+            }
+          })
         }
-
       },
       imageError(index) {
         console.log(this.rewardTraceListData)
@@ -505,8 +524,9 @@
         //window.navigator.userAgent属性包含了浏览器类型、版本、操作系统类型、浏览器引擎类型等信息，这个属性可以用来判断浏览器类型
         let ua = window.navigator.userAgent.toLowerCase();
         //通过正则表达式匹配ua中是否含有MicroMessenger字符串
-        // return ua.match(/MicroMessenger/i) == 'micromessenger';
-        return true
+        console.log(this.$prodEnv)
+        return this.$prodEnv ? ua.match(/MicroMessenger/i) == 'micromessenger' : true;
+        // return this.$prodEnv;
       }
     }
   }

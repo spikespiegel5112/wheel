@@ -28,10 +28,10 @@
       line-height: 1rem;
       h1 {
         font-size: 0.8rem;
-        letter-spacing: 0.7rem;
+        letter-spacing: 0.1rem;
       }
       h2 {
-        font-size: 0.7rem;
+        font-size: 0.5rem;
         letter-spacing: 0.05rem;
 
       }
@@ -50,7 +50,7 @@
   }
   .ranklist {
     li {
-      margin: 1rem 0 0 0;
+      padding: 0.5rem 0;
       width: 100%;
       font-size: 0;
       .avatar {
@@ -60,7 +60,7 @@
         border: 1px dashed #fff;
         border-radius: 50%;
         position: relative;
-        vertical-align: top;
+        vertical-align: middle;
         text-align: center;
         img {
           display: inline-block;
@@ -88,10 +88,11 @@
         box-sizing: border-box;
         width: 10.8rem;
         color: #fff;
-        vertical-align: top;
+        vertical-align: middle;
         font-size: 0.7rem;
         .name {
           width: 10rem;
+          font-size: 0.6rem;
           label {
             display: inline-block;
             max-width: 5rem;
@@ -103,12 +104,13 @@
           }
           span {
             display: inline-block;
-            margin: 0 0 0 0.3rem;
+            margin: 0 0.3rem 0 0;
             vertical-align: middle;
           }
         }
         .comment {
           margin: 0.3rem 0 0 0;
+          font-size: 0.6rem;
         }
       }
       .prizename {
@@ -128,7 +130,7 @@
     }
   }
   .prize_wrapper {
-    margin: 1rem 0 0 0;
+    margin: 1rem 0;
     //background: #fff;
     overflow: hidden;
     background: url("./image/share/notebg.png") no-repeat;
@@ -152,7 +154,7 @@
           text-align: center;
           img{
             display: inline-block;
-            width: 4rem;
+            width: 3.5rem;
           }
         }
         .detail {
@@ -225,10 +227,10 @@
   }
   .rules {
     li {
-      margin: 0.3rem auto;
+      margin: 0.5rem  0 0.5rem 1rem;
       width: 90%;
       color: #eee;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
     }
   }
   .notfound404{

@@ -4,7 +4,7 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 // import axios from 'axios'
 import moment from 'moment';
-import  { ConfirmPlugin } from 'vux'
+import {ConfirmPlugin} from 'vux'
 
 import App from './App'
 import router from './router/router'
@@ -13,19 +13,18 @@ import util from './js/util';
 import store from './store/store'
 
 
-
-
 Vue.use(util);
 
-Vue.use(ConfirmPlugin)
-moment.locale("zh-cn")
-FastClick.attach(document.body)
+Vue.use(ConfirmPlugin);
+moment.locale("zh-cn");
+FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
 Vue.prototype.$moment = moment;
 Vue.prototype.$http = service;
 // Vue.prototype.$baseUrl = 'http://testgate.zan-qian.com/';
 Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/';
+Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
 
 /* eslint-disable no-new */
 new Vue({
