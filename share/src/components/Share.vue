@@ -124,11 +124,12 @@
             <p>活动细则</p>
             <span><i></i></span>
           </div>
-          <ul>
-            <li>1.每个人每天最多抢五个红包</li>
-            <li>1.每个人每天最多抢五个红包</li>
-            <li>1.每个人每天最多抢五个红包</li>
-          </ul>
+          <ol>
+            <li>本次活动有效期为2018年7月16日至2018年10月31日</li>
+            <li>本次活动所有奖品为随机抽取得到</li>
+            <li>本次活动每次抽奖最高奖项为百视通半年会员</li>
+            <li>本次活动最高解释权归彬指网络科技（上海）有限公司所有</li>
+          </ol>
         </div>
       </div>
     </div>
@@ -276,7 +277,6 @@
       });
       this.getAdvertise();
       this.getUserInfoAndReceivePrize();
-      this.getRewardTraceList();
     },
     methods: {
       login() {
@@ -377,6 +377,8 @@
             this.loading = false;
           }
 
+          this.getRewardTraceList();
+
         })
       },
       getRewardTraceList() {
@@ -471,6 +473,8 @@
             }
 
             this.loading = false;
+
+            this.getRewardTraceList();
 
           }).catch(error => {
             this.loading = false;

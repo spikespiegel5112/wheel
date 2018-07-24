@@ -132,9 +132,9 @@
     //background: #fff;
     overflow: hidden;
     background: url("./image/share/notebg.png") no-repeat;
-    background-size: cover;
+    background-size: 100% 100%;
     h1 {
-      margin: 0.3rem 0;
+      margin: 0.6rem 0 0.3rem 0;
       text-align: center;
       color: #FE370E;
       font-size: 0.8rem;
@@ -225,7 +225,8 @@
   }
   .rules {
     li {
-      margin: 0.5rem 0;
+      margin: 0.3rem auto;
+      width: 90%;
       color: #eee;
       font-size: 0.7rem;
     }
