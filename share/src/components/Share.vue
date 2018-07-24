@@ -470,7 +470,7 @@
       },
       initSwiper() {
         this.swiperInstance = new Swiper('.swiper-container', {
-          autoplay: true,
+          autoplay:5000,
           loop: true
         })
       },
