@@ -248,6 +248,10 @@
           code: 10007,
           text: '活动不存在',
           type: 'withoutPicture'
+        }, {
+          code: 10008,
+          text: 'weChat信息错误',
+          type: 'withoutPicture'
         }]
       }
     },
@@ -349,7 +353,7 @@
           }],
         }).then(response => {
           console.log(response)
-          if (response.code === 10008) {
+          if (response.code === 10008 && this.isWechat()) {
             this.$vux.confirm.show({
               showCancelButton: false,
               title: response.message,
@@ -489,7 +493,7 @@
             this.loading = false;
             this.$vux.confirm.show({
               showCancelButton: false,
-              title: '验证码格式不正确',
+              title: '验证码不正确',
               onConfirm() {
               }
             })
@@ -498,7 +502,7 @@
         } else {
           this.$vux.confirm.show({
             showCancelButton: false,
-            title: '验证码格式不正确',
+            title: '请输入完整的验证码',
             onConfirm() {
             }
           })
