@@ -9,7 +9,7 @@
       </div>
     </div>
     <!--<div v-if="true">-->
-      <div v-if="isWechat()">
+    <div v-if="isWechat()">
 
       <div class="share_main_wrapper">
         <div class="carousel swiper-container">
@@ -53,13 +53,15 @@
           </div>
         </div>
         <div v-if="prizeData.code!==''" class="prize_wrapper">
+          <!--<div class="prize_wrapper">-->
+
           <h1>{{prizeData.data.rewardPrompt}}</h1>
           <div class="main">
             <div v-if="prizeData.code===10000" class="withpicture">
               <div class="prizeimage">
-                <img v-if="prizeData.data.rewardType==='coin'" src="../image/share/coin.png" />
-                <img v-if="prizeData.data.rewardType==='point'" src="../image/share/coin.png" />
-                <img v-if="prizeData.data.rewardType==='bes_tv'" src="../image/share/bestv.png" />
+                <img v-if="prizeData.data.rewardType==='coin'" src="../image/share/coin.png"/>
+                <img v-if="prizeData.data.rewardType==='point'" src="../image/share/coin.png"/>
+                <img v-if="prizeData.data.rewardType==='bes_tv'" src="../image/share/bestv.png"/>
               </div>
               <div class="detail">
                 <label v-if="prizeData.data.rewardType==='coin'">{{prizeData.data.rewardValue}}趣豆！</label>
@@ -194,7 +196,7 @@
         prizeData: {
           code: '',
           data: {
-            rewardPrompt:'',
+            rewardPrompt: '',
             description: '',
             loginId: '',
             rewardStr: '',
@@ -316,6 +318,14 @@
 
           })
         } else {
+          // this.$vux.confirm.show({
+          //   // 组件除show外的属性
+          //   onCancel () {
+          //     console.log(this) // 非当前 vm
+          //     console.log(_this) // 当前 vm
+          //   },
+          //   onConfirm () {}
+          // })
           alert('短信已发出，请稍后再试')
         }
       },
@@ -347,9 +357,24 @@
             alert(response.message)
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
-              openId: response.data.openId,
+              openId: response.data,
               verificationCode: response.data.verificationCode
             })
+          } else {
+            if (response.code === 10010) {
+              alert(response.message)
+            } else if (response.data === null) {
+              this.prizeData = Object.assign(this.prizeData, {
+                code: response.code,
+                message: response.message
+              });
+              this.acceptPrizeFlag = true;
+            } else {
+              this.prizeData = response;
+              this.acceptPrizeFlag = true;
+            }
+
+            this.loading = false;
           }
 
         })
@@ -434,6 +459,12 @@
             console.log(response)
             if (response.code === 10010) {
               alert(response.message)
+            } else if (response.data === null) {
+              this.prizeData = Object.assign(this.prizeData, {
+                code: response.code,
+                message: response.message
+              });
+              this.acceptPrizeFlag = true;
             } else {
               this.prizeData = response;
               this.acceptPrizeFlag = true;
@@ -462,7 +493,7 @@
       },
       initSwiper() {
         this.swiperInstance = new Swiper('.swiper-container', {
-          autoplay: true,
+          autoplay: 5000,
           loop: true
         })
       },
