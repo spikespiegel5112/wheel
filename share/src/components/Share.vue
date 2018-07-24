@@ -318,6 +318,14 @@
 
           })
         } else {
+          // this.$vux.confirm.show({
+          //   // 组件除show外的属性
+          //   onCancel () {
+          //     console.log(this) // 非当前 vm
+          //     console.log(_this) // 当前 vm
+          //   },
+          //   onConfirm () {}
+          // })
           alert('短信已发出，请稍后再试')
         }
       },
@@ -349,9 +357,24 @@
             alert(response.message)
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
-              openId: response.data.openId,
+              openId: response.data,
               verificationCode: response.data.verificationCode
             })
+          } else {
+            if (response.code === 10010) {
+              alert(response.message)
+            } else if (response.data === null) {
+              this.prizeData = Object.assign(this.prizeData, {
+                code: response.code,
+                message: response.message
+              });
+              this.acceptPrizeFlag = true;
+            } else {
+              this.prizeData = response;
+              this.acceptPrizeFlag = true;
+            }
+
+            this.loading = false;
           }
 
         })
@@ -470,7 +493,7 @@
       },
       initSwiper() {
         this.swiperInstance = new Swiper('.swiper-container', {
-          autoplay:5000,
+          autoplay: 5000,
           loop: true
         })
       },
