@@ -5,12 +5,14 @@ import FastClick from 'fastclick'
 // import axios from 'axios'
 import moment from 'moment';
 import {ConfirmPlugin} from 'vux'
+import Swiper from 'swiper';
 
 import App from './App'
 import router from './router/router'
 import service from './js/request'
 import util from './js/util';
 import store from './store/store'
+
 
 
 Vue.use(util);
