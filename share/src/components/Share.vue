@@ -155,7 +155,6 @@
 </template>
 
 <script>
-  import Swiper from 'swiper'
   import CommonLoading from './common/CommonLoading.vue'
 
 

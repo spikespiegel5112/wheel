@@ -33,6 +33,7 @@ let webpackConfig = {
       'localPath': resolve(''),
       $: 'jquery',
       jQuery: 'jquery',
+      'swiper@': 'swiper',
       // 'swiper$': resolve('/src/assets/js/swiper/swiper.esm.bundle.js'),
       // 'moment$': resolve('/src/assets/js/moment/moment.min.js'),
     }
@@ -101,7 +102,7 @@ module.exports = vuxLoader.merge(webpackConfig, {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-      swiper: 'swiper',
+      swiper: 'Swiper',
       // moment:'moment'
     }),
     // new webpack.ContextReplacementPlugin(
