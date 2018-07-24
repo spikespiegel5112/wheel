@@ -21,8 +21,8 @@ FastClick.attach(document.body)
 Vue.config.productionTip = false;
 Vue.prototype.$moment = moment;
 Vue.prototype.$http = service;
-// Vue.prototype.$baseUrl = 'http://testgate.zan-qian.com/';
-Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/';
+Vue.prototype.$baseUrl = 'http://testgate.zan-qian.com/';
+// Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/';
 
 
 /* eslint-disable no-new */

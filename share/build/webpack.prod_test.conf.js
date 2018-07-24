@@ -15,7 +15,7 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-const env = require('../config/dev.env')
+const env = require('../config/prod.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -67,8 +67,6 @@ const webpackConfig = merge(baseWebpackConfig, {
       filename: config.build.index,
       template: 'index.html',
       inject: true,
-      favicon: resolve('favicon.ico'),
-      title: 'vue-element-admin',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
