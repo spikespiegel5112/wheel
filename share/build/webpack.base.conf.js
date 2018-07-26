@@ -33,7 +33,10 @@ let webpackConfig = {
       'localPath': resolve(''),
       $: 'jquery',
       jQuery: 'jquery',
-      'swiper@': 'swiper',
+      'swiper$': 'swiper',
+      // 'jsSDK$':'weixin-js-sdk',
+      // 'jsSDK$': resolve('/static/assets/js/jsSDK.js'),
+
       // 'swiper$': resolve('/src/assets/js/swiper/swiper.esm.bundle.js'),
       // 'moment$': resolve('/src/assets/js/moment/moment.min.js'),
     }
@@ -103,6 +106,7 @@ module.exports = vuxLoader.merge(webpackConfig, {
       $: 'jquery',
       jQuery: 'jquery',
       swiper: 'Swiper',
+      // jsSDK: 'weixin-js-sdk',
       // moment:'moment'
     }),
     // new webpack.ContextReplacementPlugin(
