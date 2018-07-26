@@ -450,7 +450,6 @@
         }).then(response => {
           console.log(response)
           if (response.code === 10008 && this.isWechat()) {
-            alert('ddsds')
             this.$vux.confirm.show({
               showCancelButton: false,
               title: response.message,
