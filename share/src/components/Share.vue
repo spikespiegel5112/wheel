@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="common_main_container" >
+    <div class="common_main_container">
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app" v-if="!initializing">
         <div class="common_header_wrapper">
@@ -159,7 +159,7 @@
       </div>
     </div>
     <!--<div class="share_iframe_container">-->
-      <!--<iframe :src='weChatAuthorityURL' width="100%" :height="windowHeight" seamless="true" :onload="onIframeLoaded"></iframe>-->
+    <!--<iframe :src='weChatAuthorityURL' width="100%" :height="windowHeight" seamless="true" :onload="onIframeLoaded"></iframe>-->
     <!--</div>-->
   </div>
 
@@ -203,11 +203,11 @@
           openId: '',
           verificationCode: '',
         },
-        windowHeight:0,
+        windowHeight: 0,
         receiveRewardFlag: false,
         rewardTraceListData: [],
         acceptPrizeFlag: true,
-        initializing:true,
+        initializing: true,
         loading: false,
         prizeData: {
           code: '',
@@ -286,13 +286,13 @@
         return this.$route.query.code
       }
     },
-    watch:{
-      weChatAuthorityURL(value){
+    watch: {
+      weChatAuthorityURL(value) {
         console.log(value)
       }
 
     },
-    beforeCreate(){
+    beforeCreate() {
     },
     created() {
       this.checkUserInfoCode();
@@ -425,7 +425,7 @@
           })
         }
       },
-      checkUserInfoCode(){
+      checkUserInfoCode() {
         this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByWeChatCodeRequest + `/${this.identityCode}`, {
           weChatCode: this.wechatAuthCode
         }, {
@@ -442,6 +442,8 @@
         }).then(response => {
           if (response.code === 10008 && this.isWechat()) {
             location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+          } else {
+            this.initializing = false;
           }
         })
       },
@@ -651,12 +653,12 @@
         return this.$prodEnv ? ua.match(/MicroMessenger/i) == 'micromessenger' : true;
         // return this.$prodEnv;
       },
-      onIframeLoaded(){
+      onIframeLoaded() {
         alert('dsdsds')
       },
-      changeUrl(){
-        let url='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
-        window.history.pushState({},0,url);
+      changeUrl() {
+        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
+        window.history.pushState({}, 0, url);
       }
     }
   }
