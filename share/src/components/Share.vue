@@ -298,8 +298,8 @@
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           // url: 'testactivity.fnvalley.com'
           // url:'localhost',
-          // url:encodeURIComponent(location.href.split('#')[0]),
-          url: encodeURIComponent('http://activity.fnvalley.com/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'),
+          url:encodeURIComponent(location.href.split('#')[0]),
+          // url: encodeURIComponent('http://activity.fnvalley.com/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'),
           // url:encodeURIComponent('http://localhost/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
         }, {
           // url:location.href.split('?')[0]
@@ -315,9 +315,6 @@
           }],
         }).then(response => {
           console.log(response)
-          let params={
-
-          }
 
           wx.config(Object.assign({
             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
