@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="share_realpage_container">
-      <div class="common_main_container" id="app">
+    <div class="common_main_container" >
+      <CommonLoading :loading="initializing"/>
+      <div class="content" id="app" v-if="!initializing">
         <div class="common_header_wrapper">
           <div class="left_wrapper">
             <a class="previous iconfont icon-backward2"></a>
@@ -206,6 +207,7 @@
         receiveRewardFlag: false,
         rewardTraceListData: [],
         acceptPrizeFlag: true,
+        initializing:true,
         loading: false,
         prizeData: {
           code: '',
@@ -290,17 +292,15 @@
       }
 
     },
+    beforeCreate(){
+    },
     created() {
+      this.checkUserInfoCode();
 
     },
     mounted() {
       this.$autoHeight({
-        target: '.common_main_container',
-        returnValue:true
-      });
-      this.windowHeight=this.$autoHeight({
-        target: 'body',
-        returnValue:true
+        target: '.share_realpage_container'
       });
       this.$remResizing({
         fontSize: 20,
@@ -425,6 +425,26 @@
           })
         }
       },
+      checkUserInfoCode(){
+        this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByWeChatCodeRequest + `/${this.identityCode}`, {
+          weChatCode: this.wechatAuthCode
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          transformRequest: [function (data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+        }).then(response => {
+          if (response.code === 10008 && this.isWechat()) {
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+          }
+        })
+      },
       checkVerifyCode() {
         console.log(this.receiveRewardParams.verificationCode.toString().length)
         if (this.receiveRewardParams.verificationCode.toString().length >= 5) {
@@ -450,13 +470,12 @@
         }).then(response => {
           console.log(response)
           if (response.code === 10008 && this.isWechat()) {
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: response.message,
-            })
-            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://localhost&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: response.message,
+            // })
+            console.warn(response.message)
 
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
               openId: response.data.openId,
