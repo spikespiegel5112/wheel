@@ -294,11 +294,11 @@
     methods: {
       initJSSDK() {
         // alert(encodeURIComponent(location.href.split('#')[0]))
-        console.log('777',encodeURIComponent('http://localhost?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'))
+        console.log('777', encodeURIComponent('http://localhost?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'))
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           // url: 'testactivity.fnvalley.com'
           // url:'localhost',
-          url:encodeURIComponent(location.href.split('#')[0]),
+          url: encodeURIComponent(location.href.split('#')[0]),
           // url: encodeURIComponent('http://activity.fnvalley.com/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'),
           // url:encodeURIComponent('http://localhost/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
         }, {
@@ -319,17 +319,13 @@
           wx.config(Object.assign({
             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
-            timestamp: '', // 必填，生成签名的时间戳
-            nonceStr: '', // 必填，生成签名的随机串
-            signature: '',// 必填，签名
-            jsApiList: [
-              'onMenuShareTimeline'
-            ] // 必填，需要使用的JS接口列表
-          }, {
             timestamp: response.data.timestamp, // 必填，生成签名的时间戳
             nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
             signature: response.data.signature,// 必填，签名
-          }));
+            jsApiList: [
+              'onMenuShareTimeline'
+            ] // 必填，需要使用的JS接口列表
+          }, {}));
 
           wx.ready((e) => {
             console.log(e)
