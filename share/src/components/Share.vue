@@ -455,9 +455,9 @@
               showCancelButton: false,
               title: response.message,
             })
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://localhost&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://localhost&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
 
-            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
               openId: response.data.openId,
