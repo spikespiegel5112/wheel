@@ -289,12 +289,16 @@
     watch: {
       weChatAuthorityURL(value) {
         console.log(value)
+      },
+      initializing(value){
+        if(!value){
+          this.getUserInfoAndReceivePrize();
+        }
       }
-
     },
     beforeCreate() {
     },
-    created() {
+    beforeMount() {
       this.checkUserInfoCode();
 
     },
@@ -306,9 +310,6 @@
         fontSize: 20,
       });
       this.getAdvertise();
-      if(!this.initializing){
-        this.getUserInfoAndReceivePrize();
-      }
 
       // this.initJSSDK();
       console.log(Swiper)
@@ -511,8 +512,7 @@
           this.getRewardTraceList();
 
         })
-      }
-      ,
+      },
       getRewardTraceList() {
         this.loading = true;
 
