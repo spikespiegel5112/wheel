@@ -11,7 +11,7 @@ import App from './App'
 import router from './router/router'
 import service from './js/request'
 import util from './js/util';
-import store from './store/store'
+// import store from './store/store'
 
 
 
@@ -32,7 +32,7 @@ Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
 new Vue({
   el: '#app',
   router,
-  store,
+  // store,
   template: '<App/>',
   components: {App}
 })

@@ -9,10 +9,31 @@
     background-color: #fff;
     border-radius: 0.25rem;
     overflow: hidden;
-    img {
-      display: block;
+    li{
       width: 100%;
+      height: 100%;
+      img {
+        display: block;
+        width: 100%;
+      }
+      .defaultbanner{
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        label{
+          display: inline-block;
+          vertical-align: middle;
+          color: #2777B4;
+        }
+        //&:before{
+        //  display: inline-block;
+        //  content: '';
+        //  height: 100%;
+        //  vertical-align: middle;
+        //}
+      }
     }
+
   }
   .form {
     margin: 0.5rem auto;
@@ -49,6 +70,7 @@
     }
   }
   .ranklist {
+    margin: 0.5rem 0 0 0;
     li {
       padding: 0.5rem 0;
       width: 100%;
@@ -86,7 +108,7 @@
         display: inline-block;
         padding: 0 0 0 0.5rem;
         box-sizing: border-box;
-        width: 10.8rem;
+        width: 10.2rem;
         color: #fff;
         vertical-align: middle;
         font-size: 0.7rem;
@@ -115,7 +137,7 @@
       }
       .prizename {
         display: inline-block;
-        width: 2rem;
+        width: 2.7rem;
         color: #ffde02;
         vertical-align: top;
         font-size: 0.7rem;

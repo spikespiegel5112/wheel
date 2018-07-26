@@ -10,12 +10,17 @@
     </div>
     <!--<div v-if="true">-->
     <div v-if="isWechat()">
-
       <div class="share_main_wrapper">
         <div class="carousel swiper-container">
           <ul class="swiper-wrapper">
-            <li class="swiper-slide" v-for="item in advertiseList">
+            <li class="swiper-slide" v-if="advertiseList.length>0" v-for="item in advertiseList">
               <img :src="item.image+`-style_640x380`"/>
+            </li>
+            <li>
+              <div class="defaultbanner">
+                <!--<label>banner</label>-->
+                <img src="../image/share/defaultbanner_00000.jpg"/>
+              </div>
             </li>
           </ul>
           <div class="swiper-pagination"></div>
@@ -53,11 +58,11 @@
           </div>
         </div>
         <div v-if="prizeData.code!==''" class="prize_wrapper">
-          <!--<div class="prize_wrapper">-->
+        <!--<div class="prize_wrapper">-->
 
           <h1>{{prizeData.data.rewardPrompt}}</h1>
           <div class="main">
-            <div v-if="prizeData.code===10000" class="withpicture">
+            <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
               <div class="prizeimage">
                 <img v-if="prizeData.data.rewardType==='coin'" src="../image/share/coin.png"/>
                 <img v-if="prizeData.data.rewardType==='point'" src="../image/share/coin.png"/>
@@ -89,14 +94,11 @@
           </div>
           <ul>
             <li v-for="(item, index) in rewardTraceListData">
-
               <div class="avatar">
                 <div v-if="item.rewardUserImage!==null">
                   <img :src="item.rewardUserImage+'-style_100x100'"/>
                 </div>
-                <span class="query">?
-                  <!--{{item.availible===true}}-->
-              </span>
+                <span class="query">?</span>
               </div>
               <div class="detail">
                 <div class="name">
@@ -109,14 +111,13 @@
                 </div>
               </div>
               <div class="prizename">
-                {{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].name}}
+                {{item.rewardValue}}{{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].unit}}{{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].name}}
               </div>
             </li>
-
           </ul>
-          <p class="hint">
-            只差一点点，大红包就是你的啦~
-          </p>
+          <!--<p class="hint">-->
+            <!--只差一点点，大红包就是你的啦~-->
+          <!--</p>-->
         </div>
         <div class="rules">
           <div class='common_blocktitle_item'>
@@ -191,7 +192,7 @@
 
         receiveRewardFlag: false,
         rewardTraceListData: [],
-        acceptPrizeFlag: false,
+        acceptPrizeFlag: true,
         loading: false,
         prizeData: {
           code: '',
@@ -208,13 +209,16 @@
         access_token: '',
         prizeTypeDictionary: [{
           name: '趣豆',
-          code: 'coin'
+          code: 'coin',
+          unit:''
         }, {
           name: '积分',
-          code: 'point'
+          code: 'point',
+          unit:''
         }, {
-          name: '百视通',
-          code: 'bes_tv'
+          name: '百视通会员卡',
+          code: 'bes_tv',
+          unit:''
         }],
         activityStatusDictionary: [{
           code: 10000,
