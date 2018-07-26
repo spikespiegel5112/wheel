@@ -108,16 +108,16 @@
         display: inline-block;
         padding: 0 0 0 0.5rem;
         box-sizing: border-box;
-        width: 10.2rem;
+        width: 10.5rem;
         color: #fff;
         vertical-align: middle;
         font-size: 0.7rem;
         .name {
           width: 10rem;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
           label {
             display: inline-block;
-            max-width: 5rem;
+            max-width: 6rem;
             color: #ffde02;
             white-space: nowrap;
             overflow: hidden;
@@ -132,15 +132,15 @@
         }
         .comment {
           margin: 0.3rem 0 0 0;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
         }
       }
       .prizename {
         display: inline-block;
-        width: 2.7rem;
+        width: 2.3rem;
         color: #ffde02;
         vertical-align: top;
-        font-size: 0.7rem;
+        font-size: 0.6rem;
 
       }
     }
@@ -252,7 +252,7 @@
       margin: 0.5rem  0 0.5rem 1rem;
       width: 90%;
       color: #eee;
-      font-size: 0.6rem;
+      font-size: 0.5rem;
     }
   }
   .notfound404{

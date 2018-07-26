@@ -58,7 +58,7 @@
           </div>
         </div>
         <div v-if="prizeData.code!==''" class="prize_wrapper">
-        <!--<div class="prize_wrapper">-->
+          <!--<div class="prize_wrapper">-->
 
           <h1>{{prizeData.data.rewardPrompt}}</h1>
           <div class="main">
@@ -116,7 +116,7 @@
             </li>
           </ul>
           <!--<p class="hint">-->
-            <!--只差一点点，大红包就是你的啦~-->
+          <!--只差一点点，大红包就是你的啦~-->
           <!--</p>-->
         </div>
         <div class="rules">
@@ -157,7 +157,7 @@
 
 <script>
   import CommonLoading from './common/CommonLoading.vue'
-
+  import wx from 'weixin-js-sdk'
 
   export default {
     name: "Promotion",
@@ -175,6 +175,8 @@
 
         acceptShareUserActivityRewardByWeChatCodeRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityRewardByWeChatCode',
         acceptShareUserActivityRewardByPhoneRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityRewardByPhone',
+
+        getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
         swiperInstance: {},
         smsCodeState: false,
@@ -210,15 +212,15 @@
         prizeTypeDictionary: [{
           name: '趣豆',
           code: 'coin',
-          unit:''
+          unit: ''
         }, {
           name: '积分',
           code: 'point',
-          unit:''
+          unit: ''
         }, {
           name: '百视通会员卡',
           code: 'bes_tv',
-          unit:''
+          unit: ''
         }],
         activityStatusDictionary: [{
           code: 10000,
@@ -284,8 +286,83 @@
       });
       this.getAdvertise();
       this.getUserInfoAndReceivePrize();
+
+      this.initJSSDK();
+      console.log(Swiper)
+      console.log(wx)
     },
     methods: {
+      initJSSDK() {
+        // alert(encodeURIComponent(location.href.split('#')[0]))
+        console.log('777',encodeURIComponent('http://localhost?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'))
+        this.$http.post(this.$baseUrl + this.getSignatureRequest, {
+          // url: 'testactivity.fnvalley.com'
+          // url:'localhost',
+          // url:encodeURIComponent(location.href.split('#')[0]),
+          url: encodeURIComponent('http://activity.fnvalley.com/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'),
+          // url:encodeURIComponent('http://localhost/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
+        }, {
+          // url:location.href.split('?')[0]
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          transformRequest: [function (data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+        }).then(response => {
+          console.log(response)
+          let params={
+
+          }
+
+          wx.config(Object.assign({
+            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
+            timestamp: '', // 必填，生成签名的时间戳
+            nonceStr: '', // 必填，生成签名的随机串
+            signature: '',// 必填，签名
+            jsApiList: [
+              'onMenuShareTimeline'
+            ] // 必填，需要使用的JS接口列表
+          }, {
+            timestamp: response.data.timestamp, // 必填，生成签名的时间戳
+            nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
+            signature: response.data.signature,// 必填，签名
+          }));
+
+          wx.ready((e) => {
+            console.log(e)
+            wx.onMenuShareTimeline({
+              title: 'aaa', // 分享标题
+              link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: 'aaa', // 分享图标
+              success: function () {
+                alert('dsds')
+              }
+            })
+          })
+        });
+
+        let configParams = {
+          "code": 10000,
+          "message": "success",
+          "data": {
+            debug: true,
+            appId: 'wx67c26ff8068af257',
+            "nonceStr": "kTEZ8zoLxPUr1H38",
+            "timestamp": 1532592214778,
+            "signature": "89f38961e8e0da122f76086a6c3d4bb4240c518c",
+            jsApiList: [
+              'onMenuShareTimeline'
+            ]
+          }
+        };
+
+      },
       sendSmsCode() {
         if (this.smsCodeState === false) {
           this.loading = true;
@@ -332,14 +409,16 @@
             }
           })
         }
-      },
+      }
+      ,
       checkVerifyCode() {
         console.log(this.receiveRewardParams.verificationCode.toString().length)
         if (this.receiveRewardParams.verificationCode.toString().length >= 5) {
           this.receiveRewardFlag = true;
         }
         console.log(this.receiveRewardFlag)
-      },
+      }
+      ,
       getUserInfoAndReceivePrize() {
         console.log(this.wechatAuthCode)
         this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByWeChatCodeRequest + `/${this.identityCode}`, {
@@ -391,7 +470,8 @@
           this.getRewardTraceList();
 
         })
-      },
+      }
+      ,
       getRewardTraceList() {
         this.loading = true;
 
@@ -410,7 +490,8 @@
           this.loading = false;
           console.log(error)
         })
-      },
+      }
+      ,
       getAdvertise() {
         let deviceData = this.$getDevice();
         let deviceType;
@@ -449,7 +530,8 @@
 
           console.log(error)
         })
-      },
+      }
+      ,
       acceptPrize() {
         console.log(this.receiveRewardParams)
         if (this.receiveRewardFlag) {
@@ -511,7 +593,8 @@
             }
           })
         }
-      },
+      }
+      ,
       imageError(index) {
         console.log(this.rewardTraceListData)
         console.log(index)
@@ -520,13 +603,15 @@
           availible: false
         }))
         // this.rewardTraceListData[index].availible = false;
-      },
+      }
+      ,
       initSwiper() {
         this.swiperInstance = new Swiper('.swiper-container', {
           autoplay: 5000,
           loop: true
         })
-      },
+      }
+      ,
       isWechat() {
         //window.navigator.userAgent属性包含了浏览器类型、版本、操作系统类型、浏览器引擎类型等信息，这个属性可以用来判断浏览器类型
         let ua = window.navigator.userAgent.toLowerCase();
