@@ -306,7 +306,9 @@
         fontSize: 20,
       });
       this.getAdvertise();
-      this.getUserInfoAndReceivePrize();
+      if(!this.initializing){
+        this.getUserInfoAndReceivePrize();
+      }
 
       // this.initJSSDK();
       console.log(Swiper)
@@ -444,6 +446,7 @@
             if (response.code === 10008) {
 
               location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+              this.initializing=false;
           }
         })
       },
@@ -471,7 +474,6 @@
           }],
         }).then(response => {
           console.log(response)
-          this.initializing = false;
 
           if (response.code === 10008 && this.isWechat()) {
             // this.$vux.confirm.show({
