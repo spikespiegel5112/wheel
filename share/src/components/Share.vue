@@ -290,8 +290,8 @@
       weChatAuthorityURL(value) {
         console.log(value)
       },
-      initializing(value){
-        if(!value){
+      initializing(value) {
+        if (!value) {
           this.getUserInfoAndReceivePrize();
         }
       }
@@ -444,10 +444,12 @@
           }],
         }).then(response => {
           // if (response.code === 10008 && this.isWechat()) {
-            if (response.code === 10008) {
+          if (response.code === 10008) {
 
-              location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
-              this.initializing=false;
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+          } else {
+            this.initializing = false;
+
           }
         })
       },
