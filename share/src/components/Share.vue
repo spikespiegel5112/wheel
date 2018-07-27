@@ -359,7 +359,8 @@
 
             wx.onMenuShareTimeline({
               title: '趣福利', // 分享标题
-              link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$baseUrl + '/shareRedirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: this.baseUrl + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
                 alert('dsds')
