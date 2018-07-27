@@ -295,7 +295,7 @@
         }
       }
     },
-    Created() {
+    created() {
       this.getUserInfoAndReceivePrize();
     },
     beforeMount() {
