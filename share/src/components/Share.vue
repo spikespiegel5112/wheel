@@ -273,7 +273,8 @@
           code: 10008,
           text: 'weChat信息错误',
           type: 'withoutPicture'
-        }]
+        }],
+        redirectInfo: ''
       }
     },
     computed: {
@@ -287,11 +288,6 @@
       wechatAuthCode() {
         return this.$route.query.code
       },
-      redirectInfo() {
-        alert(this.$route.query.routeto)
-
-        return this.$route.query.routeto || '';
-      },
 
     },
     watch: {
@@ -303,7 +299,9 @@
         }
       },
       redirectInfo(value) {
-        alert('redirectingFlag', value)
+        alert('dsds')
+        alert(value)
+          console.warn(value)
         if (value === 'shareredirect') {
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
         } else {
@@ -312,7 +310,7 @@
       }
     },
     created() {
-      this.getUserInfoAndReceivePrize();
+      this.redirectInfo = this.$route.query.routeto;
     },
     beforeMount() {
 
@@ -328,6 +326,10 @@
         fontSize: 20,
       });
       this.getAdvertise();
+
+      if (!this.redirectingFlag) {
+        this.getUserInfoAndReceivePrize();
+      }
 
       this.initJSSDK();
       console.log(Swiper)
