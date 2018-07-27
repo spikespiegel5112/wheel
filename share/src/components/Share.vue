@@ -295,10 +295,10 @@
         }
       }
     },
-    beforeCreate() {
+    Created() {
+      this.getUserInfoAndReceivePrize();
     },
     beforeMount() {
-      this.getUserInfoAndReceivePrize();
 
 
     },
@@ -430,31 +430,6 @@
           })
         }
       },
-      checkUserInfoCode() {
-        this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByWeChatCodeRequest + `/${this.identityCode}`, {
-          weChatCode: this.wechatAuthCode
-        }, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          transformRequest: [function (data) {
-            let ret = '';
-            for (let it in data) {
-              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-            }
-            return ret
-          }],
-        }).then(response => {
-          // if (response.code === 10008 && this.isWechat()) {
-          if (response.code === 10008) {
-
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
-          } else {
-            this.initializing = false;
-
-          }
-        })
-      },
       checkVerifyCode() {
         console.log(this.receiveRewardParams.verificationCode.toString().length)
         if (this.receiveRewardParams.verificationCode.toString().length >= 5) {
@@ -480,7 +455,7 @@
         }).then(response => {
           console.log(response)
 
-          if (response.code === 10008) {
+          if (response.code === 10008 && this.isWechat()) {
 
             location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
 
