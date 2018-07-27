@@ -80,14 +80,14 @@
                     <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
                     <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
                     <span>奖品已放入您的账户</span>
-                    <button>打开趣谷APP</button>
+                    <a>打开趣谷APP</a>
                   </div>
                 </div>
                 <div v-else class="withoutpicture">
                   <div class="detail">
                     <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
                     <span>告诉你个小秘密，可以自己发起活动哦~</span>
-                    <button>我要发起</button>
+                    <a>我要发起</a>
                   </div>
                 </div>
               </div>
@@ -301,7 +301,7 @@
       redirectInfo(value) {
         // alert('dsds')
         // alert(value)
-          console.warn(value)
+        console.warn(value)
         if (value === 'shareredirect') {
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
         } else {
@@ -383,13 +383,25 @@
             });
 
             wx.onMenuShareTimeline({
-              title: '趣福利aaa', // 分享标题
+              title: '趣福利', // 分享标题
               link: 'http://activity.fnvalley.com/?routeto=shareredirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
 
               }
-            })
+            });
+
+            wx.onMenuShareAppMessage({
+              title: '趣福利', // 分享标题
+              desc: '趣福利分享给朋友', // 分享描述
+              link: 'http://activity.fnvalley.com/?routeto=shareredirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
+              type: '', // 分享类型,music、video或link，不填默认为link
+              dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+              success: function () {
+// 用户点击了分享后执行的回调函数
+              }
+            });
           })
 
         });
