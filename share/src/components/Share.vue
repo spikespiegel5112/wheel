@@ -371,9 +371,11 @@
           });
           wx.error(error => {
             console.warn(error)
+            alert('error')
           })
           wx.ready((e) => {
             console.warn(e)
+            alert('dsds')
             wx.checkJsApi({
               jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
               success: function (res) {
