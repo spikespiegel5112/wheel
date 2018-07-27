@@ -80,14 +80,14 @@
                     <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
                     <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
                     <span>奖品已放入您的账户</span>
-                    <a class="button" href='download.fnvalley.com' target="_blank">打开趣谷APP</a>
+                    <a class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>
                   </div>
                 </div>
                 <div v-else class="withoutpicture">
                   <div class="detail">
                     <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
                     <span>告诉你个小秘密，可以自己发起活动哦~</span>
-                    <a class="button" href='download.fnvalley.com' target="_blank">我要发起</a>
+                    <a class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>
                   </div>
                 </div>
               </div>
@@ -304,7 +304,7 @@
       redirectInfo(value) {
         // alert('dsds')
         // alert(value)
-        console.warn(value)
+        console.log(value)
         if (value === 'shareredirect') {
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
         } else {
@@ -370,11 +370,11 @@
             ] // 必填，需要使用的JS接口列表
           });
           wx.error(error => {
-            console.warn(error)
+            console.log(error)
             alert('error')
           })
           wx.ready((e) => {
-            console.warn(e)
+            console.log(e)
             alert('dsds')
             wx.checkJsApi({
               jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
