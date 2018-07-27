@@ -11,7 +11,7 @@
             <a class="previous iconfont icon-backward2"></a>
           </div>
           <div class="middle_wrapper">
-            趣福利
+            分享免费领取百视通
           </div>
         </div>
         <!--<div v-if="true">-->
@@ -80,14 +80,14 @@
                     <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
                     <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
                     <span>奖品已放入您的账户</span>
-                    <a class="button">打开趣谷APP</a>
+                    <a class="button" href='download.fnvalley.com'>打开趣谷APP</a>
                   </div>
                 </div>
                 <div v-else class="withoutpicture">
                   <div class="detail">
                     <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
                     <span>告诉你个小秘密，可以自己发起活动哦~</span>
-                    <a class="button">我要发起</a>
+                    <a class="button" href='download.fnvalley.com'>我要发起</a>
                   </div>
                 </div>
               </div>
