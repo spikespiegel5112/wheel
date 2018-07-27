@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="share_redirect_container" v-if="redirectFlag">
+    <div class="share_redirect_container" v-if="redirectingFlag">
       <CommonLoading :loading="initializing"/>
     </div>
     <div class="common_main_container" v-else>
@@ -200,7 +200,7 @@
         advertiseList: [],
         activityId: '',
         prizeStatus: '',
-        redirectFlag: false,
+        redirectingFlag: true,
         receiveRewardParams: {
           openId: '',
           verificationCode: '',
@@ -287,7 +287,7 @@
       wechatAuthCode() {
         return this.$route.query.code
       },
-      needRedirect() {
+      redirectInfo() {
         alert(this.$route.query.routeto)
 
         return this.$route.query.routeto || '';
@@ -302,11 +302,12 @@
         if (!value) {
         }
       },
-      needRedirect(value) {
-        alert('redirectFlag',value)
+      redirectInfo(value) {
+        alert('redirectingFlag', value)
         if (value === 'shareredirect') {
-          this.redirectFlag=false;
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
+        } else {
+          this.redirectingFlag = false;
         }
       }
     },
