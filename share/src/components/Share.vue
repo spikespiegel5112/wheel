@@ -375,11 +375,11 @@
           });
           wx.ready((e) => {
             console.log(e)
-            alert('dsds')
+            // alert('dsds')
             wx.checkJsApi({
               jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
               success: function (res) {
-                alert('check')
+                // alert('check')
                 // 以键值对的形式返回，可用的api值true，不可用为false
                 // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
 //		    	alert(JSON.stringify(res));
@@ -491,10 +491,10 @@
 
             location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: response.message,
-            })
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: response.message,
+            // })
 
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
