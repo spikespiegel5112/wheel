@@ -326,6 +326,7 @@
           // url: 'http://activity.fnvalley.com?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'
           // url:'localhost',
           url: location.href.split('#')[0],
+          
           // url: encodeURIComponent(location.href.split('#')[0]),
           // url:encodeURIComponent('http://localhost/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
         }, {
