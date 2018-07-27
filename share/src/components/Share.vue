@@ -306,6 +306,8 @@
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
         } else {
           this.redirectingFlag = false;
+          this.getUserInfoAndReceivePrize();
+
         }
       }
     },
@@ -328,7 +330,6 @@
       this.getAdvertise();
 
       if (!this.redirectingFlag) {
-        this.getUserInfoAndReceivePrize();
       }
 
       this.initJSSDK();
