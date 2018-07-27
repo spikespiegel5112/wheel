@@ -313,7 +313,7 @@
       });
       this.getAdvertise();
 
-      // this.initJSSDK();
+      this.initJSSDK();
       console.log(Swiper)
       console.log(wx)
       // this.changeUrl();
@@ -344,7 +344,7 @@
           console.log(response)
 
           wx.config(Object.assign({
-            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
             timestamp: response.data.timestamp, // 必填，生成签名的时间戳
             nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
@@ -457,7 +457,12 @@
 
           if (response.code === 10008 && this.isWechat()) {
 
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: response.message,
+            })
 
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
