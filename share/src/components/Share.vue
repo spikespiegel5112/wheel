@@ -372,7 +372,7 @@
           wx.error(error => {
             console.log(error)
             alert('error')
-          })
+          });
           wx.ready((e) => {
             console.log(e)
             alert('dsds')
@@ -388,19 +388,22 @@
             });
 
             wx.onMenuShareTimeline({
-              title: '趣福利', // 分享标题
+              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               link: 'http://activity.fnvalley.com/?routeto=shareredirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
+              // imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
+              imgUrl: '/static/img/share/qiang.png', // 分享图标
+
               success: function () {
 
               }
             });
 
             wx.onMenuShareAppMessage({
-              title: '趣福利', // 分享标题
-              desc: '趣福利分享给朋友', // 分享描述
+              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              desc: '千万不要错过哦', // 分享描述
               link: 'http://activity.fnvalley.com/?routeto=shareredirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
+              // imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
+              imgUrl: '/static/img/share/qiang.png', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
               success: function () {
