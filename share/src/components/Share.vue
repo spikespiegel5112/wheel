@@ -299,8 +299,8 @@
         }
       },
       redirectInfo(value) {
-        alert('dsds')
-        alert(value)
+        // alert('dsds')
+        // alert(value)
           console.warn(value)
         if (value === 'shareredirect') {
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
@@ -375,7 +375,7 @@
             wx.checkJsApi({
               jsApiList: ['closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
               success: function (res) {
-                alert('check')
+                // alert('check')
                 // 以键值对的形式返回，可用的api值true，不可用为false
                 // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
 //		    	alert(JSON.stringify(res));
@@ -389,7 +389,7 @@
               // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
-                alert('dsds')
+                // alert('dsds')
               }
             })
           })
@@ -653,9 +653,6 @@
         console.log(ua)
         return this.$prodEnv ? ua.match(/MicroMessenger/i) == 'micromessenger' : true;
         // return this.$prodEnv;
-      },
-      onIframeLoaded() {
-        alert('dsdsds')
       },
       changeUrl() {
         let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
