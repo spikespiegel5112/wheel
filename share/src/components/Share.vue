@@ -340,7 +340,6 @@
     methods: {
       initJSSDK() {
         console.log('777', location.href.split('#')[0])
-        let tempURL = encodeURIComponent('http://activity.fnvalley.com?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           url: location.href.split('#')[0],
         }, {
@@ -386,15 +385,12 @@
             wx.onMenuShareTimeline({
               title: '趣福利aaa', // 分享标题
               link: 'http://activity.fnvalley.com/?routeto=shareredirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
-                // alert('dsds')
+
               }
             })
           })
-
-          // this.xujin();
 
         });
 
@@ -475,10 +471,10 @@
 
             location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
 
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: response.message,
-            })
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: response.message,
+            // })
 
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
@@ -658,68 +654,6 @@
         let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
         window.history.pushState({}, 0, url);
       },
-      xujin() {
-        let nowUrl = "http://www.alle-maison.com/allemasion/wap/index";
-        wx.ready(function () {
-
-//		alert("开始加载");
-          wx.checkJsApi({
-            jsApiList: ['closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-            success: function (res) {
-              // 以键值对的形式返回，可用的api值true，不可用为false
-              // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-//		    	alert(JSON.stringify(res));
-            }
-
-          });
-
-          //分享给朋友
-          wx.onMenuShareAppMessage({
-            title: 'ALLE MAISON', // 分享标题
-            desc: '汇集奢侈精品艺术生活', // 分享描述
-            link: 'http://www.alle-maison.com/allemasion/weixin/share?nowUrl=' + nowUrl, // 分享链接
-            imgUrl: 'http://www.alle-maison.com/logo.jpg', // 分享图标
-            type: '', // 分享类型,music、video或link，不填默认为link
-            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-            trigger: function (res) {
-              // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
-//		        alert('用户点击发送给朋友');
-            },
-            success: function () {
-              // 用户确认分享后执行的回调函数
-//		    	alert("发送成功");
-            },
-            cancel: function () {
-              // 用户取消分享后执行的回调函数
-              //alert("取消分享");
-            }
-          });
-          //分享到朋友圈
-          wx.onMenuShareTimeline({
-            title: 'ALLE MAISON', // 分享标题
-            link: 'http://www.alle-maison.com/allemasion/weixin/share?nowUrl=' + nowUrl, // 分享链接
-            imgUrl: 'http://www.alle-maison.com/logo.jpg', // 分享图标
-            success: function () {
-              // 用户确认分享后执行的回调函数
-//		    	alert("分享成功");
-            },
-            cancel: function () {
-              // 用户取消分享后执行的回调函数
-
-            }
-          });
-          //批量隐藏功能按钮接口
-          // wx.hideMenuItems({
-          //   menuList: ['menuItem:share:qq','menuItem:share:QZone','menuItem:openWithSafari'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
-          // });
-
-          wx.error(function (res) {
-
-            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-            alert(res.errMsg);
-          });
-        });
-      }
     }
   }
 </script>
