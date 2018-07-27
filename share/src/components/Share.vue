@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="share_redirect_container" v-if="needRedirect==='shareRedirect'">
+    <div class="share_redirect_container" v-if="redirectFlag">
       <CommonLoading :loading="initializing"/>
     </div>
     <div class="common_main_container" v-else>
@@ -289,11 +289,8 @@
       },
       needRedirect() {
         alert(this.$route.query.routeto)
-        let result = this.$route.query.routeto || '';
-        if (result === 'shareRedirect') {
-          this.redirectFlag = true;
-        }
-        return result
+
+        return this.$route.query.routeto || '';
       },
 
     },
@@ -305,8 +302,10 @@
         if (!value) {
         }
       },
-      redirectFlag(value) {
-        if (value === true) {
+      needRedirect(value) {
+        alert('redirectFlag',value)
+        if (value === 'shareredirect') {
+          this.redirectFlag=false;
           location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
         }
       }
@@ -384,7 +383,7 @@
 
             wx.onMenuShareTimeline({
               title: '趣福利aaa', // 分享标题
-              link: 'http://activity.fnvalley.com/?routeto=shareRedirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: 'http://activity.fnvalley.com/?routeto=shareredirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
@@ -472,7 +471,7 @@
 
           if (response.code === 10008 && this.isWechat()) {
 
-            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_info&state=2#wechat_redirect')
 
             this.$vux.confirm.show({
               showCancelButton: false,
