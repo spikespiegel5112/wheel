@@ -355,7 +355,16 @@
           })
           wx.ready((e) => {
             console.warn(e)
+            wx.checkJsApi({
+              jsApiList: ['closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+              success: function(res) {
+                alert('check')
+                // 以键值对的形式返回，可用的api值true，不可用为false
+                // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+//		    	alert(JSON.stringify(res));
+              }
 
+            });
 
             wx.onMenuShareTimeline({
               title: '趣福利aaa', // 分享标题
