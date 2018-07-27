@@ -399,6 +399,7 @@
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
               success: function () {
+                alert('ddd')
 // 用户点击了分享后执行的回调函数
               }
             });
@@ -560,7 +561,6 @@
         this.$http.get(this.$baseUrl + this.getAdvertiseRequest + `/${deviceType}/${location}`, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            // Authorization: 'Bearer b95a6b75-4767-431a-ba4f-b7db8abcbe5e'
           },
         }).then(response => {
           console.log(response)
