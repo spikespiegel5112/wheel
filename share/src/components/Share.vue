@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="common_main_container">
+    <div class="common_main_container" v-if="needRedirect!=='shareRedirect'">
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app" v-if="!initializing">
         <div class="common_header_wrapper">
@@ -158,9 +158,9 @@
         <CommonLoading :loading="loading"/>
       </div>
     </div>
-    <!--<div class="share_iframe_container">-->
-    <!--<iframe :src='weChatAuthorityURL' width="100%" :height="windowHeight" seamless="true" :onload="onIframeLoaded"></iframe>-->
-    <!--</div>-->
+    <div class="share_redirect_container" v-else>
+      <CommonLoading :loading="loading"/>
+    </div>
   </div>
 
 </template>
@@ -284,6 +284,9 @@
       },
       wechatAuthCode() {
         return this.$route.query.code
+      },
+      needRedirect() {
+        return this.$route.query.routeto || '';
       }
     },
     watch: {
@@ -357,7 +360,7 @@
             console.warn(e)
             wx.checkJsApi({
               jsApiList: ['closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-              success: function(res) {
+              success: function (res) {
                 alert('check')
                 // 以键值对的形式返回，可用的api值true，不可用为false
                 // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
@@ -368,7 +371,7 @@
 
             wx.onMenuShareTimeline({
               title: '趣福利aaa', // 分享标题
-              link: 'http://activity.fnvalley.com' + '/#/shareRedirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: 'http://activity.fnvalley.com' + '?routeto=shareRedirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
