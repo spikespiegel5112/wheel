@@ -189,7 +189,7 @@
 
         getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
-        weChatAuthorityURL: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$baseUrl + '&response_type=code&scope=snsapi_userinfo&state=7&connect_redirect=1#wechat_redirect',
+        weChatAuthorityURL: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$baseUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '&connect_redirect=1#wechat_redirect',
 
         swiperInstance: {},
         smsCodeState: false,
@@ -288,6 +288,9 @@
       wechatAuthCode() {
         return this.$route.query.code
       },
+      stateCode() {
+        return this.$route.query.state
+      }
 
     },
     watch: {
@@ -303,7 +306,7 @@
         // alert(value)
         console.warn(value)
         if (value === 'shareredirect') {
-          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
+          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
         } else {
           this.redirectingFlag = false;
           this.getUserInfoAndReceivePrize();
@@ -482,7 +485,7 @@
 
           if (response.code === 10008 && this.isWechat()) {
 
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
             // this.$vux.confirm.show({
             //   showCancelButton: false,
@@ -663,7 +666,7 @@
         // return this.$prodEnv;
       },
       changeUrl() {
-        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
+        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=' + this.stateCode + '#wechat_redirect';
         window.history.pushState({}, 0, url);
       },
     }
