@@ -292,17 +292,19 @@
       },
       initializing(value) {
         if (!value) {
-          this.getUserInfoAndReceivePrize();
         }
       }
     },
     beforeCreate() {
     },
     beforeMount() {
-      this.checkUserInfoCode();
+      this.getUserInfoAndReceivePrize();
+
 
     },
     mounted() {
+      this.initializing = false;
+
       this.$autoHeight({
         target: '.share_realpage_container'
       });
@@ -478,12 +480,9 @@
         }).then(response => {
           console.log(response)
 
-          if (response.code === 10008 && this.isWechat()) {
-            // this.$vux.confirm.show({
-            //   showCancelButton: false,
-            //   title: response.message,
-            // })
-            console.warn(response.message)
+          if (response.code === 10008) {
+
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
 
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
