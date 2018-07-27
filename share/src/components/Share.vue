@@ -488,12 +488,12 @@
 
           if (response.code === 10008 && this.isWechat()) {
 
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
-            // this.$vux.confirm.show({
-            //   showCancelButton: false,
-            //   title: response.message,
-            // })
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: response.message,
+            })
 
           } else if (response.code === 10009) {
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
