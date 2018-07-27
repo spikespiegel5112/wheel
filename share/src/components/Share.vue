@@ -321,16 +321,10 @@
     methods: {
       initJSSDK() {
         console.log('777', location.href.split('#')[0])
-        let tempURL=encodeURIComponent('http://activity.fnvalley.com?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
+        let tempURL = encodeURIComponent('http://activity.fnvalley.com?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
-          // url: 'http://activity.fnvalley.com?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'
-          // url:'localhost',
           url: location.href.split('#')[0],
-          
-          // url: encodeURIComponent(location.href.split('#')[0]),
-          // url:encodeURIComponent('http://localhost/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
         }, {
-          // url:location.href.split('?')[0]
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
@@ -351,10 +345,10 @@
             nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
             signature: response.data.signature,// 必填，签名
             jsApiList: [
-              'closeWindow','chooseWXPay','onMenuShareAppMessage','onMenuShareTimeline','hideMenuItems'
+              'closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'
             ] // 必填，需要使用的JS接口列表
           });
-          wx.error(error=>{
+          wx.error(error => {
             debugger
 
             console.warn(error)
@@ -364,9 +358,9 @@
 
 
             wx.onMenuShareTimeline({
-              title: 'aaa', // 分享标题
+              title: '趣福利', // 分享标题
               link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'aaa', // 分享图标
+              imgUrl: this.baseUrl + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
                 alert('dsds')
               }
@@ -376,21 +370,6 @@
           // this.xujin();
 
         });
-
-        let configParams = {
-          "code": 10000,
-          "message": "success",
-          "data": {
-            debug: true,
-            appId: 'wx67c26ff8068af257',
-            "nonceStr": "kTEZ8zoLxPUr1H38",
-            "timestamp": 1532592214778,
-            "signature": "89f38961e8e0da122f76086a6c3d4bb4240c518c",
-            jsApiList: [
-              'onMenuShareTimeline'
-            ]
-          }
-        };
 
       },
       sendSmsCode() {
@@ -655,14 +634,14 @@
         let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
         window.history.pushState({}, 0, url);
       },
-      xujin(){
-        let nowUrl="http://www.alle-maison.com/allemasion/wap/index";
-        wx.ready(function() {
+      xujin() {
+        let nowUrl = "http://www.alle-maison.com/allemasion/wap/index";
+        wx.ready(function () {
 
 //		alert("开始加载");
           wx.checkJsApi({
-            jsApiList: ['closeWindow','chooseWXPay','onMenuShareAppMessage','onMenuShareTimeline','hideMenuItems'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-            success: function(res) {
+            jsApiList: ['closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+            success: function (res) {
               // 以键值对的形式返回，可用的api值true，不可用为false
               // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
 //		    	alert(JSON.stringify(res));
@@ -674,7 +653,7 @@
           wx.onMenuShareAppMessage({
             title: 'ALLE MAISON', // 分享标题
             desc: '汇集奢侈精品艺术生活', // 分享描述
-            link: 'http://www.alle-maison.com/allemasion/weixin/share?nowUrl='+nowUrl, // 分享链接
+            link: 'http://www.alle-maison.com/allemasion/weixin/share?nowUrl=' + nowUrl, // 分享链接
             imgUrl: 'http://www.alle-maison.com/logo.jpg', // 分享图标
             type: '', // 分享类型,music、video或link，不填默认为link
             dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -694,7 +673,7 @@
           //分享到朋友圈
           wx.onMenuShareTimeline({
             title: 'ALLE MAISON', // 分享标题
-            link: 'http://www.alle-maison.com/allemasion/weixin/share?nowUrl='+nowUrl , // 分享链接
+            link: 'http://www.alle-maison.com/allemasion/weixin/share?nowUrl=' + nowUrl, // 分享链接
             imgUrl: 'http://www.alle-maison.com/logo.jpg', // 分享图标
             success: function () {
               // 用户确认分享后执行的回调函数
@@ -710,7 +689,7 @@
           //   menuList: ['menuItem:share:qq','menuItem:share:QZone','menuItem:openWithSafari'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
           // });
 
-          wx.error(function(res){
+          wx.error(function (res) {
 
             // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
             alert(res.errMsg);
