@@ -368,8 +368,6 @@
             ] // 必填，需要使用的JS接口列表
           });
           wx.error(error => {
-            debugger
-
             console.warn(error)
           })
           wx.ready((e) => {
@@ -475,7 +473,7 @@
 
           if (response.code === 10008 && this.isWechat()) {
 
-            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_info&state=2#wechat_redirect')
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
 
             this.$vux.confirm.show({
               showCancelButton: false,
