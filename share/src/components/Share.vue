@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="common_main_container" v-if="needRedirect!=='shareRedirect'">
+    <div class="share_redirect_container" v-if="needRedirect==='shareRedirect'">
+      <CommonLoading :loading="initializing"/>
+    </div>
+    <div class="common_main_container" v-else>
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app" v-if="!initializing">
         <div class="common_header_wrapper">
@@ -158,9 +161,7 @@
         <CommonLoading :loading="loading"/>
       </div>
     </div>
-    <div class="share_redirect_container" v-else>
-      <CommonLoading :loading="loading"/>
-    </div>
+
   </div>
 
 </template>
@@ -199,6 +200,7 @@
         advertiseList: [],
         activityId: '',
         prizeStatus: '',
+        redirectFlag: false,
         receiveRewardParams: {
           openId: '',
           verificationCode: '',
@@ -286,8 +288,14 @@
         return this.$route.query.code
       },
       needRedirect() {
-        return this.$route.query.routeto || '';
-      }
+        alert(this.$route.query.routeto)
+        let result = this.$route.query.routeto || '';
+        if (result === 'shareRedirect') {
+          this.redirectFlag = true;
+        }
+        return result
+      },
+
     },
     watch: {
       weChatAuthorityURL(value) {
@@ -295,6 +303,11 @@
       },
       initializing(value) {
         if (!value) {
+        }
+      },
+      redirectFlag(value) {
+        if (value === true) {
+          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=2#wechat_redirect')
         }
       }
     },
@@ -371,7 +384,7 @@
 
             wx.onMenuShareTimeline({
               title: '趣福利aaa', // 分享标题
-              link: 'http://activity.fnvalley.com' + '?routeto=shareRedirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: 'http://activity.fnvalley.com' + '/?routeto=shareRedirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://activity.fnvalley.com' + '/static/img/404.b92dcc1.png', // 分享图标
               success: function () {
