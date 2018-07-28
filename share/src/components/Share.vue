@@ -333,6 +333,8 @@
       });
       this.getAdvertise();
 
+      this.getRewardTraceList();
+
       if (!this.redirectingFlag) {
       }
 
@@ -488,7 +490,7 @@
           console.log(response)
 
           if (response.code === 10008 && this.isWechat()) {
-            // if (response.code === 10008) {
+          // if (response.code === 10008) {
 
             location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
@@ -528,6 +530,7 @@
           this.getRewardTraceList();
 
         })
+
       },
       getRewardTraceList() {
         this.loading = true;
@@ -538,13 +541,15 @@
 
           this.rewardTraceListData = response.data;
           this.rewardTraceListData.forEach((item, index) => {
-            console.log(item.rewardUserImage.indexOf('resource.zan-qian.com') > 0)
-            this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
-              availible: true,
-              rewardUserImage: item.rewardUserImage.indexOf('resource.zan-qian.com') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
-            }))
-            // this.rewardTraceListData[index].availible = true;
+            if (item.rewardUserImage !== null) {
+              let result = Object.assign(this.rewardTraceListData[index], {
+                availible: true,
+                rewardUserImage: item.rewardUserImage.indexOf('resource') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
+              })
+              this.$set(this.rewardTraceListData, index, result)
+            }
           })
+          console.log(555, this.rewardTraceListData)
         }).catch(error => {
           this.loading = false;
           console.log(error)
