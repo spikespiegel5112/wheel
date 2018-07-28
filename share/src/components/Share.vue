@@ -31,7 +31,7 @@
               </ul>
               <div class="swiper-pagination"></div>
             </div>
-            <div class="form" v-if="acceptPrizeFlag===false">
+            <div class="form" v-if="acceptPrizeFlag">
               <div class="title">
                 <h1>好礼即将到账</h1>
                 <h2>验证手机号码领取</h2>
@@ -208,7 +208,7 @@
         windowHeight: 0,
         receiveRewardFlag: false,
         rewardTraceListData: [],
-        acceptPrizeFlag: true,
+        acceptPrizeFlag: false,
         initializing: true,
         loading: false,
         prizeData: {
@@ -497,6 +497,8 @@
             // })
 
           } else if (response.code === 10009) {
+            this.acceptPrizeFlag = true;
+
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
               openId: response.data.openId,
               verificationCode: response.data.verificationCode,
@@ -513,10 +515,10 @@
                 code: response.code,
                 message: response.message
               });
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             } else {
               this.prizeData = response;
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             }
 
             this.loading = false;
