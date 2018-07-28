@@ -538,7 +538,8 @@
           this.rewardTraceListData = response.data;
           this.rewardTraceListData.forEach((item, index) => {
             this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
-              availible: true
+              availible: true,
+              rewardUserImage: item.rewardUserImage.indexOf('resource.zan-qian.com') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
             }))
             // this.rewardTraceListData[index].availible = true;
           })
