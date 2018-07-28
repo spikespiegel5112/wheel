@@ -537,6 +537,7 @@
 
           this.rewardTraceListData = response.data;
           this.rewardTraceListData.forEach((item, index) => {
+            console.log(item.rewardUserImage.indexOf('resource.zan-qian.com') > 0)
             this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
               availible: true,
               rewardUserImage: item.rewardUserImage.indexOf('resource.zan-qian.com') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
