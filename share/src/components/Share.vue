@@ -103,7 +103,8 @@
                 <li v-for="(item, index) in rewardTraceListData">
                   <div class="avatar">
                     <div v-if="item.rewardUserImage!==null">
-                      <img :src="item.rewardUserImage"/>
+                      <!--<img :src="item.rewardUserImage"/>-->
+                      <img :src="item.rewardUserImage+'_style-100x100'"/>
                     </div>
                     <span class="query">?</span>
                   </div>
@@ -540,7 +541,7 @@
             console.log(item.rewardUserImage.indexOf('resource.zan-qian.com') > 0)
             this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
               availible: true,
-              rewardUserImage: item.rewardUserImage.indexOf('resource.zan-qian.com') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
+              // rewardUserImage: item.rewardUserImage.indexOf('resource.zan-qian.com') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
             }))
             // this.rewardTraceListData[index].availible = true;
           })
