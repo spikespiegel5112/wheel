@@ -103,7 +103,7 @@
                 <li v-for="(item, index) in rewardTraceListData">
                   <div class="avatar">
                     <div v-if="item.rewardUserImage!==null">
-                      <img :src="item.rewardUserImage+'-style_100x100'"/>
+                      <img :src="item.rewardUserImage"/>
                     </div>
                     <span class="query">?</span>
                   </div>
