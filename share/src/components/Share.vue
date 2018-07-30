@@ -6,14 +6,14 @@
     <div class="common_main_container" v-else>
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app" v-if="!initializing">
-        <div class="common_header_wrapper">
-          <div class="left_wrapper">
-            <a class="previous iconfont icon-backward2"></a>
-          </div>
-          <div class="middle_wrapper">
-            分享免费领取百视通
-          </div>
-        </div>
+        <!--<div class="common_header_wrapper">-->
+          <!--<div class="left_wrapper">-->
+            <!--<a class="previous iconfont icon-backward2"></a>-->
+          <!--</div>-->
+          <!--<div class="middle_wrapper">-->
+            <!--分享免费领取百视通-->
+          <!--</div>-->
+        <!--</div>-->
         <!--<div v-if="true">-->
         <div v-if="isWechat()">
           <div class="share_main_wrapper">
@@ -79,8 +79,12 @@
                     <label v-if="prizeData.data.rewardType==='coin'">{{prizeData.data.rewardValue}}趣豆！</label>
                     <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
                     <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
-                    <span>奖品已放入您的账户</span>
-                    <a class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>
+
+                    <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
+                    <span v-else>想要大奖，自己发起活动吧</span>
+
+                    <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>
+                    <a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>
                   </div>
                 </div>
                 <div v-else class="withoutpicture">
@@ -111,8 +115,8 @@
                   <div class="detail">
                     <div class="name">
                       <label>{{item.rewardUserNickName}}</label>
-                      <span>{{$moment(item.createDate).format('MM.DD')}}</span>
-                      <span>{{$moment(item.createDate).format('hh:mm')}}</span>
+                      <span>{{$moment(item.createDate).utcOffset(0).format('MM.DD')}}</span>
+                      <span>{{$moment(item.createDate).utcOffset(0).format(' hh:mm')}}</span>
                     </div>
                     <div class="comment">
                       {{item.rewardPrompt}}
@@ -492,7 +496,7 @@
           if (response.code === 10008 && this.isWechat()) {
           // if (response.code === 10008) {
 
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
             // this.$vux.confirm.show({
             //   showCancelButton: false,

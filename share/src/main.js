@@ -18,7 +18,7 @@ import util from './js/util';
 Vue.use(util);
 
 Vue.use(ConfirmPlugin);
-moment.locale("zh-cn");
+// moment.locale("zh-cn");
 FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
