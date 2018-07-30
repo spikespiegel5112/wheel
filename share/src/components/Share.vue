@@ -630,10 +630,10 @@
                 code: response.code,
                 message: response.message
               });
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             } else {
               this.prizeData = response;
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             }
 
             this.loading = false;
