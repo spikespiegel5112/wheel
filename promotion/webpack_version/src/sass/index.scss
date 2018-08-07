@@ -1,0 +1,171 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+input,
+textarea:focus {
+  outline: none;
+}
+
+body {
+  font-family: PingFang-SC-Medium;
+}
+
+.warp {
+  width: 100%;
+  height: 100%;
+  background: url('http://resource.zan-qian.com/share/invite_20180807145310.jpg-style_640x1020') no-repeat;
+  background-size: 100%;
+  // display: flex;
+  // display: -webkit-flex;
+  // justify-content: center;
+  // -webkit-justify-content: center;
+  // align-items: center;
+  // -webkit-align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.box {
+  margin: 8.5rem auto 0;
+  width: 10rem;
+  // height: 4.5rem;
+  padding: 1rem 0.6rem;
+  border-radius: 0.266666rem;
+  background-color: #FFFFFF;
+  box-shadow: 0px 0px 21px #888686;
+}
+
+.tel-wrap {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: space-around;
+  -webkit-justify-content: space-around;
+  align-items: center;
+  -webkit-align-items: center;
+  label{
+    font-size: 0.7rem;
+  }
+}
+
+#tel {
+  width: 5.5rem;
+  height: 1rem;
+  vertical-align: middle;
+  border-radius: 0.266666rem;
+  border-color: #999999;
+  box-shadow: 0px 0px 2px #999999 inset;
+  font-size: 0.48rem;
+  color: #666666;
+  text-align: center;
+}
+
+.prompt {
+  color: #FF0000;
+  text-align: center;
+  font-size: 0.3rem;
+  padding: 0.25rem 0 1rem 0;
+  visibility: hidden;
+}
+
+.btn-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  width: 5rem;
+  height: 1.3rem;
+  line-height: 1.3rem;
+  background: url(../img/btn.png) no-repeat;
+  background-size: 100% 100%;
+  font-family: PingFang-SC-Medium;
+  color: #FFFFFF;
+  font-size: 0.48rem;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.poster_wrap {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  // background-color: rgba(0, 0, 0, 0.8)
+  .mask{
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.temp_wrap {
+  width: 100%;
+  /*height: 100%;*/
+  text-align: center;
+}
+
+.save-wrap {
+  // background: rgba(0, 0, 0, 0.8);
+  margin-left: 2.5rem;
+  padding: 15px 0 25px;
+}
+
+.saveImg {
+  // display: none;
+  width: 10rem;
+  padding: 0 1rem;
+  padding-top: 0.5rem;
+}
+
+.saveInfo {
+  padding: 1rem 0;
+  width: 100%;
+  text-align: center;
+  color: #FEFEFE;
+  font-size: 0.4rem;
+  letter-spacing: 1px;
+  /*position: absolute;
+  bottom: 5px;*/
+}
+
+.realimage_wrapper {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  width: 10rem;
+  z-index: -2;
+  img {
+    width: 10rem;
+    /*position: absolute;*/
+  }
+  span {
+    font-size: 0.56rem;
+    color: #FB7014;
+    position: absolute;
+    left: 2.57rem;
+    bottom: 2.2rem;
+  }
+}
+
+.canvasimage_wrapper {
+  height: 100%;
+  // background-color: rgba(0, 0, 0, 0.8);
+  position: relative;
+z-index: 1;
+}
+
+.common_loading_wrapper{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 8rem;
+  .loader{
+    margin: 8rem 0 0 0;
+  }
+}
