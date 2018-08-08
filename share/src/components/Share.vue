@@ -1,16 +1,19 @@
 <template>
   <div>
-    <div class="common_main_container">
+    <div class="share_redirect_container" v-if="redirectingFlag">
+      <CommonLoading :loading="initializing"/>
+    </div>
+    <div class="common_main_container" v-else>
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app" v-if="!initializing">
-        <div class="common_header_wrapper">
-          <div class="left_wrapper">
-            <a class="previous iconfont icon-backward2"></a>
-          </div>
-          <div class="middle_wrapper">
-            趣福利
-          </div>
-        </div>
+        <!--<div class="common_header_wrapper">-->
+          <!--<div class="left_wrapper">-->
+            <!--<a class="previous iconfont icon-backward2"></a>-->
+          <!--</div>-->
+          <!--<div class="middle_wrapper">-->
+            <!--分享免费领取百视通-->
+          <!--</div>-->
+        <!--</div>-->
         <!--<div v-if="true">-->
         <div v-if="isWechat()">
           <div class="share_main_wrapper">
@@ -28,7 +31,7 @@
               </ul>
               <div class="swiper-pagination"></div>
             </div>
-            <div class="form" v-if="acceptPrizeFlag===false">
+            <div class="form" v-if="acceptPrizeFlag">
               <div class="title">
                 <h1>好礼即将到账</h1>
                 <h2>验证手机号码领取</h2>
@@ -76,15 +79,19 @@
                     <label v-if="prizeData.data.rewardType==='coin'">{{prizeData.data.rewardValue}}趣豆！</label>
                     <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
                     <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
-                    <span>奖品已放入您的账户</span>
-                    <button>打开趣谷APP</button>
+
+                    <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
+                    <span v-else>想要大奖，自己发起活动吧</span>
+
+                    <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>
+                    <a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>
                   </div>
                 </div>
                 <div v-else class="withoutpicture">
                   <div class="detail">
                     <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
                     <span>告诉你个小秘密，可以自己发起活动哦~</span>
-                    <button>我要发起</button>
+                    <a class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>
                   </div>
                 </div>
               </div>
@@ -100,15 +107,16 @@
                 <li v-for="(item, index) in rewardTraceListData">
                   <div class="avatar">
                     <div v-if="item.rewardUserImage!==null">
-                      <img :src="item.rewardUserImage+'-style_100x100'"/>
+                      <!--<img :src="item.rewardUserImage"/>-->
+                      <img :src="item.rewardUserImage"/>
                     </div>
                     <span class="query">?</span>
                   </div>
                   <div class="detail">
                     <div class="name">
                       <label>{{item.rewardUserNickName}}</label>
-                      <span>{{$moment(item.createDate).format('MM.DD')}}</span>
-                      <span>{{$moment(item.createDate).format('hh:mm')}}</span>
+                      <span>{{$moment(item.createDate).utcOffset(0).format('MM.DD')}}</span>
+                      <span>{{$moment(item.createDate).utcOffset(0).format(' hh:mm')}}</span>
                     </div>
                     <div class="comment">
                       {{item.rewardPrompt}}
@@ -158,9 +166,7 @@
         <CommonLoading :loading="loading"/>
       </div>
     </div>
-    <!--<div class="share_iframe_container">-->
-    <!--<iframe :src='weChatAuthorityURL' width="100%" :height="windowHeight" seamless="true" :onload="onIframeLoaded"></iframe>-->
-    <!--</div>-->
+
   </div>
 
 </template>
@@ -188,7 +194,7 @@
 
         getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
-        weChatAuthorityURL: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$baseUrl + '&response_type=code&scope=snsapi_userinfo&state=7&connect_redirect=1#wechat_redirect',
+        weChatAuthorityURL: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$baseUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '&connect_redirect=1#wechat_redirect',
 
         swiperInstance: {},
         smsCodeState: false,
@@ -199,6 +205,7 @@
         advertiseList: [],
         activityId: '',
         prizeStatus: '',
+        redirectingFlag: true,
         receiveRewardParams: {
           openId: '',
           verificationCode: '',
@@ -206,7 +213,7 @@
         windowHeight: 0,
         receiveRewardFlag: false,
         rewardTraceListData: [],
-        acceptPrizeFlag: true,
+        acceptPrizeFlag: false,
         initializing: true,
         loading: false,
         prizeData: {
@@ -271,7 +278,8 @@
           code: 10008,
           text: 'weChat信息错误',
           type: 'withoutPicture'
-        }]
+        }],
+        redirectInfo: ''
       }
     },
     computed: {
@@ -284,7 +292,11 @@
       },
       wechatAuthCode() {
         return this.$route.query.code
+      },
+      stateCode() {
+        return this.$route.query.state
       }
+
     },
     watch: {
       weChatAuthorityURL(value) {
@@ -293,10 +305,22 @@
       initializing(value) {
         if (!value) {
         }
+      },
+      redirectInfo(value) {
+        // alert('dsds')
+        // alert(value)
+        console.log(value)
+        if (value === 'shareredirect') {
+          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+        } else {
+          this.redirectingFlag = false;
+          this.getUserInfoAndReceivePrize();
+
+        }
       }
     },
     created() {
-      this.getUserInfoAndReceivePrize();
+      this.redirectInfo = this.$route.query.routeto;
     },
     beforeMount() {
 
@@ -313,6 +337,11 @@
       });
       this.getAdvertise();
 
+      this.getRewardTraceList();
+
+      if (!this.redirectingFlag) {
+      }
+
       this.initJSSDK();
       console.log(Swiper)
       console.log(wx)
@@ -320,16 +349,10 @@
     },
     methods: {
       initJSSDK() {
-        // alert(encodeURIComponent(location.href.split('#')[0]))
-        console.log('777', encodeURIComponent('http://localhost?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'))
+        console.log('777', location.href.split('#')[0])
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
-          // url: 'testactivity.fnvalley.com'
-          // url:'localhost',
-          url: encodeURIComponent(location.href.split('#')[0]),
-          // url: encodeURIComponent('http://activity.fnvalley.com/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2'),
-          // url:encodeURIComponent('http://localhost/?code=3D081hWek62tUgcL0op0l620Cnk62hWekW&state=2')
+          url: location.href.split('#')[0],
         }, {
-          // url:location.href.split('?')[0]
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
@@ -343,44 +366,59 @@
         }).then(response => {
           console.log(response)
 
-          wx.config(Object.assign({
+          wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
             timestamp: response.data.timestamp, // 必填，生成签名的时间戳
             nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
             signature: response.data.signature,// 必填，签名
             jsApiList: [
-              'onMenuShareTimeline'
+              'closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'
             ] // 必填，需要使用的JS接口列表
-          }, {}));
-
+          });
+          wx.error(error => {
+            console.log(error)
+            alert('error')
+          });
           wx.ready((e) => {
             console.log(e)
-            wx.onMenuShareTimeline({
-              title: 'aaa', // 分享标题
-              link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'aaa', // 分享图标
-              success: function () {
-                alert('dsds')
+            // alert('dsds')
+            wx.checkJsApi({
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+              success: function (res) {
+                // alert('check')
+                // 以键值对的形式返回，可用的api值true，不可用为false
+                // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+//		    	alert(JSON.stringify(res));
               }
-            })
-          })
-        });
 
-        let configParams = {
-          "code": 10000,
-          "message": "success",
-          "data": {
-            debug: true,
-            appId: 'wx67c26ff8068af257',
-            "nonceStr": "kTEZ8zoLxPUr1H38",
-            "timestamp": 1532592214778,
-            "signature": "89f38961e8e0da122f76086a6c3d4bb4240c518c",
-            jsApiList: [
-              'onMenuShareTimeline'
-            ]
-          }
-        };
+            });
+
+            wx.onMenuShareTimeline({
+              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+
+              success: function () {
+
+              }
+            });
+
+            wx.onMenuShareAppMessage({
+              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              desc: '千万不要错过哦', // 分享描述
+              link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              type: '', // 分享类型,music、video或link，不填默认为link
+              dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+              success: function () {
+                // alert('ddd')
+// 用户点击了分享后执行的回调函数
+              }
+            });
+          })
+
+        });
 
       },
       sendSmsCode() {
@@ -456,15 +494,18 @@
           console.log(response)
 
           if (response.code === 10008 && this.isWechat()) {
+          // if (response.code === 10008) {
 
-            // location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect')
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: response.message,
-            })
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: response.message,
+            // })
 
           } else if (response.code === 10009) {
+            this.acceptPrizeFlag = true;
+
             this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
               openId: response.data.openId,
               verificationCode: response.data.verificationCode,
@@ -481,10 +522,10 @@
                 code: response.code,
                 message: response.message
               });
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             } else {
               this.prizeData = response;
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             }
 
             this.loading = false;
@@ -493,6 +534,7 @@
           this.getRewardTraceList();
 
         })
+
       },
       getRewardTraceList() {
         this.loading = true;
@@ -503,11 +545,15 @@
 
           this.rewardTraceListData = response.data;
           this.rewardTraceListData.forEach((item, index) => {
-            this.$set(this.rewardTraceListData, index, Object.assign(this.rewardTraceListData[index], {
-              availible: true
-            }))
-            // this.rewardTraceListData[index].availible = true;
+            if (item.rewardUserImage !== null) {
+              let result = Object.assign(this.rewardTraceListData[index], {
+                availible: true,
+                rewardUserImage: item.rewardUserImage.indexOf('resource') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
+              })
+              this.$set(this.rewardTraceListData, index, result)
+            }
           })
+          console.log(555, this.rewardTraceListData)
         }).catch(error => {
           this.loading = false;
           console.log(error)
@@ -536,7 +582,6 @@
         this.$http.get(this.$baseUrl + this.getAdvertiseRequest + `/${deviceType}/${location}`, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            // Authorization: 'Bearer b95a6b75-4767-431a-ba4f-b7db8abcbe5e'
           },
         }).then(response => {
           console.log(response)
@@ -585,10 +630,10 @@
                 code: response.code,
                 message: response.message
               });
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             } else {
               this.prizeData = response;
-              this.acceptPrizeFlag = true;
+              this.acceptPrizeFlag = false;
             }
 
             this.loading = false;
@@ -602,7 +647,7 @@
               title: '验证码不正确',
               onConfirm() {
               }
-            })
+            });
             console.log(error.message)
           })
         } else {
@@ -638,13 +683,10 @@
         return this.$prodEnv ? ua.match(/MicroMessenger/i) == 'micromessenger' : true;
         // return this.$prodEnv;
       },
-      onIframeLoaded() {
-        alert('dsdsds')
-      },
       changeUrl() {
-        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=2#wechat_redirect';
+        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=' + this.stateCode + '#wechat_redirect';
         window.history.pushState({}, 0, url);
-      }
+      },
     }
   }
 </script>

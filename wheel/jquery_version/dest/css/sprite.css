@@ -1,0 +1,104 @@
+/*
+Icon classes can be used entirely standalone. They are named after their original file names.
+
+Example usage in HTML:
+
+`display: block` sprite:
+<div class="icon-home"></div>
+
+To change `display` (e.g. `display: inline-block;`), we suggest using a common CSS class:
+
+// CSS
+.icon {
+  display: inline-block;
+}
+
+// HTML
+<i class="icon icon-home"></i>
+*/
+.icon-100 {
+  background-image: url(../image/sprite.png);
+  background-position: -1076px -1097px;
+  width: 56px;
+  height: 67px;
+}
+.icon-20 {
+  background-image: url(../image/sprite.png);
+  background-position: -1137px -1097px;
+  width: 54px;
+  height: 67px;
+}
+.icon-50 {
+  background-image: url(../image/sprite.png);
+  background-position: -1196px -1097px;
+  width: 54px;
+  height: 66px;
+}
+.icon-bg {
+  background-image: url(../image/sprite.png);
+  background-position: 0px 0px;
+  width: 750px;
+  height: 1334px;
+}
+.icon-border {
+  background-image: url(../image/sprite.png);
+  background-position: -920px -1029px;
+  width: 380px;
+  height: 63px;
+}
+.icon-button {
+  background-image: url(../image/sprite.png);
+  background-position: -755px -1029px;
+  width: 160px;
+  height: 198px;
+}
+.icon-caidai {
+  background-image: url(../image/sprite.png);
+  background-position: -755px 0px;
+  width: 750px;
+  height: 1024px;
+}
+.icon-circle {
+  background-image: url(../image/sprite.png);
+  background-position: -1510px 0px;
+  width: 665px;
+  height: 665px;
+}
+.icon-dark {
+  background-image: url(../image/sprite.png);
+  background-position: 0px -1339px;
+  width: 617px;
+  height: 617px;
+}
+.icon-face {
+  background-image: url(../image/sprite.png);
+  background-position: -920px -1097px;
+  width: 77px;
+  height: 77px;
+}
+.icon-gift {
+  background-image: url(../image/sprite.png);
+  background-position: -1002px -1097px;
+  width: 69px;
+  height: 73px;
+}
+.icon-light {
+  background-image: url(../image/sprite.png);
+  background-position: -1510px -670px;
+  width: 617px;
+  height: 617px;
+}
+.icon-list {
+  background-image: url(../image/sprite.png);
+  background-position: -1510px -1292px;
+  width: 357px;
+  height: 22px;
+}
+.icon-title {
+  background-image: url(../image/sprite.png);
+  background-position: -622px -1339px;
+  width: 639px;
+  height: 316px;
+}
+
+/*# sourceMappingURL=sprite.css.map */
