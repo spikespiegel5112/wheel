@@ -7,12 +7,12 @@
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app" v-if="!initializing">
         <!--<div class="common_header_wrapper">-->
-          <!--<div class="left_wrapper">-->
-            <!--<a class="previous iconfont icon-backward2"></a>-->
-          <!--</div>-->
-          <!--<div class="middle_wrapper">-->
-            <!--分享免费领取百视通-->
-          <!--</div>-->
+        <!--<div class="left_wrapper">-->
+        <!--<a class="previous iconfont icon-backward2"></a>-->
+        <!--</div>-->
+        <!--<div class="middle_wrapper">-->
+        <!--分享免费领取百视通-->
+        <!--</div>-->
         <!--</div>-->
         <!--<div v-if="true">-->
         <div v-if="isWechat()">
@@ -83,15 +83,19 @@
                     <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
                     <span v-else>想要大奖，自己发起活动吧</span>
 
-                    <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>
-                    <a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>
+                    <!--<a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>-->
+                    <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" :href='downloadUrl'
+                       target="_blank">打开趣谷APP</a>
+
+                    <!--<a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>-->
+                    <a v-else class="button" :href='downloadUrl' target="_blank">我要发起</a>
                   </div>
                 </div>
                 <div v-else class="withoutpicture">
                   <div class="detail">
                     <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
                     <span>告诉你个小秘密，可以自己发起活动哦~</span>
-                    <a class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>
+                    <a class="button" :href='downloadUrl' target="_blank">我要发起</a>
                   </div>
                 </div>
               </div>
@@ -279,7 +283,8 @@
           text: 'weChat信息错误',
           type: 'withoutPicture'
         }],
-        redirectInfo: ''
+        redirectInfo: '',
+        downloadUrl: ''
       }
     },
     computed: {
@@ -339,8 +344,7 @@
 
       this.getRewardTraceList();
 
-      if (!this.redirectingFlag) {
-      }
+      this.getDownloadUrl();
 
       this.initJSSDK();
       console.log(Swiper)
@@ -494,7 +498,7 @@
           console.log(response)
 
           if (response.code === 10008 && this.isWechat()) {
-          // if (response.code === 10008) {
+            // if (response.code === 10008) {
 
             location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
@@ -687,6 +691,18 @@
         let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=' + this.stateCode + '#wechat_redirect';
         window.history.pushState({}, 0, url);
       },
+      getDownloadUrl() {
+        let result;
+        let deviceData = this.$getDevice();
+        if (deviceData.ios) {
+          result = 'https://itunes.apple.com/cn/app/%E8%B6%A3%E8%B0%B7-%E4%B8%80%E4%B8%AA%E6%87%82%E4%BD%A0%E7%9A%84app/id1397292579?mt=8'
+        } else if (deviceData.android) {
+          result = 'http://a.app.qq.com/o/simple.jsp?pkgname=io.cityzone.android'
+        } else {
+          result = 'http://download.fnvalley.com'
+        }
+        this.downloadUrl = result;
+      }
     }
   }
 </script>
