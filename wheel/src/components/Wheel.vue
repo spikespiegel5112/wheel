@@ -51,22 +51,28 @@
 
         wheelData: [{
           name: 'aaa',
-          value: 10
+          value: 10,
+          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: 'bbb',
-          value: 20
+          value: 20,
+          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: 'ccc',
-          value: 30
+          value: 30,
+          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: 'ddd',
-          value: 30
+          value: 30,
+          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: 'eee',
-          value: 30
+          value: 30,
+          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: 'fff',
-          value: 30
+          value: 30,
+          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }],
         wheelCanvas: {},
         remUnit: '',
@@ -177,11 +183,26 @@
         console.log(canvasHeight)
 
 
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctx.strokeStyle = "#f06549";
         ctx.font = '16px';
-        // ctx.fillStyle = 'cornflowerblue';
-        // ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        ctx.beginPath();
+        ctx.arc(canvasWidth / 2, canvasHeight / 2, 215, 0, Math.PI * 2, true);
+        ctx.fillStyle = 'rgba(188,75,61,0.3)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(canvasWidth / 2, canvasHeight / 2, 209, 0, Math.PI * 2, true);
+        ctx.fillStyle = '#bc4b3d';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(canvasWidth / 2, canvasHeight / 2, 202, 0, Math.PI * 2, true);
+        ctx.fillStyle = '#f06949';
+        ctx.fill();
+
+        ctx.save();
+
+
         this.wheelData.forEach((item, index) => {
 
 
@@ -194,40 +215,45 @@
           // ctx.arc(canvasWidth /2, canvasHeight /2, 150, angle, angle + baseAngle, false);
           ctx.lineWidth = 3;
           ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
-          ctx.arc(canvasWidth / 2, canvasHeight / 2, 150, angle + baseAngle, angle, true);
-          ctx.arc(canvasWidth / 2, canvasHeight / 2, 0, angle, angle * baseAngle, true);
+          ctx.arc(canvasWidth / 2, canvasHeight / 2, 170, angle + baseAngle, angle, true);
+          // ctx.arc(canvasWidth / 2, canvasHeight / 2, 0, angle, angle * baseAngle, true);
 
-          // ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
+
+          ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
+
+          ctx.strokeStyle = '#f06949';
           ctx.stroke();
           ctx.fillStyle = this.colorDictionary[index % 2];
 
-          ctx.fill();
           ctx.save();
 
-          // ctx.fillStyle = "#E5302F";
+
+          ctx.fill();
+
           let rewardName = item.name;
-          let line_height = 17;
           let translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2) * 150;
           let translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2) * 150;
-          // ctx.translate(translateX, translateY);
-          // ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
           ctx.font = "20px Georgia";
           console.log(222, -ctx.measureText(this.wheelData[index].name).width / 2)
           console.log(333, translateX, translateY)
-          // ctx.fillText('dsadsa', -ctx.measureText(this.wheelData[index].name).width / 2, 22);
-          // ctx.fillText('dsadsa', canvasWidth / 2, canvasHeight / 2);
           ctx.fillStyle = this.textColorDictionary[index % 2]
           console.log(this.colorDictionary[index % 3])
           ctx.translate(translateX, translateY);
           ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
           ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
+          let imageObj = new Image();
+          imageObj.width = '10';
+          imageObj.height = '10';
+          imageObj.src = this.wheelData[index].image;
+
+          console.log(imageObj)
+
+          let imageWidth = 50;
+          let imageHeight = 50;
+
+          ctx.drawImage(imageObj, -imageWidth / 2, imageHeight, imageWidth, imageHeight);
 
 
-          //
-          //
-          //
-          //
-          //
           ctx.restore();
         })
       },
