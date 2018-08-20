@@ -1,40 +1,50 @@
-.share_main_wrapper {
+.wheel_realpage_container {
   margin: 0 auto;
-  width: 15rem;
-  .carousel {
-    margin: 1rem auto 0!important;
-    width: 100%;
-    height: 8.9rem;
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
-    background-color: #fff;
-    border-radius: 0.25rem;
+  .title {
+    margin: 0 auto 0!important;
+    width: 15rem;
+    height: 8rem;
+    background-image: url("./image/wheel/title_00000.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    top: 1rem;
+  }
+  .wheel_wrapper{
+    width: 16rem;
+    height: 18rem;
+    background-image: url('./image/wheel/ribbon_00000.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
     overflow: hidden;
-    li {
-      width: 100%;
-      height: 100%;
-      img {
-        display: block;
-        width: 100%;
-      }
-      .defaultbanner {
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        label {
-          display: inline-block;
-          vertical-align: middle;
-          color: #2777B4;
-        }
-        //&:before{
-        //  display: inline-block;
-        //  content: '';
-        //  height: 100%;
-        //  vertical-align: middle;
-        //}
+    .wheel{
+      margin: 1.6rem auto 0.7rem;
+      width: 13.5rem;
+      height: 13.5rem;
+      background-image: url('./image/wheel/wheel_00000.png');
+      background-size: 100%;
+      background-repeat: no-repeat;
+      position: relative;
+      canvas{
+        width: 13.5rem;;
+        height: 13.5rem;;
       }
     }
-
+    .prizechance{
+      text-align: center;
+      color: #fff;
+      h1{
+        font-size: 0.6rem;
+        line-height: 0.3rem;
+      }
+      label{
+        font-size: 0.5rem;
+        color: #ccc;
+      }
+    }
   }
+
+
   .form {
     margin: 0.5rem auto;
     width: 100%;
@@ -44,6 +54,8 @@
     overflow: hidden;
     .title {
       margin: 0.3rem 0;
+      width: 100%;
+      height: 3rem;
       text-align: center;
       color: #fff;
       line-height: 1rem;
@@ -57,6 +69,7 @@
 
       }
     }
+
     .main {
       li {
         margin: 0.5rem auto;
@@ -155,7 +168,6 @@
     margin: 1rem 0;
     //background: #fff;
     overflow: hidden;
-    background: url("./image/share/notebg.png") no-repeat;
     background-size: 100% 100%;
     h1 {
       margin: 0.6rem 0 0.3rem 0;
@@ -262,6 +274,6 @@
   }
 }
 
-.share_redirect_container {
+.wheel_redirect_container {
 
 }

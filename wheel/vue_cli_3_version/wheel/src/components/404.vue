@@ -8,13 +8,13 @@
         趣福利
       </div>
     </div>
-    <div class="share_main_wrapper">
+    <div class="wheel_main_wrapper">
       <div class="prize_wrapper">
         <h1>404</h1>
         <div class="main">
           <div class="withpicture">
             <div class="prizeimage">
-              <img src="../image/share/404.png"/>
+              <img src="../image/wheel/404.png"/>
             </div>
             <div class="detail">
               <span>您所访问的页面不存在</span>

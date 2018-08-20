@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="share_redirect_container" v-if="redirectingFlag">
+    <div class="wheel_redirect_container" v-if="redirectingFlag">
       <CommonLoading :loading="initializing"/>
     </div>
     <div class="common_main_container" v-else>
@@ -16,7 +16,7 @@
         <!--</div>-->
         <!--<div v-if="true">-->
         <div v-if="isWechat()">
-          <div class="share_main_wrapper">
+          <div class="wheel_main_wrapper">
             <div class="carousel swiper-container">
               <ul class="swiper-wrapper">
                 <li class="swiper-slide" v-if="advertiseList.length>0" v-for="item in advertiseList">
@@ -25,7 +25,7 @@
                 <li>
                   <div class="defaultbanner">
                     <!--<label>banner</label>-->
-                    <img src="../image/share/defaultbanner_00000.jpg"/>
+                    <img src="../image/wheel/defaultbanner_00000.jpg"/>
                   </div>
                 </li>
               </ul>
@@ -71,9 +71,9 @@
               <div class="main">
                 <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
                   <div class="prizeimage">
-                    <img v-if="prizeData.data.rewardType==='coin'" src="../image/share/coin.png"/>
-                    <img v-if="prizeData.data.rewardType==='point'" src="../image/share/coin.png"/>
-                    <img v-if="prizeData.data.rewardType==='bes_tv'" src="../image/share/bestv.png"/>
+                    <img v-if="prizeData.data.rewardType==='coin'" src="../image/wheel/coin.png"/>
+                    <img v-if="prizeData.data.rewardType==='point'" src="../image/wheel/coin.png"/>
+                    <img v-if="prizeData.data.rewardType==='bes_tv'" src="../image/wheel/bestv.png"/>
                   </div>
                   <div class="detail">
                     <label v-if="prizeData.data.rewardType==='coin'">{{prizeData.data.rewardValue}}趣豆！</label>
@@ -151,13 +151,13 @@
           </div>
         </div>
         <div v-else>
-          <div class="share_main_wrapper">
+          <div class="wheel_main_wrapper">
             <div class="prize_wrapper">
               <h1>Error</h1>
               <div class="main">
                 <div class="withpicture">
                   <div class="prizeimage">
-                    <img src="../image/share/404.png"/>
+                    <img src="../image/wheel/404.png"/>
                   </div>
                   <div class="detail">
                     <span>请在微信中打开本页面</span>
@@ -335,7 +335,7 @@
       this.initializing = false;
 
       this.$autoHeight({
-        target: '.share_realpage_container'
+        target: '.wheel_realpage_container'
       });
       this.$remResizing({
         fontSize: 20,
@@ -401,7 +401,7 @@
             wx.onMenuShareTimeline({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              imgUrl: 'http://resource.zan-qian.com/wheel/red_packet20180727191755.png-style_108x144', // 分享图标
 
               success: function () {
 
@@ -412,7 +412,7 @@
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               desc: '千万不要错过哦', // 分享描述
               link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              imgUrl: 'http://resource.zan-qian.com/wheel/red_packet20180727191755.png-style_108x144', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
               success: function () {

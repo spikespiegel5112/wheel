@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <router-view></router-view>
-  </div>
+  <router-view></router-view>
+
 </template>
 
 <script>
@@ -21,7 +20,7 @@ body {
 <style lang="scss">
   @import 'sass/reset.scss';
   @import 'sass/common.scss';
-  @import 'sass/share.scss';
+  @import 'sass/wheel';
 
 
   body {

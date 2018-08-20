@@ -6,18 +6,18 @@ Vue.use(VueRouter)
 
 const routes = [{
   path: '/',
-  // redirect: '/share',
+  // redirect: '/wheel',
   name: 'index',
   // component: Share,
   component: () => import('../components/Share.vue')
 
 }, {
-  path: '/share',
-  name: 'share',
+  path: '/wheel',
+  name: 'wheel',
   component: () => import('../components/Share.vue')
 }, {
   path: '/shareRedirect',
-  name: 'share',
+  name: 'wheel',
   component: () => import('../components/Share.vue')
 }, {
   path: '/*',
