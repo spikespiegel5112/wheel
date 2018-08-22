@@ -12,7 +12,7 @@
           <div class="wheel_wrapper">
             <div class="wheel">
               <canvas id="wheelcanvas" :width="remUnit*13.5" :height="remUnit*13.5">抱歉！浏览器不支持。</canvas>
-              <a class="start" @click="rotateWheel"></a>
+              <a class="start" @click="drawPrize"></a>
             </div>
             <div class="prizechance">
               <h1>获得1次抽奖机会</h1>
@@ -111,13 +111,14 @@
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
 
-        getActivityInfoRequest:'promotion-service/1.0.0/rotary_table_activity/getActivityInfo',
+        getActivityInfoRequest: 'promotion-service/1.0.0/rotary_table_activity/getActivityInfo',
+        participate_activityRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_activity',
         sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         redirectingFlag: false,
         initializing: false,
         loading: false,
         smsCodeState: false,
-        winningPrizeFlag:false,
+        winningPrizeFlag: false,
 
         redirectInfo: '',
         downloadUrl: '',
@@ -191,9 +192,8 @@
           this.canvasHeight = value * 13.5 + 'px';
           // this.canvasReadyFlag=true;
           console.log(111, this.canvasWidth)
-          // this.getPrizeList();
+          this.getPrizeList();
 
-          this.drawCanvas();
 
         })
 
@@ -232,25 +232,81 @@
       });
     },
     methods: {
-      getPrizeList(){
-        this.$http.get(this.$baseUrl+this.getActivityInfoRequest).then(response=>{
+      getPrizeList() {
+        this.$http.get(this.$baseUrl + this.getActivityInfoRequest).then(response => {
           console.log(response)
-          response=response.data;
-          response.rewardList.forEach((item, index)=>{
+          response = response.data;
+          this.wheelData = [];
+
+          // response.rewardList.forEach((item, index) => {
+          //   this.wheelData.push({
+          //     name: item.rewardName,
+          //     // image:item.rewardImage!==null?item.rewardImage:'',
+          //     image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
+          //     value: item.activityRewardMappingId
+          //   })
+          // });
+
+          for (let i = 0; i < 8; i++) {
             this.wheelData.push({
-              name:item.description,
-              icon:item.image
+              name: response.rewardList[i].rewardName,
+              // image:item.rewardImage!==null?item.rewardImage:'',
+              image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
+              value: response.rewardList[i].activityRewardMappingId
             })
+          }
+
+          this.drawCanvas();
+
+        }).catch(error => {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: error.message,
+            onConfirm() {
+            }
+          })
+        })
+      },
+      drawPrize() {
+        this.$http.post(this.$baseUrl + this.participate_activityRequest, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(response => {
+          console.log(response)
+          response = response.data;
+          this.wheelData.forEach((item1, index1) => {
+            console.log(item1.value)
+            if (item1.value === response.activityRewardMappingId) {
+              debugger
+              this.rotateWheel(index1)
+            }
+
           });
         })
-          // .catch(error=>{
-          // this.$vux.confirm.show({
-          //   showCancelButton: false,
-          //   title: error.message,
-          //   onConfirm() {
-          //   }
-          // })
-        // })
+        // .catch(error => {
+        //
+        // });
+      },
+      rotateWheel(offset) {
+        console.log(111, offset)
+        // let actualRotate = Math.PI * 2 / this.wheelData.length;
+        let initRotateAngle = 360;
+        let unitAngle = 360 / this.wheelData.length;
+        console.log(222, initRotateAngle + unitAngle * offset)
+        let actualRotate = initRotateAngle + unitAngle * offset;
+        if (!this.rotatingFlag) {
+          this.rotatingFlag = true;
+          this.wheelCanvas.style.transition = 'all 5s ease';
+          this.wheelCanvas.style.transform = 'rotate(' + actualRotate + 'deg)';
+          // this.wheelCanvas.style.transform = 'rotate(3600deg)';
+          setTimeout(() => {
+            this.rotatingFlag = false;
+            this.wheelCanvas.style.transition = 'all 0s ease';
+            // this.wheelCanvas.style.transform = 'rotate(0deg)';
+          }, 5000)
+        }
+
       },
       drawCanvas() {
         console.log(this.remUnit)
@@ -315,7 +371,7 @@
           imageObj.width = '100';
           imageObj.height = '100';
           imageObj.src = this.wheelData[index].image;
-          imageObj.transparency = 0.2
+          imageObj.transparency = 0.2;
           imageSequence.push(imageObj);
         });
         let imageSequenceReady = false;
@@ -347,12 +403,18 @@
 
         imageSequenceReady = true;
 
+
         this.wheelData.forEach((item, index) => {
           let angle = baseAngle * index;
+          // debugger
           ctx.beginPath();
           ctx.moveTo(canvasWidth / 2, canvasHeight / 2);
           ctx.lineWidth = 3;
-          ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 5.4, angle + baseAngle, angle, true);
+          if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
+            ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 5.4, angle + baseAngle - Math.PI / this.wheelData.length, angle - Math.PI / this.wheelData.length, true);
+          } else {
+            ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 5.4, angle + baseAngle, angle, true);
+          }
           ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
 
           ctx.strokeStyle = '#f06949';
@@ -364,18 +426,33 @@
 
           ctx.fill();
 
+
           imageSequence[index].onload = () => {
             finishSequence.push(true);
-            let translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2) * this.remUnit * 5;
-            let translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2) * this.remUnit * 5;
+            let translateX, translateY;
+            // console.warn(this.wheelData.length)
+            // console.warn(this.checkLowestCommonDivisorWith2(this.wheelData.length))
+
+            if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
+              translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
+              translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
+            } else {
+              translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2) * this.remUnit * 5;
+              translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2) * this.remUnit * 5;
+            }
+
             ctx.font = this.remUnit * 0.7 + "px Georgia";
             ctx.fillStyle = this.textColorDictionary[index % 2];
             ctx.translate(translateX, translateY);
-            ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
+            if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
+              ctx.rotate(angle + Math.PI / 2);
+            } else {
+              ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
+            }
             ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
             // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
             // console.log(currentImageUrlData)
-            ctx.drawImage(imageSequence[index], 0, 0, imageSequence[index].width, imageSequence[index].height, -this.remUnit, this.remUnit * 1.2, this.remUnit * 2, this.remUnit * 2)
+            ctx.drawImage(imageSequence[index], 0, 0, imageSequence[index].width, imageSequence[index].height, -this.remUnit * 0.5, this.remUnit * 1.5, this.remUnit, this.remUnit);
             ctx.shadowColor = '#0f0'; // green for demo purposes
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 0;
@@ -384,6 +461,7 @@
             // ctx.drawImage(currentImageUrlData, 0, 0, currentImageUrlData.width, currentImageUrlData.height, -this.remUnit, this.remUnit * 1.2, this.remUnit * 2, this.remUnit * 2)
 
             ctx.restore();
+            ctx.save();
 
             // if(finishSequence.length===imageSequence.length){
             //   console.log(finishSequence)
@@ -399,6 +477,9 @@
 
 
           };
+          ctx.rotate(baseAngle);
+          ctx.restore();
+
 
           // setInterval(()=>{
           //   ctx.rotate(baseAngle*Math.PI/180);
@@ -414,19 +495,7 @@
 
 
       },
-      rotateWheel() {
-        if (!this.rotatingFlag) {
-          this.rotatingFlag = true;
-          this.wheelCanvas.style.transition = 'all 5s ease';
-          this.wheelCanvas.style.transform = 'rotate(3600deg)';
-          setTimeout(() => {
-            this.rotatingFlag = false;
-            this.wheelCanvas.style.transition = 'all 0s ease';
-            this.wheelCanvas.style.transform = 'rotate(0deg)';
-          }, 5000)
-        }
 
-      },
       sendSmsCode() {
         if (this.smsCodeState === false) {
           this.loading = true;
@@ -478,6 +547,31 @@
         this.$router.push({
           name: 'acceptPrize'
         })
+      },
+      // checkLowestCommonDivisorWith2(source) {
+      //   let result = source / 2;
+      //   if (result % 2 === 0) {
+      //
+      //     if (result > 2) {
+      //       this.checkLowestCommonDivisorWith2(result)
+      //     } else {
+      //       debugger
+      //
+      //       return result
+      //     }
+      //   } else {
+      //     return result;
+      //   }
+      // },
+      checkLowestCommonDivisorWith2(source) {
+        let flag = true;
+        for (let i = 2; i < source; i++) {
+          source = source / 2;
+          if (source !== 2) {
+            flag = source % 2 === 0
+          }
+        }
+        return flag;
       }
 
     }
