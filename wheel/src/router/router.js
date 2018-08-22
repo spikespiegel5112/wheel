@@ -16,6 +16,10 @@ const routes = [{
   name: 'wheel',
   component: () => import('../components/Wheel.vue')
 }, {
+  path: '/acceptPrize',
+  name: 'acceptPrize',
+  component: () => import('../components/AcceptPrize.vue')
+}, {
   path: '/*',
   name: '404',
   component: () => import('../components/404.vue')

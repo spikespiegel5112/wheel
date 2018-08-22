@@ -7,22 +7,92 @@
       <CommonLoading :loading="initializing"/>
       <div class="content" id="app">
         <div class="wheel_realpage_container">
+          <img id="pointer" src='../image/wheel/pointer_00000.png' style="display: none"/>
           <div class="title"></div>
           <div class="wheel_wrapper">
             <div class="wheel">
               <canvas id="wheelcanvas" :width="remUnit*13.5" :height="remUnit*13.5">抱歉！浏览器不支持。</canvas>
+              <a class="start" @click="rotateWheel"></a>
             </div>
             <div class="prizechance">
               <h1>获得1次抽奖机会</h1>
               <label>活动时间：2018.8.14~2018.8.15</label>
-
             </div>
+
+          </div>
+          <div class="operator">
+            <ul>
+              <li>
+                <a class="a">
+                  <label>活动规则</label>
+                  <span>活动规则</span>
+                </a>
+              </li>
+              <li>
+                <a class="a">
+                  <label>我的奖品</label>
+                  <span>我的奖品</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="sponsor">
+            <ul>
+              <li>
+                  <span>
+                    <img src="../image/wheel/tongchenglvyou_00000.png"/>
+                  </span>
+              </li>
+              <li>
+                  <span>
+                    <img src="../image/wheel/qugu_00000.png"/>
+                  </span>
+              </li>
+            </ul>
+            <p>文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案</p>
+          </div>
+          <div class='common_blocktitle_item'>
+            <span><i></i></span>
+            <p>中奖名单</p>
+            <span><i></i></span>
+          </div>
+          <div class="winninglist">
+            <ul>
+              <li>
+                <label>dasdasdasdas</label>
+                <span>抽中大神大撒大撒大所多撒抽中大神大撒大撒大所多撒抽中大神大撒大撒大所多撒抽中大神大撒大撒大所多撒</span>
+              </li>
+              <li>
+                <label>dasdasdasdas</label>
+                <span>ddasdsadsada</span>
+              </li>
+              <li>
+                <label>dasdasdasdas</label>
+                <span>ddasdsadsada</span>
+              </li>
+            </ul>
           </div>
         </div>
         <CommonLoading :loading="loading"/>
       </div>
     </div>
-
+    <div v-show="winningPrizeFlag" class="wheel_winningdialog_wrapper">
+      <div class="content">
+        <p class="hint">
+          输入手机号立即领取
+        </p>
+        <div class="form">
+          <div class="inputitem">
+            <input class="phone" placeholder="请输入手机号" v-model="loginId"/>
+          </div>
+          <div class="inputitem">
+            <input class="smscode" placeholder=""/>
+            <a class="button smscodebutton" @click="sendSmsCode">获取</a>
+          </div>
+          <a class="button" @click="acceptPrize">立即领取</a>
+        </div>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -40,9 +110,14 @@
     data: function () {
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
+
+        getActivityInfoRequest:'promotion-service/1.0.0/rotary_table_activity/getActivityInfo',
+        sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         redirectingFlag: false,
         initializing: false,
         loading: false,
+        smsCodeState: false,
+        winningPrizeFlag:false,
 
         redirectInfo: '',
         downloadUrl: '',
@@ -52,15 +127,15 @@
         wheelData: [{
           name: '比萨饼',
           value: 10,
-          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
+          image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png'
         }, {
           name: '酱肘子',
           value: 20,
-          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
+          image: 'http://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png'
         }, {
           name: '红烧肉',
           value: 30,
-          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
+          image: 'http://pic.c-ctrip.com/platform/online/home/un_index_supply.png'
         }, {
           name: '炖排骨',
           value: 30,
@@ -74,11 +149,16 @@
           value: 30,
           image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
         }],
+        sponsor: [{
+          name: ''
+        }],
         wheelCanvas: {},
-        remUnit: '',
+        remUnit: 0,
         canvasWidth: '400px',
         canvasHeight: '400px',
-        canvasReadyFlag: false
+        canvasReadyFlag: false,
+        rotatingFlag: false,
+        loginId: ''
 
       }
     },
@@ -111,6 +191,7 @@
           this.canvasHeight = value * 13.5 + 'px';
           // this.canvasReadyFlag=true;
           console.log(111, this.canvasWidth)
+          // this.getPrizeList();
 
           this.drawCanvas();
 
@@ -124,17 +205,6 @@
         if (!value) {
         }
       },
-      redirectInfo(value) {
-        // alert('dsds')
-        // alert(value)
-        console.log(value)
-        if (value === 'shareredirect') {
-          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
-        } else {
-          this.redirectingFlag = false;
-
-        }
-      }
     },
     created() {
       this.redirectInfo = this.$route.query.routeto;
@@ -150,6 +220,9 @@
         this.$autoHeight({
           target: '.wheel_realpage_container'
         });
+        this.$autoHeight({
+          target: '.wheel_winningdialog_wrapper'
+        })
       });
       this.$remResizing({
         fontSize: 20,
@@ -157,20 +230,35 @@
       this.$nextTick(() => {
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
-
-
-      this.initJSSDK();
-      // this.changeUrl();
     },
     methods: {
+      getPrizeList(){
+        this.$http.get(this.$baseUrl+this.getActivityInfoRequest).then(response=>{
+          console.log(response)
+          response=response.data;
+          response.rewardList.forEach((item, index)=>{
+            this.wheelData.push({
+              name:item.description,
+              icon:item.image
+            })
+          });
+        })
+          // .catch(error=>{
+          // this.$vux.confirm.show({
+          //   showCancelButton: false,
+          //   title: error.message,
+          //   onConfirm() {
+          //   }
+          // })
+        // })
+      },
       drawCanvas() {
         console.log(this.remUnit)
         console.log(this.canvasWidth)
+        console.log(this.wheelData)
         this.wheelCanvas = document.getElementById('wheelcanvas');
-        // this.wheelCanvas.width = this.canvasWidth.replace('','px');
-        // this.wheelCanvas.height = this.canvasWidth.replace('','px');
         let ctx = this.wheelCanvas.getContext('2d');
-        let $parentEl = $('.wheel_wrapper .wheel');
+        let ctx2 = this.wheelCanvas.getContext('2d');
 
         let baseAngle = Math.PI * 2 / this.wheelData.length;
         // document.querySelector('.wheel_wrapper .wheel').style.width = this.remUnit * 13.5;
@@ -179,30 +267,30 @@
 
         let canvasWidth = this.remUnit * 13.5;
         let canvasHeight = this.remUnit * 13.5;
-        // let canvasWidth = this.remUnit*5;
-        // let canvasHeight = this.remUnit*5;
         console.log(canvasWidth)
         console.log(canvasHeight)
 
 
         ctx.font = this.remUnit;
 
-        ctx.beginPath();
-        ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 6.75, 0, Math.PI * 2, true);
-        ctx.fillStyle = 'rgba(188,75,61,0.5)';
-        ctx.fill();
+        ctx2.beginPath();
+        ctx2.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 6.75, 0, Math.PI * 2, true);
+        ctx2.fillStyle = 'rgba(188,75,61,0.5)';
+        ctx2.fill();
 
-        ctx.beginPath();
-        ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 6.57, 0, Math.PI * 2, true);
-        ctx.fillStyle = '#bc4b3d';
-        ctx.fill();
+        ctx2.beginPath();
+        ctx2.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 6.57, 0, Math.PI * 2, true);
+        ctx2.fillStyle = '#bc4b3d';
+        ctx2.fill();
 
-        ctx.beginPath();
-        ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 6.35, 0, Math.PI * 2, true);
-        ctx.fillStyle = '#f06949';
-        ctx.fill();
+        ctx2.beginPath();
+        ctx2.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 6.35, 0, Math.PI * 2, true);
+        ctx2.fillStyle = '#f06949';
+        ctx2.fill();
 
-        ctx.save();
+
+        ctx2.save();
+
         let showDots = () => {
           for (let i = 0; i < 24; i++) {
             ctx.beginPath();
@@ -220,15 +308,49 @@
           this.dotsColorDictionary = this.dotsColorDictionary.reverse();
         }, 1000);
 
+        let imageSequence = [];
+
+        this.wheelData.forEach((item, index) => {
+          let imageObj = new Image();
+          imageObj.width = '100';
+          imageObj.height = '100';
+          imageObj.src = this.wheelData[index].image;
+          imageObj.transparency = 0.2
+          imageSequence.push(imageObj);
+        });
+        let imageSequenceReady = false;
+
+
+        let count = 0;
+        let finishSequence = [];
+
+        let checkImageReady = () => {
+          setTimeout(() => {
+            if (imageSequenceReady === false) {
+              alert(imageSequence[index].onload)
+
+              imageSequence.forEach((item, index) => {
+                imageSequence[index].onload = function () {
+                  count++;
+                }
+              });
+            }
+            if (count === imageSequence.length) {
+              imageSequenceReady = true;
+            } else {
+              checkImageReady();
+            }
+          }, 200)
+        };
+
+        // checkImageReady();
+
+        imageSequenceReady = true;
 
         this.wheelData.forEach((item, index) => {
           let angle = baseAngle * index;
-          console.log(angle + baseAngle)
-          console.log(ctx.fillStyle)
           ctx.beginPath();
           ctx.moveTo(canvasWidth / 2, canvasHeight / 2);
-          // ctx.lineTo(canvasWidth - 3, canvasHeight / 2);
-          // ctx.arc(canvasWidth /2, canvasHeight /2, 150, angle, angle + baseAngle, false);
           ctx.lineWidth = 3;
           ctx.arc(canvasWidth / 2, canvasHeight / 2, this.remUnit * 5.4, angle + baseAngle, angle, true);
           ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
@@ -242,135 +364,125 @@
 
           ctx.fill();
 
-          let translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2) * this.remUnit * 5;
-          let translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2) * this.remUnit * 5;
-          ctx.font = this.remUnit * 0.7 + "px Georgia";
-          ctx.fillStyle = this.textColorDictionary[index % 2];
-          console.log(this.colorDictionary[index % 3])
-          ctx.translate(translateX, translateY);
-          ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
-          ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
-          // let imageObj = new Image();
-          // imageObj.width = '10';
-          // imageObj.height = '10';
-          // imageObj.src = this.wheelData[index].image;
+          imageSequence[index].onload = () => {
+            finishSequence.push(true);
+            let translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2) * this.remUnit * 5;
+            let translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2) * this.remUnit * 5;
+            ctx.font = this.remUnit * 0.7 + "px Georgia";
+            ctx.fillStyle = this.textColorDictionary[index % 2];
+            ctx.translate(translateX, translateY);
+            ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
+            ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
+            // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
+            // console.log(currentImageUrlData)
+            ctx.drawImage(imageSequence[index], 0, 0, imageSequence[index].width, imageSequence[index].height, -this.remUnit, this.remUnit * 1.2, this.remUnit * 2, this.remUnit * 2)
+            ctx.shadowColor = '#0f0'; // green for demo purposes
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
 
-          let imageObj = new Image();
-          imageObj.width = '100';
-          imageObj.height = '100';
-          imageObj.src = this.wheelData[index].image;
+            // ctx.drawImage(currentImageUrlData, 0, 0, currentImageUrlData.width, currentImageUrlData.height, -this.remUnit, this.remUnit * 1.2, this.remUnit * 2, this.remUnit * 2)
 
-          let imageWidth = this.remUnit * 2;
-          let imageHeight = this.remUnit * 2;
-          window.onload = () => {
+            ctx.restore();
+
+            // if(finishSequence.length===imageSequence.length){
+            //   console.log(finishSequence)
+            //   console.log(imageSequence)
+            //   let pointer = document.getElementById('pointer')
+            //   console.log(pointer.src)
+            //   console.log(pointer.width)
+            //   pointer.onload = () => {
+            //     ctx.drawImage(pointer,this.remUnit*5.2,this.remUnit*5.2,  this.remUnit*3, this.remUnit*3)
+            //     ctx.restore();
+            //   };
+            // }
 
 
           };
-          ctx.drawImage(imageObj, 0,0,imageObj.width ,imageObj.height, -imageWidth / 2, this.remUnit * 1.2, this.remUnit * 2, this.remUnit * 2);
+
+          // setInterval(()=>{
+          //   ctx.rotate(baseAngle*Math.PI/180);
+          // }, 1000);
+
+          // let pointer = new Image();
+          // pointer.url = 'http://localhost/static/img/pointer_00000.png';
+          // pointer.width = '100';
+          // pointer.height = '100';
 
 
-          ctx.restore();
         });
 
-        setTimeout(() => {
 
-          // ctx.drawImage(imageObj, -imageWidth / 2, imageHeight, this.remUnit * 3, this.remUnit * 3);
+      },
+      rotateWheel() {
+        if (!this.rotatingFlag) {
+          this.rotatingFlag = true;
+          this.wheelCanvas.style.transition = 'all 5s ease';
+          this.wheelCanvas.style.transform = 'rotate(3600deg)';
+          setTimeout(() => {
+            this.rotatingFlag = false;
+            this.wheelCanvas.style.transition = 'all 0s ease';
+            this.wheelCanvas.style.transform = 'rotate(0deg)';
+          }, 5000)
+        }
 
+      },
+      sendSmsCode() {
+        if (this.smsCodeState === false) {
+          this.loading = true;
+          this.$http.get(this.$baseUrl + this.sendBindWxMsgRequest + '/' + this.loginId).then(response => {
+              console.log(response)
+              this.loading = false;
+              if (response.alreadySent === true) {
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '短信已发出，请查收',
+                  onConfirm() {
+                  }
+                });
+                this.smsCodeState = true;
+                if (this.smsCodeCountDown > 0) {
+                  setInterval(() => {
+                    this.smsCodeCountDown--;
+                    if (this.smsCodeCountDown === 0) {
+                      this.smsCodeState = false;
+                    }
+                  }, 1000)
+                } else {
+                  this.smsCodeState = false;
+                }
+              } else {
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: response.message,
+                  onConfirm() {
+                  }
+                })
+              }
+            }
+          ).catch(error => {
+            console.log(error)
+            this.loading = false;
 
-        }, 500)
-
-
-        // this.wheelData.forEach((item, index) => {
-        // })
+          })
+        } else {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '短信已发出，请稍后再试',
+            onConfirm() {
+            }
+          })
+        }
+      },
+      acceptPrize() {
+        this.$router.push({
+          name: 'acceptPrize'
+        })
       }
 
-
-    },
-    initJSSDK() {
-      this.$http.post(this.$baseUrl + this.getSignatureRequest, {
-        url: location.href.split('#')[0],
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        transformRequest: [function (data) {
-          let ret = '';
-          for (let it in data) {
-            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-          }
-          return ret
-        }],
-      }).then(response => {
-        console.log(response)
-
-        wx.config({
-          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
-          timestamp: response.data.timestamp, // 必填，生成签名的时间戳
-          nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
-          signature: response.data.signature,// 必填，签名
-          jsApiList: [
-            'closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'
-          ] // 必填，需要使用的JS接口列表
-        });
-        wx.error(error => {
-          console.log(error)
-          alert('error')
-        });
-        wx.ready((e) => {
-          console.log(e)
-          // alert('dsds')
-          wx.checkJsApi({
-            jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-            success: function (res) {
-              // alert('check')
-              // 以键值对的形式返回，可用的api值true，不可用为false
-              // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-//		    	alert(JSON.stringify(res));
-            }
-
-          });
-
-          wx.onMenuShareTimeline({
-            title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-            link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'http://resource.zan-qian.com/wheel/red_packet20180727191755.png-style_108x144', // 分享图标
-
-            success: function () {
-
-            }
-          });
-
-          wx.onMenuShareAppMessage({
-            title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-            desc: '千万不要错过哦', // 分享描述
-            link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'http://resource.zan-qian.com/wheel/red_packet20180727191755.png-style_108x144', // 分享图标
-            type: '', // 分享类型,music、video或link，不填默认为link
-            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-            success: function () {
-              // alert('ddd')
-// 用户点击了分享后执行的回调函数
-            }
-          });
-        })
-
-      });
-
-    },
-
-
-    isWechat() {
-      //window.navigator.userAgent属性包含了浏览器类型、版本、操作系统类型、浏览器引擎类型等信息，这个属性可以用来判断浏览器类型
-      let ua = window.navigator.userAgent.toLowerCase();
-      //通过正则表达式匹配ua中是否含有MicroMessenger字符串
-      console.log(this.$prodEnv)
-      console.log(ua)
-      return this.$prodEnv ? ua.match(/MicroMessenger/i) === 'micromessenger' : true;
-      // return this.$prodEnv;
-    },
-
+    }
   }
+
 
 </script>
 
