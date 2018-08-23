@@ -77,20 +77,24 @@
       </div>
     </div>
     <div v-show="winningPrizeFlag" class="wheel_winningdialog_wrapper">
-      <div class="content">
+      <div class="login">
         <p class="hint">
           输入手机号立即领取
         </p>
         <div class="form">
           <div class="inputitem">
-            <input class="phone" placeholder="请输入手机号" v-model="loginId"/>
+            <input class="phone" placeholder="请输入手机号" v-model="phoneNumber"/>
           </div>
           <div class="inputitem">
-            <input class="smscode" placeholder=""/>
+            <input class="smscode" placeholder="" v-model="verificationCode"/>
             <a class="button smscodebutton" @click="sendSmsCode">获取</a>
           </div>
           <a class="button" @click="acceptPrize">立即领取</a>
         </div>
+      </div>
+      <div class="acceprprize">
+        <h1>恭喜！</h1>
+
       </div>
     </div>
   </div>
@@ -101,6 +105,7 @@
   import CommonLoading from './common/CommonLoading.vue'
   import wx from 'weixin-js-sdk'
   import $ from 'jquery';
+  import Cookies from 'js-cookie'
 
   export default {
     name: "Promotion",
@@ -113,7 +118,10 @@
 
         getActivityInfoRequest: 'promotion-service/1.0.0/rotary_table_activity/getActivityInfo',
         participate_activityRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_activity',
-        sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
+        verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
+
+        accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
+
         redirectingFlag: false,
         initializing: false,
         loading: false,
@@ -159,7 +167,9 @@
         canvasHeight: '400px',
         canvasReadyFlag: false,
         rotatingFlag: false,
-        loginId: ''
+        phoneNumber: '',
+        verificationCode: '',
+        rewardCode: ''
 
       }
     },
@@ -233,32 +243,36 @@
     },
     methods: {
       getPrizeList() {
+        this.loading = true;
+
         this.$http.get(this.$baseUrl + this.getActivityInfoRequest).then(response => {
           console.log(response)
+          this.loading = false;
           response = response.data;
           this.wheelData = [];
 
-          // response.rewardList.forEach((item, index) => {
-          //   this.wheelData.push({
-          //     name: item.rewardName,
-          //     // image:item.rewardImage!==null?item.rewardImage:'',
-          //     image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
-          //     value: item.activityRewardMappingId
-          //   })
-          // });
-
-          for (let i = 0; i < 8; i++) {
+          response.rewardList.forEach((item, index) => {
             this.wheelData.push({
-              name: response.rewardList[i].rewardName,
-              // image:item.rewardImage!==null?item.rewardImage:'',
-              image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
-              value: response.rewardList[i].activityRewardMappingId
+              name: item.rewardName,
+              image: item.rewardImage !== null ? item.rewardImage + '-style_100x100' : '',
+              // image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
+              value: item.activityRewardMappingId
             })
-          }
+          });
+
+          // for (let i = 0; i < 8; i++) {
+          //   this.wheelData.push({
+          //     name: response.rewardList[i].rewardName,
+          //     image: response.rewardList[i].rewardImage !== null ? response.rewardList[i].rewardImage + '-style_100x100' : '',
+          //     // image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
+          //     value: response.rewardList[i].activityRewardMappingId
+          //   })
+          // }
 
           this.drawCanvas();
 
         }).catch(error => {
+          this.loading = false;
           this.$vux.confirm.show({
             showCancelButton: false,
             title: error.message,
@@ -268,45 +282,62 @@
         })
       },
       drawPrize() {
+        this.loading = true;
         this.$http.post(this.$baseUrl + this.participate_activityRequest, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           }
         }).then(response => {
           console.log(response)
+          this.loading = false;
           response = response.data;
+          this.rewardCode = response.rewardCode
           this.wheelData.forEach((item1, index1) => {
             if (item1.value === response.activityRewardMappingId) {
               // if (item1.value === 10) {
-              alert(index1)
-              this.rotateWheel(index1)
-            }
+              this.rotateWheel(index1).then(() => {
+                console.log(Cookies.get('wheelPhoneNumber'))
+                if (Cookies.get('wheelPhoneNumber') !== undefined) {
 
+                } else {
+
+                  this.winningPrizeFlag = true;
+                }
+              })
+            }
           });
-        })
-        // .catch(error => {
-        //
-        // });
+        }).catch(error => {
+          this.loading = false;
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: error.message,
+            onConfirm() {
+
+            }
+          })
+        });
       },
       rotateWheel(offset) {
-        console.log(111, offset)
-        offset = this.wheelData.length - offset; //因为canvas绘图顺序为顺时针，旋转顺序也为顺时针的话，旋转过后的个数会从最大值往最小值数，所以索性对偏移的个数进行取反
-        // let actualRotate = Math.PI * 2 / this.wheelData.length;
-        let initRotateAngle = 3600;
-        let unitAngle = 360 / this.wheelData.length;
-        console.log(222, initRotateAngle + unitAngle * offset)
-        let actualRotate = initRotateAngle + unitAngle * offset;
-        if (!this.rotatingFlag) {
-          this.rotatingFlag = true;
-          this.wheelCanvas.style.transition = 'all 5s ease';
-          this.wheelCanvas.style.transform = 'rotate(' + actualRotate + 'deg)';
-          // this.wheelCanvas.style.transform = 'rotate(3600deg)';
-          setTimeout(() => {
-            this.rotatingFlag = false;
-            this.wheelCanvas.style.transition = 'all 0s ease';
-            // this.wheelCanvas.style.transform = 'rotate(0deg)';
-          }, 5000)
-        }
+        return new Promise((resolve, reject) => {
+          console.log(111, offset)
+          offset = this.wheelData.length - offset; //因为canvas绘图顺序为顺时针，旋转顺序也为顺时针的话，旋转过后的个数会从最大值往最小值数，所以索性对偏移的个数进行取反
+          let initRotateAngle = 3600;
+          let unitAngle = 360 / this.wheelData.length;
+          console.log(222, initRotateAngle + unitAngle * offset)
+          let actualRotate = initRotateAngle + unitAngle * offset;
+          if (!this.rotatingFlag) {
+            this.rotatingFlag = true;
+            this.wheelCanvas.style.transition = 'all 5s ease';
+            this.wheelCanvas.style.transform = 'rotate(' + actualRotate + 'deg)';
+            setTimeout(() => {
+              this.rotatingFlag = false;
+              this.wheelCanvas.style.transition = 'all 0s ease';
+              resolve();
+            }, 5000)
+          } else {
+            reject();
+          }
+        })
 
       },
       drawCanvas() {
@@ -375,39 +406,10 @@
           imageObj.transparency = 0.2;
           imageSequence.push(imageObj);
         });
-        let imageSequenceReady = false;
-
-
-        let count = 0;
-        let finishSequence = [];
-
-        let checkImageReady = () => {
-          setTimeout(() => {
-            if (imageSequenceReady === false) {
-              alert(imageSequence[index].onload)
-
-              imageSequence.forEach((item, index) => {
-                imageSequence[index].onload = function () {
-                  count++;
-                }
-              });
-            }
-            if (count === imageSequence.length) {
-              imageSequenceReady = true;
-            } else {
-              checkImageReady();
-            }
-          }, 200)
-        };
-
-        // checkImageReady();
-
-        imageSequenceReady = true;
 
 
         this.wheelData.forEach((item, index) => {
           let angle = baseAngle * index;
-          // debugger
           ctx.beginPath();
           ctx.moveTo(canvasWidth / 2, canvasHeight / 2);
           ctx.lineWidth = 3;
@@ -423,17 +425,10 @@
           ctx.fillStyle = this.colorDictionary[index % 2];
 
           ctx.save();
-
-
           ctx.fill();
 
-
           imageSequence[index].onload = () => {
-            finishSequence.push(true);
             let translateX, translateY;
-            // console.warn(this.wheelData.length)
-            // console.warn(this.checkLowestCommonDivisorWith2(this.wheelData.length))
-
             if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
               translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2 - Math.PI / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
               translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2 - Math.PI / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
@@ -456,7 +451,7 @@
             // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
             // console.log(currentImageUrlData)
             ctx.drawImage(imageSequence[index], 0, 0, imageSequence[index].width, imageSequence[index].height, -this.remUnit * 0.5, this.remUnit * 1.5, this.remUnit, this.remUnit);
-            ctx.shadowColor = '#0f0'; // green for demo purposes
+            ctx.shadowColor = '#000'; // green for demo purposes
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
@@ -466,23 +461,7 @@
             ctx.restore();
             ctx.save();
 
-            // if(finishSequence.length===imageSequence.length){
-            //   console.log(finishSequence)
-            //   console.log(imageSequence)
-            //   let pointer = document.getElementById('pointer')
-            //   console.log(pointer.src)
-            //   console.log(pointer.width)
-            //   pointer.onload = () => {
-            //     ctx.drawImage(pointer,this.remUnit*5.2,this.remUnit*5.2,  this.remUnit*3, this.remUnit*3)
-            //     ctx.restore();
-            //   };
-            // }
-
-
           };
-          // ctx.save();
-          // ctx.restore();
-
           ctx.restore();
           ctx.save();
 
@@ -503,9 +482,17 @@
       },
 
       sendSmsCode() {
+        if (this.phoneNumber === '') {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '请输入手机号',
+            onConfirm() {
+            }
+          })
+        }
         if (this.smsCodeState === false) {
           this.loading = true;
-          this.$http.get(this.$baseUrl + this.sendBindWxMsgRequest + '/' + this.loginId).then(response => {
+          this.$http.get(this.$baseUrl + this.verificationCodeRequest + `/${this.phoneNumber}/1`).then(response => {
               console.log(response)
               this.loading = false;
               if (response.alreadySent === true) {
@@ -550,25 +537,50 @@
         }
       },
       acceptPrize() {
-        this.$router.push({
-          name: 'acceptPrize'
-        })
+        this.$http.post(this.$baseUrl + this.accept_rewardRequest + `/${this.phoneNumber}`, {
+          verificationCode: this.verificationCode,
+          rewardCode: this.rewardCode
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          transformRequest: [function (data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }]
+        }).then(response => {
+          console.log(response)
+          switch (response.code) {
+            case 10000:
+              this.$router.push({
+                name: 'acceptPrize'
+              });
+              break;
+            case 10010:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: error.message,
+                onConfirm() {
+                }
+              });
+              break;
+            default:
+              break;
+          }
+
+        }).catch(error => {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: error.message,
+            onConfirm() {
+            }
+          })
+        });
+
       },
-      // checkLowestCommonDivisorWith2(source) {
-      //   let result = source / 2;
-      //   if (result % 2 === 0) {
-      //
-      //     if (result > 2) {
-      //       this.checkLowestCommonDivisorWith2(result)
-      //     } else {
-      //       debugger
-      //
-      //       return result
-      //     }
-      //   } else {
-      //     return result;
-      //   }
-      // },
       checkLowestCommonDivisorWith2(source) {
         let flag = true;
         for (let i = 2; i < source; i++) {
@@ -579,7 +591,6 @@
         }
         return flag;
       }
-
     }
   }
 
