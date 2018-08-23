@@ -276,9 +276,9 @@
           console.log(response)
           response = response.data;
           this.wheelData.forEach((item1, index1) => {
-            console.log(item1.value)
             if (item1.value === response.activityRewardMappingId) {
-              debugger
+              // if (item1.value === 10) {
+              alert(index1)
               this.rotateWheel(index1)
             }
 
@@ -290,8 +290,9 @@
       },
       rotateWheel(offset) {
         console.log(111, offset)
+        offset = this.wheelData.length - offset; //因为canvas绘图顺序为顺时针，旋转顺序也为顺时针的话，旋转过后的个数会从最大值往最小值数，所以索性对偏移的个数进行取反
         // let actualRotate = Math.PI * 2 / this.wheelData.length;
-        let initRotateAngle = 360;
+        let initRotateAngle = 3600;
         let unitAngle = 360 / this.wheelData.length;
         console.log(222, initRotateAngle + unitAngle * offset)
         let actualRotate = initRotateAngle + unitAngle * offset;
@@ -434,8 +435,8 @@
             // console.warn(this.checkLowestCommonDivisorWith2(this.wheelData.length))
 
             if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
-              translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
-              translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
+              translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2 - Math.PI / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
+              translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2 - Math.PI / 2 - Math.PI / this.wheelData.length) * this.remUnit * 5;
             } else {
               translateX = canvasWidth * 0.5 + Math.cos(angle + baseAngle / 2) * this.remUnit * 5;
               translateY = canvasHeight * 0.5 + Math.sin(angle + baseAngle / 2) * this.remUnit * 5;
@@ -444,10 +445,12 @@
             ctx.font = this.remUnit * 0.7 + "px Georgia";
             ctx.fillStyle = this.textColorDictionary[index % 2];
             ctx.translate(translateX, translateY);
+            // ctx.rotate(angle + Math.PI / 2);
             if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
-              ctx.rotate(angle + Math.PI / 2);
+              //
+              ctx.rotate(angle + Math.PI / 2 - Math.PI / 2);
             } else {
-              ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
+              ctx.rotate(angle + baseAngle / 2 + Math.PI / 2 - Math.PI / 2);
             }
             ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
             // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
@@ -477,8 +480,11 @@
 
 
           };
-          ctx.rotate(baseAngle);
+          // ctx.save();
+          // ctx.restore();
+
           ctx.restore();
+          ctx.save();
 
 
           // setInterval(()=>{
