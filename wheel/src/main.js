@@ -12,6 +12,7 @@ import router from './router/router'
 import service from './js/request'
 import util from './js/util';
 // import store from './store/store'
+import CommonLoading from './components/common/CommonLoading.vue'
 
 
 
@@ -27,6 +28,9 @@ Vue.prototype.$http = service;
 // Vue.prototype.$baseUrl = 'http://gateway.zan-qian.com/';
 Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/';
 Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
+
+Vue.component('CommonLoading', CommonLoading);
+
 
 /* eslint-disable no-new */
 new Vue({

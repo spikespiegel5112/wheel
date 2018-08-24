@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div class="wheel_redirect_container" v-if="redirectingFlag">
-      <CommonLoading :loading="initializing"/>
-    </div>
-    <div class="common_main_container" v-else>
-      <CommonLoading :loading="initializing"/>
+    <div class="common_main_container">
       <div class="content" id="app">
         <div class="wheel_realpage_container">
           <img id="pointer" src='../image/wheel/pointer_00000.png' style="display: none"/>
@@ -12,24 +8,25 @@
           <div class="wheel_wrapper">
             <div class="wheel">
               <canvas id="wheelcanvas" :width="remUnit*13.5" :height="remUnit*13.5">抱歉！浏览器不支持。</canvas>
-              <a class="start" @click="drawPrize"></a>
+              <a class="start" @click="drawPrize">
+                <span>{{winningPrizeChanceFlag?'开始抽奖':'领取奖品'}}</span>
+              </a>
             </div>
             <div class="prizechance">
               <h1>获得1次抽奖机会</h1>
-              <label>活动时间：2018.8.14~2018.8.15</label>
+              <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY.MM.DD')}}~{{$moment(activityInfo.endDate).format('YYYY.MM.DD')}}</label>
             </div>
-
           </div>
           <div class="operator">
             <ul>
               <li>
-                <a class="a">
+                <router-link class="a" :to="{name:'activityRules'}">
                   <label>活动规则</label>
                   <span>活动规则</span>
-                </a>
+                </router-link>
               </li>
               <li>
-                <a class="a">
+                <a class="a" @click="loginToCheckMyPrize">
                   <label>我的奖品</label>
                   <span>我的奖品</span>
                 </a>
@@ -49,7 +46,7 @@
                   </span>
               </li>
             </ul>
-            <p>文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案</p>
+            <p>同城相遇，趣谷有你</p>
           </div>
           <div class='common_blocktitle_item'>
             <span><i></i></span>
@@ -58,17 +55,9 @@
           </div>
           <div class="winninglist">
             <ul>
-              <li>
-                <label>dasdasdasdas</label>
-                <span>抽中大神大撒大撒大所多撒抽中大神大撒大撒大所多撒抽中大神大撒大撒大所多撒抽中大神大撒大撒大所多撒</span>
-              </li>
-              <li>
-                <label>dasdasdasdas</label>
-                <span>ddasdsadsada</span>
-              </li>
-              <li>
-                <label>dasdasdasdas</label>
-                <span>ddasdsadsada</span>
+              <li v-for="item in rewardRecordList">
+                <label>{{item.loginId}}</label>
+                <span>{{item.description}}</span>
               </li>
             </ul>
           </div>
@@ -76,42 +65,74 @@
         <CommonLoading :loading="loading"/>
       </div>
     </div>
-    <div v-show="winningPrizeFlag" class="wheel_winningdialog_wrapper">
+    <div v-show="dialogFlag" class="wheel_winningdialog_wrapper">
       <div class="login">
-        <p class="hint">
-          输入手机号立即领取
-        </p>
-        <div class="form">
-          <div class="inputitem">
-            <input class="phone" placeholder="请输入手机号" v-model="phoneNumber"/>
+        <div v-if="phoneNumberReceiveFlag" class="">
+          <div class="crown"></div>
+          <div class="dialog_wrapper inputphonenumber">
+            <p class="hint">
+              已抽中{{prizeData.rewardName}}
+            </p>
+            <div class="form">
+              <div class="inputitem">
+                <input class="phone" placeholder="请输入手机号" v-model="phoneNumber"/>
+              </div>
+              <div class="inputitem">
+                <input class="smscode" placeholder="" v-model="verificationCode"/>
+                <a class="button smscodebutton" :class="{disable:smsCodeState}" @click="sendSmsCode">{{smsCodeState?smsCodeCountDown+'s':'获取'}}</a>
+              </div>
+              <a class="button" @click="receivePrizeByForm">免费领取</a>
+            </div>
           </div>
-          <div class="inputitem">
-            <input class="smscode" placeholder="" v-model="verificationCode"/>
-            <a class="button smscodebutton" @click="sendSmsCode">获取</a>
+        </div>
+        <div v-if="tokenReceiveFlag" class="">
+          <div class="crown"></div>
+          <div class="dialog_wrapper acceptprize">
+            <h1>恭 喜!</h1>
+            <div class="banner">
+              <img src="../image/wheel/prize.png"/>
+            </div>
+            <a class="button" @click="receivePrizeByToken">免费领取</a>
+            <div class="userinfo">
+              <label>{{jsCookieInstance.get('wheel-loginId')}}</label>
+              <a @click="changeUser"><label>立即修改</label>></a>
+            </div>
           </div>
-          <a class="button" @click="acceptPrize">立即领取</a>
+        </div>
+        <div v-if="loginToGetPrizeListFlag" class="">
+          <div class="dialog_wrapper inputphonenumber">
+            <p class="hint">
+              登 录
+            </p>
+            <div class="form">
+              <div class="inputitem">
+                <input class="phone" placeholder="请输入手机号" v-model="phoneNumber"/>
+              </div>
+              <div class="inputitem">
+                <input class="smscode" placeholder="" v-model="verificationCode"/>
+                <a class="button smscodebutton" :class="{disable:smsCodeState}" @click="sendSmsCode">{{smsCodeState?smsCodeCountDown+'s':'获取'}}</a>
+              </div>
+              <a class="button" @click="loginAndGetMyPrize">确定</a>
+            </div>
+          </div>
+        </div>
+        <div class="close">
+          <a @click="close"></a>
         </div>
       </div>
-      <div class="acceprprize">
-        <h1>恭喜！</h1>
-
-      </div>
     </div>
+    <img v-show="false"
+         :src="statisticImageUrl"
+         width="0" height="0"/>
   </div>
 
 </template>
 
 <script>
-  import CommonLoading from './common/CommonLoading.vue'
-  import wx from 'weixin-js-sdk'
-  import $ from 'jquery';
   import Cookies from 'js-cookie'
 
   export default {
     name: "Promotion",
-    components: {
-      CommonLoading
-    },
     data: function () {
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
@@ -122,17 +143,45 @@
 
         accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
 
+
+        queryRewardTraceRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTrace',
+        queryRewardTraceByLoginId: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTraceByLoginId',
+
+
+        loginToGetRewardRecordListRequest: 'uaa/oauth/token',
+
+        statisticImageUrl: '',
+
         redirectingFlag: false,
         initializing: false,
         loading: false,
         smsCodeState: false,
-        winningPrizeFlag: false,
+        winningPrizeChanceFlag: true,
 
+
+        jsCookieInstance: Cookies,
         redirectInfo: '',
         downloadUrl: '',
         colorDictionary: ['#feebcd', '#ffb54c'],
         textColorDictionary: ['#f06949', '#feebcd'],
         dotsColorDictionary: ['#ffd800', '#fe9166'],
+        prizeTypeDictionary: [{
+          name: '趣豆',
+          code: 'coin',
+          unit: ''
+        }, {
+          name: '积分',
+          code: 'point',
+          unit: ''
+        }, {
+          name: '百视通会员卡',
+          code: 'bes_tv',
+          unit: ''
+        }, {
+          name: 'third_link',
+          code: 'third_link',
+          unit: ''
+        }],
         wheelData: [{
           name: '比萨饼',
           value: 10,
@@ -161,6 +210,7 @@
         sponsor: [{
           name: ''
         }],
+        activityInfo: {},
         wheelCanvas: {},
         remUnit: 0,
         canvasWidth: '400px',
@@ -169,7 +219,16 @@
         rotatingFlag: false,
         phoneNumber: '',
         verificationCode: '',
-        rewardCode: ''
+        rewardCode: '',
+        rotateDuration: 1000,
+        dialogFlag: false,
+        phoneNumberReceiveFlag: false,
+        tokenReceiveFlag: false,
+        loginToGetPrizeListFlag: false,
+        smsCodeCountDown: 60,
+        rewardRecordList: [],
+        productToken: '',
+        prizeData: {}
 
       }
     },
@@ -187,6 +246,10 @@
       stateCode() {
         return this.$route.query.state
       },
+      currentTimeStamp() {
+        return timestamp = Date.parse(new Date());
+      }
+
       // canvasWidth() {
       //   return this.remUnit * 13.5 + 'px';
       // },
@@ -196,17 +259,11 @@
     },
     watch: {
       remUnit(value) {
-        // alert('dsds')
         this.$nextTick(() => {
           this.canvasWidth = value * 13.5 + 'px';
           this.canvasHeight = value * 13.5 + 'px';
-          // this.canvasReadyFlag=true;
-          console.log(111, this.canvasWidth)
           this.getPrizeList();
-
-
         })
-
       },
       weChatAuthorityURL(value) {
         console.log(value)
@@ -232,31 +289,35 @@
         });
         this.$autoHeight({
           target: '.wheel_winningdialog_wrapper'
-        })
+        });
+        this.$remResizing({
+          fontSize: 20,
+        });
       });
-      this.$remResizing({
-        fontSize: 20,
-      });
+
       this.$nextTick(() => {
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
+
+      this.getRewardRecordList();
+      this.getStatisticImageUrl();
     },
     methods: {
       getPrizeList() {
         this.loading = true;
-
         this.$http.get(this.$baseUrl + this.getActivityInfoRequest).then(response => {
           console.log(response)
           this.loading = false;
           response = response.data;
           this.wheelData = [];
-
+          this.activityInfo = response.activityInfo;
           response.rewardList.forEach((item, index) => {
             this.wheelData.push({
               name: item.rewardName,
               image: item.rewardImage !== null ? item.rewardImage + '-style_100x100' : '',
               // image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
-              value: item.activityRewardMappingId
+              value: item.activityRewardMappingId,
+
             })
           });
 
@@ -283,39 +344,50 @@
       },
       drawPrize() {
         this.loading = true;
-        this.$http.post(this.$baseUrl + this.participate_activityRequest, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        }).then(response => {
-          console.log(response)
-          this.loading = false;
-          response = response.data;
-          this.rewardCode = response.rewardCode
-          this.wheelData.forEach((item1, index1) => {
-            if (item1.value === response.activityRewardMappingId) {
-              // if (item1.value === 10) {
-              this.rotateWheel(index1).then(() => {
-                console.log(Cookies.get('wheelPhoneNumber'))
-                if (Cookies.get('wheelPhoneNumber') !== undefined) {
+        if (this.winningPrizeChanceFlag) {
+          this.$http.post(this.$baseUrl + this.participate_activityRequest, {}, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+          }).then(response => {
+            console.log(response)
+            this.loading = false;
+            response = response.data;
+            this.prizeData = response;
+            sessionStorage.setItem('prizeData', JSON.stringify(response))
+            this.rewardCode = response.rewardCode;
+            this.wheelData.forEach((item1, index1) => {
+              if (item1.value === response.activityRewardMappingId) {
+                // if (item1.value === 10) {
+                this.rotateWheel(index1).then(() => {
+                  this.winningPrizeChanceFlag = false;
+                  console.log(Cookies.get('wheel-accessToken'))
+                })
+              }
+            });
+          }).catch(error => {
+            this.loading = false;
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: error.message,
+              onConfirm() {
 
-                } else {
-
-                  this.winningPrizeFlag = true;
-                }
-              })
-            }
+              }
+            })
           });
-        }).catch(error => {
+        } else {
           this.loading = false;
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: error.message,
-            onConfirm() {
-
-            }
-          })
-        });
+          if (Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
+            this.dialogFlag = true;
+            this.phoneNumberReceiveFlag = true;
+            this.tokenReceiveFlag = false;
+          } else {
+            this.dialogFlag = true;
+            this.phoneNumberReceiveFlag = false;
+            this.tokenReceiveFlag = true;
+          }
+          // this.dialogFlag = true;
+        }
       },
       rotateWheel(offset) {
         return new Promise((resolve, reject) => {
@@ -327,23 +399,178 @@
           let actualRotate = initRotateAngle + unitAngle * offset;
           if (!this.rotatingFlag) {
             this.rotatingFlag = true;
-            this.wheelCanvas.style.transition = 'all 5s ease';
+            this.wheelCanvas.style.transition = 'all ' + this.rotateDuration / 1000 + 's ease';
             this.wheelCanvas.style.transform = 'rotate(' + actualRotate + 'deg)';
             setTimeout(() => {
               this.rotatingFlag = false;
-              this.wheelCanvas.style.transition = 'all 0s ease';
+              this.wheelCanvas.style.transition = 'rotate 0s ease';
               resolve();
-            }, 5000)
+            }, this.rotateDuration)
           } else {
             reject();
           }
         })
+      },
+      receivePrizeByForm() {
+        this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
+        this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
+        if (this.phoneNumber === '') {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '手机号未填写',
+            onConfirm() {
+            }
+          });
+          return
+        }
+        if (this.verificationCode === '') {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码未填写',
+            onConfirm() {
+            }
+          });
+          return
+        }
 
+        this.$http.post(this.$baseUrl + this.accept_rewardRequest + `/${this.phoneNumber}`, {
+          verificationCode: this.verificationCode,
+          rewardCode: this.rewardCode
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          transformRequest: [function (data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }]
+        }).then(response => {
+          console.log(response)
+
+
+          switch (response.code) {
+            case 10000:
+              response = response.data;
+              Cookies.set('wheel-accessToken', response.accessToken);
+              Cookies.set('wheel-loginId', this.phoneNumber);
+              this.$router.push({
+                name: 'acceptPrize'
+              });
+              break;
+            case 10010:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10011:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10012:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10013:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10014:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            default:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+          }
+
+        }).catch(error => {
+          console.log(error.message)
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: error.message,
+            onConfirm() {
+            }
+          })
+        });
+      },
+      receivePrizeByToken() {
+        this.$http.post(this.$baseUrl + this.accept_rewardRequest + '?access_token=' + Cookies.get('wheel-accessToken'), {
+          rewardCode: this.rewardCode
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            // 'access_token': Cookies.get('wheel-accessToken')
+          },
+          transformRequest: [function (data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }]
+        }).then(response => {
+          console.log('receivePrizeByToken', response)
+          switch (response.code) {
+            case 10000:
+
+              this.$router.push({
+                name: 'acceptPrize'
+              });
+              break;
+            case 10010:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            default:
+              break;
+          }
+          this.phoneNumberReceiveFlag = false;
+
+        }).catch(error => {
+          console.log(error.message)
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: error.message,
+            onConfirm() {
+            }
+          })
+        });
       },
       drawCanvas() {
         console.log(this.remUnit)
-        console.log(this.canvasWidth)
-        console.log(this.wheelData)
+        // console.log(this.canvasWidth)
+        // console.log(this.wheelData)
         this.wheelCanvas = document.getElementById('wheelcanvas');
         let ctx = this.wheelCanvas.getContext('2d');
         let ctx2 = this.wheelCanvas.getContext('2d');
@@ -351,12 +578,11 @@
         let baseAngle = Math.PI * 2 / this.wheelData.length;
         // document.querySelector('.wheel_wrapper .wheel').style.width = this.remUnit * 13.5;
         // document.querySelector('.wheel_wrapper .wheel').style.height = this.remUnit * 13.5;
-        console.log(document.querySelector('.wheel_wrapper .wheel').style)
 
         let canvasWidth = this.remUnit * 13.5;
         let canvasHeight = this.remUnit * 13.5;
-        console.log(canvasWidth)
-        console.log(canvasHeight)
+        // console.log(canvasWidth)
+        // console.log(canvasHeight)
 
 
         ctx.font = this.remUnit;
@@ -524,8 +750,13 @@
             }
           ).catch(error => {
             console.log(error)
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '短信已发出，请稍后再试',
+              onConfirm() {
+              }
+            });
             this.loading = false;
-
           })
         } else {
           this.$vux.confirm.show({
@@ -536,13 +767,64 @@
           })
         }
       },
-      acceptPrize() {
-        this.$http.post(this.$baseUrl + this.accept_rewardRequest + `/${this.phoneNumber}`, {
-          verificationCode: this.verificationCode,
-          rewardCode: this.rewardCode
+      checkLowestCommonDivisorWith2(source) {
+        let flag = true;
+        for (let i = 2; i < source; i++) {
+          source = source / 2;
+          if (source !== 2) {
+            flag = source % 2 === 0
+          }
+        }
+        return flag;
+      },
+      changeUser() {
+        this.phoneNumber = '';
+        this.verificationCode = '';
+        this.phoneNumberReceiveFlag = true;
+        this.tokenReceiveFlag = false;
+        Cookies.remove('')
+      },
+      getRewardRecordList() {
+        this.$http.get(this.$baseUrl + this.queryRewardTraceRequest, {
+          params: {
+            activityId: ''
+          }
+        }).then(response => {
+          console.log('getRewardRecordList', response)
+          response = response.data;
+          this.rewardRecordList = response;
+        })
+      },
+      close() {
+        this.dialogFlag = false;
+        this.phoneNumberReceiveFlag = false;
+        this.tokenReceiveFlag = false;
+        this.loginToGetPrizeListFlag = false;
+      },
+      loginToCheckMyPrize() {
+        if (Cookies.get('wheel-accessToken') === 'undefined' || Cookies.get('wheel-loginId') === 'undefined' || Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
+          this.dialogFlag = true;
+          this.loginToGetPrizeListFlag = true;
+
+        } else {
+          this.$router.push({
+            name: 'myPrizeList',
+            query: {
+              loginId: Cookies.get('wheel-loginId'),
+              pageNo: 0,
+            }
+          })
+        }
+      },
+      loginAndGetMyPrize() {
+        this.$http.post(this.$baseUrl + this.loginToGetRewardRecordListRequest, {
+          grant_type: 'sms',
+          username: this.phoneNumber,
+          code: this.verificationCode
         }, {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic YW5kcm9pZDphZG1pbg=='
           },
           transformRequest: [function (data) {
             let ret = '';
@@ -553,43 +835,29 @@
           }]
         }).then(response => {
           console.log(response)
-          switch (response.code) {
-            case 10000:
-              this.$router.push({
-                name: 'acceptPrize'
-              });
-              break;
-            case 10010:
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: error.message,
-                onConfirm() {
-                }
-              });
-              break;
-            default:
-              break;
-          }
-
-        }).catch(error => {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: error.message,
-            onConfirm() {
+          Cookies.set('wheel-accessToken', response.access_token);
+          Cookies.set('wheel-loginId', this.phoneNumber);
+          Cookies.set('wheel-loginId', this.phoneNumber);
+          this.$router.push({
+            name: 'myPrizeList',
+            query: {
+              loginId: Cookies.get('wheel-loginId'),
+              pageNo: 0,
+              token: response.access_token
             }
           })
-        });
-
+        })
+        // .catch(error => {
+        //   this.$vux.confirm.show({
+        //     showCancelButton: false,
+        //     title: error.message,
+        //     onConfirm() {
+        //     }
+        //   })
+        // })
       },
-      checkLowestCommonDivisorWith2(source) {
-        let flag = true;
-        for (let i = 2; i < source; i++) {
-          source = source / 2;
-          if (source !== 2) {
-            flag = source % 2 === 0
-          }
-        }
-        return flag;
+      getStatisticImageUrl() {
+        this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
       }
     }
   }

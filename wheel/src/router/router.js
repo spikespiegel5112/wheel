@@ -20,6 +20,14 @@ const routes = [{
   name: 'acceptPrize',
   component: () => import('../components/AcceptPrize.vue')
 }, {
+  path: '/myPrizeList',
+  name: 'myPrizeList',
+  component: () => import('../components/MyPrizeList.vue')
+}, {
+  path: '/activityRules',
+  name: 'activityRules',
+  component: () => import('../components/ActivityRules.vue')
+}, {
   path: '/*',
   name: '404',
   component: () => import('../components/404.vue')

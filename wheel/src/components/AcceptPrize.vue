@@ -20,30 +20,33 @@
         </li>
       </ul>
       <div class="hint">
-        用领取奖品手机号1231231231登录即可领取
+        用领取奖品手机号{{prizeData.loginId}}登录即可领取
       </div>
     </div>
     <div class="prizedescribe">
       <h1 class="title">奖品描述</h1>
-      <div class="main">
-        <div class="prizetitle">
-          <img class="icon" src="../image/wheel/0WVZG5OI3QSWS1H3YS)RSNR.png" />
-          <div class="title">
-            <label>腾讯视频会员卡(年卡)</label>
-            <div class="prize">
-              <span>￥126.00</span>
-              <a>免费领取</a>
+      <ul class="main">
+        <li>
+          <div class="prizetitle">
+            <img class="icon" :src="prizeData.rewardImage+'-style_100x100'" />
+            <div class="title">
+              <label>恭喜你，抽中{{prizeData.rewardName}}</label>
+              <div class="prize">
+                <span>￥{{prizeData.rewardValue}}</span>
+                <a>免费领取</a>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="productfeature">
-          <h1>产品特点</h1>
-          <a class="receive">立即领取</a>
-          <div class="productbanner">
-            <img src="../image/wheel/prizepreview_00000.jpg"/>
+          <div class="productfeature">
+            <h1>产品特点</h1>
+            <!--<a class="receive">立即领取</a>-->
+            <div class="productbanner">
+              <img src="../image/wheel/prizepreview_00000.jpg"/>
+            </div>
           </div>
-        </div>
-      </div>
+        </li>
+
+      </ul>
     </div>
   </div>
 
@@ -81,6 +84,10 @@
       stateCode() {
         return this.$route.query.state
       },
+      prizeData(){
+        console.log('JSON', JSON.parse(sessionStorage.getItem('prizeData')))
+        return JSON.parse(sessionStorage.getItem('prizeData'));
+      }
       // canvasWidth() {
       //   return this.remUnit * 13.5 + 'px';
       // },

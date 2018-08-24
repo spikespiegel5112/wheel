@@ -11,7 +11,8 @@
     top: 1rem;
   }
   .wheel_wrapper {
-    width: 16rem;
+    margin: 0 auto;
+    width: 15rem;
     height: 18rem;
     background-image: url('./image/wheel/ribbon_00000.png');
     background-size: 100%;
@@ -28,7 +29,7 @@
       canvas {
         width: 13.5rem;
         height: 13.5rem;
-        transition: all 6s ease;
+        transition: rotate 6s ease;
       }
       .start {
         display: inline-block;
@@ -39,6 +40,13 @@
         position: absolute;
         top: 4.75rem;
         left: 4.75rem;
+        span {
+          display: block;
+          margin: 1.4rem auto;
+          width: 1rem;
+          color: #fff;
+          font-size: 0.5rem;
+        }
       }
     }
     .prizechance {
@@ -65,15 +73,15 @@
         text-align: center;
         a {
           display: inline-block;
-          width: 7rem;
-          height: 1.5rem;
+          width: 6rem;
+          height: 1.3rem;
           line-height: 1.3rem;
-          font-size: 0.8rem;
+          font-size: 0.6rem;
           text-align: center;
           color: #fff;
           border-radius: 0.7rem;
           position: relative;
-          transition: all 0.1s;
+          transition: translateY 0.1s;
           span {
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -115,9 +123,9 @@
     ul {
       //display: inline-block;
       //flex: 1;
-      width: 13rem;
+      width: 5rem;
       position: relative;
-
+      vertical-align: middle;
       li {
         display: inline-block;
         width: 2rem;
@@ -132,10 +140,10 @@
       }
     }
     p {
-
       display: inline-flex;
       color: #fff;
       font-size: 0.5rem;
+      line-height: 1.2rem;
     }
   }
 
@@ -368,16 +376,37 @@
   }
   .winninglist {
     margin: 1rem auto;
-    padding: 1rem 1rem;
+    padding: 0.1rem 1.8rem;
     width: 92%;
     background-color: #feb54c;
     box-sizing: border-box;
     border-radius: 0.5rem;
+    position: relative;
+    &:before {
+      content: '';
+      display: inline-block;
+      width: 2px;
+      height: 2rem;
+      background-color: #f6463f;
+      position: absolute;
+      top: -1.45rem;
+      left: 1.3rem;
+    }
+    &:after {
+      content: '';
+      display: inline-block;
+      width: 2px;
+      height: 2rem;
+      background-color: #f6463f;
+      position: absolute;
+      top: -1.45rem;
+      right: 1.3rem;
+    }
     li {
       display: flex;
       margin: 0.5rem 0;
       color: #eee;
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       label {
         flex: 1;
         padding: 0 1rem;
@@ -398,68 +427,143 @@
   top: 0;
   z-index: 1;
   .login {
-    margin: 3rem auto 0;
-    width: 14rem;
-    height: 15rem;
-    background-image: url("./image/wheel/winningdialog_00000.png");
+    margin: 7rem auto 0;
+    width: 9rem;
+    height: 10rem;
+    background-image: url("./image/wheel/winningdialogbg_00000.png");
     background-size: 100%;
     background-repeat: no-repeat;
-    overflow: hidden;
+    //overflow: hidden;
+    position: relative;
+    .crown {
+      margin: 0 auto;
+      width: 13rem;
+      height: 6rem;
+      background-image: url("./image/wheel/crown_00000.png");
+      background-size: 100%;
+      //background-image: url("./image/wheel/crown_00000.png");
+
+      position: absolute;
+      top: -4rem;
+      left: -2rem;
+    }
+    .dialog_wrapper {
+      padding: 1rem 0 0 0;
+      overflow: hidden;
+    }
     .hint {
-      margin: 5.5rem 0 0 0;
+      margin: 0.5rem 0 0 0;
       text-align: center;
-      font-size: 0.5rem;
+      font-size: 0.6rem;
       color: #cb7e02;
     }
-    .form {
-      margin: 1rem auto;
-      width: 8rem;
-      font-size: 0.6rem;
-      .button {
-        display: flex;
-        justify-content: center;
-        padding: 0 0.5rem;
-        box-sizing: border-box;
-        //width: 3rem;
-        height: 1.2rem;
-        line-height: 1.2rem;
-        background-color: #ffb54c;
-        text-align: center;
-        color: #fff;
-        border-radius: 0.2rem;
+    .inputphonenumber {
+      .hint {
+        margin: 0;
       }
-      .inputitem {
-        display: flex;
-        margin: 0 0 0.4rem 0;
-        input {
-          margin: 0.2rem 0;
-          padding: 0 0.2rem;
-          width: 100%;
-          box-sizing: border-box;
-          background-color: #fff6dd;
-          border: 1px solid #cb7e02;
-          height: 1.2rem;
-          border-radius: 0.2rem;
-        }
-        .smscode {
-          width: 3rem;
-          flex: 1;
+      .form {
+        margin: 1rem auto;
+        width: 8rem;
+        font-size: 0.6rem;
 
+        .inputitem {
+          display: flex;
+          height: 2.3rem;
+          //margin: 0 0 0.4rem 0;
+          input {
+            margin: 0.2rem 0;
+            padding: 0 0.2rem;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #fff6dd;
+            border: 1px solid #cb7e02;
+            height: 1.3rem;
+            border-radius: 0.2rem;
+          }
+          .smscode {
+            width: 3rem;
+            flex: 1;
+
+          }
+        }
+        .smscodebutton {
+          margin: 0.2rem 0 0 1rem;
+          &.disable {
+            background-color: #999;
+          }
         }
       }
-      .smscodebutton {
-        margin: 0.2rem 0 0 1rem;
+    }
+
+  }
+  .acceptprize {
+    margin: 5rem auto 0;
+    width: 8rem;
+    h1 {
+      text-align: center;
+      color: #ed3801;
+    }
+    .banner {
+      margin: 0.6rem auto 0;
+      width: 8rem;
+      height: 4.7rem;
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+    .userinfo {
+      margin: 0.2rem 0;
+      font-size: 0.6rem;
+      color: #F94007;
+      a {
+        float: right;
+        color: #F94007;
+        font-size: 0.5rem;
+        label {
+          text-decoration: underline;
+        }
       }
     }
   }
-  .acceptprize{
+  .button {
+    display: flex;
+    justify-content: center;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    height: 1.3rem;
+    line-height: 1.3rem;
+    background-color: #ffb54c;
+    text-align: center;
+    color: #fff;
+    border-radius: 0.2rem;
+    font-size: 0.55rem;
+  }
+  .close {
+    position: relative;
+    bottom: -0.2rem;
+    &:before {
+      content: '';
+      display: block;
+      margin: 0 auto;
+      width: 1px;
+      height: 1rem;
+      background-color: #ccc;
+    }
+    a {
+      display: block;
+      margin: 0 auto;
+      width: 1rem;
+      height: 1rem;
+      background-image: url("./image/wheel/close_00000.png");
+      background-size: 100%;
+    }
 
   }
 }
 
 .wheel_accpetprize_wrapper {
-  margin: 0 auto;
-  width: 14.5rem;
+
   .banner {
     img {
       display: block;
@@ -468,7 +572,8 @@
     }
   }
   .accpetprize {
-    margin: 1rem 0;
+    margin: 1rem auto;
+    width: 90%;
     h1 {
       font-size: 0.6rem;
       color: #333;
@@ -517,74 +622,127 @@
       font-size: 0.5rem;
     }
   }
-  .prizedescribe {
-    h1 {
-      display: inline-block;
-      //margin: 0.5rem 0;
-      font-size: 0.6rem;
-      color: #999;
-    }
-    .main {
-      padding: 1rem;
-      width: 100%;
-      background-color: #f4f4f4;
-      border-radius: 0.5rem;
-      box-sizing: border-box;
+  .empty{
+    .main{
+      margin: 4rem auto 0;
+      width: 80%;
+      text-align: center;
+      font-size: 0.8rem;
+      position: relative;
+      h1{
+        width: 100%;
+        position: absolute;
+        top: 1rem;
+        color: #999;
+      }
+      img{
+        display: block;
+        margin: 0 auto;
+        width: 8rem;
+      }
+      p{
+        margin: 1rem 0;
+        font-size: 0.5rem;
+      }
     }
 
-    .prizetitle {
-      margin:  0 0 1rem 0;
-      .icon {
-        display: inline-block;
-        width: 3rem;
-        vertical-align: top;
-      }
-      .title {
-        display: inline-block;
-        width: 9rem;
-        //margin: 0.5rem 0;
-        font-size: 0.5rem;
-        color: #000;
-        vertical-align: top;
-        > label {
-          display: block;
-          margin: 0 0 0.5rem 0;
-        }
-        .prize {
+  }
+  .prizedescribe {
+    margin: 0 auto;
+    width: 14.5rem;
+    h1{
+      margin: 0.3rem 0;
+      font-size: 0.6rem;
+    }
+    .main {
+      li {
+        padding: 0 0.5rem;
+        background-color: #f4f4f4;
+        overflow: hidden;
+        h1 {
           display: inline-block;
-          span {
+          //margin: 0.5rem 0;
+          font-size: 0.6rem;
+          color: #999;
+        }
+        .main {
+          padding: 1rem;
+          width: 100%;
+          background-color: #f4f4f4;
+          border-radius: 0.5rem;
+          box-sizing: border-box;
+        }
+
+        .prizetitle {
+          margin: 1rem 0;
+          .icon {
             display: inline-block;
-            width: 6.5rem;
-            text-decoration: line-through;
+            width: 3rem;
+            vertical-align: top;
           }
-          a {
+          .title {
             display: inline-block;
-            color: red;
+            width: 9rem;
+            //margin: 0.5rem 0;
+            font-size: 0.5rem;
+            color: #000;
+            vertical-align: top;
+            > label {
+              display: block;
+              margin: 0 0 0.5rem 0;
+            }
+            .prize {
+              display: inline-block;
+              span {
+                display: inline-block;
+                width: 6.5rem;
+                text-decoration: line-through;
+              }
+              a {
+                display: inline-block;
+                color: red;
+              }
+            }
           }
+
         }
       }
 
     }
 
   }
-  .productfeature{
-    h1{
+  .productfeature {
+    h1 {
       width: 8.8rem;
       font-size: 0.5rem;
     }
-    .receive{
+    .receive {
       padding: 0.2rem 0.7rem;
       background-color: #f9535d;
       font-size: 0.5rem;
       color: #fff;
       border-radius: 0.2rem;
     }
-    .productbanner{
-      img{
+    .productbanner {
+      img {
         display: inline-block;
         margin: 1rem 0;
         width: 100%;
       }
+    }
+  }
+
+}
+
+.wheel_rules_wrapper {
+  ol {
+    margin: 0.5rem auto;
+    padding-left: 1rem;
+    width: 80%;
+    list-style-type: decimal;
+    li {
+      margin: 0.5rem 0;
+      font-size: 0.7rem;
     }
   }
 }
