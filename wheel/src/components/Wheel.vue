@@ -280,7 +280,7 @@
       rewardCode(value) {
         sessionStorage.setItem('rewardCode', value)
       },
-      rewardStr(value){
+      rewardStr(value) {
         sessionStorage.setItem('rewardStr', value)
       }
     },
@@ -406,9 +406,11 @@
         }
       },
       rotateWheel(offset) {
+        alert(offset)
         return new Promise((resolve, reject) => {
           console.log(111, offset)
-          offset = this.wheelData.length - offset; //因为canvas绘图顺序为顺时针，旋转顺序也为顺时针的话，旋转过后的个数会从最大值往最小值数，所以索性对偏移的个数进行取反
+          //因为canvas绘图顺序为顺时针，旋转顺序也为顺时针的话，旋转过后的个数会从最大值往最小值数，所以索性对偏移的个数进行取反
+          offset = this.wheelData.length - offset;
           let initRotateAngle = 3600;
           let unitAngle = 360 / this.wheelData.length;
           console.log(222, initRotateAngle + unitAngle * offset)
@@ -701,7 +703,15 @@
 
 
         this.wheelData.forEach((item, index) => {
-          let angle = baseAngle * index;
+          let angle = baseAngle * index
+
+          if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
+            angle = angle - Math.PI;
+
+          } else {
+            angle = angle - Math.PI + baseAngle;
+          }
+
           ctx.beginPath();
           ctx.moveTo(canvasWidth / 2, canvasHeight / 2);
           ctx.lineWidth = 3;
@@ -733,12 +743,14 @@
             ctx.fillStyle = this.textColorDictionary[index % 2];
             ctx.translate(translateX, translateY);
             // ctx.rotate(angle + Math.PI / 2);
-            if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
-              //
-              ctx.rotate(angle + Math.PI / 2);
-            } else {
-              ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
-            }
+            ctx.rotate(angle + Math.PI / 2 + baseAngle / 2);
+
+            // if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
+            //   //
+            //   ctx.rotate(angle + Math.PI / 2);
+            // } else {
+            //   ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
+            // }
             ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
             // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
             // console.log(currentImageUrlData)
