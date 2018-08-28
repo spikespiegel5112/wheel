@@ -9,11 +9,11 @@
             <div class="wheel">
               <canvas id="wheelcanvas" :width="remUnit*13.5" :height="remUnit*13.5">抱歉！浏览器不支持。</canvas>
               <a class="start" @click="drawPrize">
-                <span>{{winningPrizeChanceFlag?'开始抽奖':'领取奖品'}}</span>
+                <span>{{!alreadyReleasedPrize?'开始抽奖':'领取奖品'}}</span>
               </a>
             </div>
             <div class="prizechance">
-              <h1>获得1次抽奖机会</h1>
+              <h1>{{alreadyReleasedPrize?'您的奖励已发放':'获得1次抽奖机会'}}</h1>
               <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY.MM.DD')}}~{{$moment(activityInfo.endDate).format('YYYY.MM.DD')}}</label>
             </div>
           </div>
@@ -57,7 +57,7 @@
             <ul>
               <li v-for="item in rewardRecordList">
                 <label>{{item.loginId}}</label>
-                <span>{{item.description}}</span>
+                <span>{{item.rewardDescription}}</span>
               </li>
             </ul>
           </div>
@@ -88,13 +88,13 @@
         <div v-if="tokenReceiveFlag" class="">
           <div class="crown"></div>
           <div class="dialog_wrapper acceptprize">
-            <h1>恭 喜!</h1>
+            <p class="hint">已抽中{{prizeData.rewardName}}</p>
             <div class="banner">
               <img src="../image/wheel/prize.png"/>
             </div>
             <a class="button" @click="receivePrizeByToken">免费领取</a>
             <div class="userinfo">
-              <label>{{jsCookieInstance.get('wheel-loginId')}}</label>
+              <span>{{jsCookieInstance.get('wheel-loginId')}}</span>
               <a @click="changeUser"><label>立即修改</label>></a>
             </div>
           </div>
@@ -145,7 +145,7 @@
 
 
         queryRewardTraceRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTrace',
-        queryRewardTraceByLoginId: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTraceByLoginId',
+        queryRewardTraceByLoginIdRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTraceByLoginIdRequest',
 
 
         loginToGetRewardRecordListRequest: 'uaa/oauth/token',
@@ -156,7 +156,6 @@
         initializing: false,
         loading: false,
         smsCodeState: false,
-        winningPrizeChanceFlag: true,
 
 
         jsCookieInstance: Cookies,
@@ -219,7 +218,6 @@
         rotatingFlag: false,
         phoneNumber: '',
         verificationCode: '',
-        rewardCode: '',
         rotateDuration: 1000,
         dialogFlag: false,
         phoneNumberReceiveFlag: false,
@@ -228,7 +226,10 @@
         smsCodeCountDown: 60,
         rewardRecordList: [],
         productToken: '',
-        prizeData: {}
+        prizeData: {},
+        alreadyReleasedPrize: false,
+        alreadyReceivedPrize: false,
+        rewardCode: ''
 
       }
     },
@@ -246,9 +247,7 @@
       stateCode() {
         return this.$route.query.state
       },
-      currentTimeStamp() {
-        return timestamp = Date.parse(new Date());
-      }
+
 
       // canvasWidth() {
       //   return this.remUnit * 13.5 + 'px';
@@ -272,6 +271,18 @@
         if (!value) {
         }
       },
+      alreadyReleasedPrize(value) {
+        sessionStorage.setItem('alreadyReleasedPrize', value)
+      },
+      alreadyReceivedPrize(value) {
+        sessionStorage.setItem('alreadyReceivedPrize', value)
+      },
+      rewardCode(value) {
+        sessionStorage.setItem('rewardCode', value)
+      },
+      rewardStr(value){
+        sessionStorage.setItem('rewardStr', value)
+      }
     },
     created() {
       this.redirectInfo = this.$route.query.routeto;
@@ -301,6 +312,7 @@
 
       this.getRewardRecordList();
       this.getStatisticImageUrl();
+      this.getReceivingStatus();
     },
     methods: {
       getPrizeList() {
@@ -344,7 +356,7 @@
       },
       drawPrize() {
         this.loading = true;
-        if (this.winningPrizeChanceFlag) {
+        if (!this.alreadyReleasedPrize && !this.alreadyReceivedPrize) {
           this.$http.post(this.$baseUrl + this.participate_activityRequest, {}, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -354,13 +366,15 @@
             this.loading = false;
             response = response.data;
             this.prizeData = response;
-            sessionStorage.setItem('prizeData', JSON.stringify(response))
             this.rewardCode = response.rewardCode;
             this.wheelData.forEach((item1, index1) => {
               if (item1.value === response.activityRewardMappingId) {
                 // if (item1.value === 10) {
                 this.rotateWheel(index1).then(() => {
-                  this.winningPrizeChanceFlag = false;
+                  this.alreadyReleasedPrize = true;
+                  this.rewardStr = response.rewardStr;
+                  this.$store.commit('turnOffWinningPrizeChance');
+
                   console.log(Cookies.get('wheel-accessToken'))
                 })
               }
@@ -375,6 +389,8 @@
               }
             })
           });
+        } else if (!this.alreadyReleasedPrize) {
+
         } else {
           this.loading = false;
           if (Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
@@ -412,6 +428,7 @@
         })
       },
       receivePrizeByForm() {
+        let that = this;
         this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
         this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
         if (this.phoneNumber === '') {
@@ -449,15 +466,20 @@
           }]
         }).then(response => {
           console.log(response)
-
-
           switch (response.code) {
             case 10000:
               response = response.data;
               Cookies.set('wheel-accessToken', response.accessToken);
               Cookies.set('wheel-loginId', this.phoneNumber);
+              this.alreadyReleasedPrize = true;
+              this.alreadyReceivedPrize = true;
+
+              this.rewardStr = response.rewardStr;
               this.$router.push({
-                name: 'acceptPrize'
+                name: 'acceptPrize',
+                query: {
+                  rewardCode: this.rewardCode
+                }
               });
               break;
             case 10010:
@@ -489,6 +511,8 @@
                 showCancelButton: false,
                 title: response.message,
                 onConfirm() {
+                  that.tryAgain();
+
                 }
               });
               break;
@@ -509,7 +533,6 @@
               });
               break;
           }
-
         }).catch(error => {
           console.log(error.message)
           this.$vux.confirm.show({
@@ -521,12 +544,13 @@
         });
       },
       receivePrizeByToken() {
+        let that = this;
+
         this.$http.post(this.$baseUrl + this.accept_rewardRequest + '?access_token=' + Cookies.get('wheel-accessToken'), {
           rewardCode: this.rewardCode
         }, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            // 'access_token': Cookies.get('wheel-accessToken')
           },
           transformRequest: [function (data) {
             let ret = '';
@@ -537,14 +561,56 @@
           }]
         }).then(response => {
           console.log('receivePrizeByToken', response)
+          let that = this;
           switch (response.code) {
             case 10000:
+              response = response.data;
+              this.alreadyReleasedPrize = true;
+              this.alreadyReceivedPrize = true;
+
+              this.rewardStr = response.rewardStr;
 
               this.$router.push({
-                name: 'acceptPrize'
+                name: 'acceptPrize',
+                query: {
+                  rewardCode: this.rewardCode
+                }
               });
               break;
             case 10010:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10011:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10012:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10013:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                  that.tryAgain();
+                }
+              });
+              break;
+            case 10014:
               this.$vux.confirm.show({
                 showCancelButton: false,
                 title: response.message,
@@ -669,9 +735,9 @@
             // ctx.rotate(angle + Math.PI / 2);
             if (this.checkLowestCommonDivisorWith2(this.wheelData.length)) {
               //
-              ctx.rotate(angle + Math.PI / 2 - Math.PI / 2);
+              ctx.rotate(angle + Math.PI / 2);
             } else {
-              ctx.rotate(angle + baseAngle / 2 + Math.PI / 2 - Math.PI / 2);
+              ctx.rotate(angle + baseAngle / 2 + Math.PI / 2);
             }
             ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
             // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
@@ -858,6 +924,34 @@
       },
       getStatisticImageUrl() {
         this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
+      },
+      getReceivingStatus() {
+        let regex = new RegExp(/(true)|(false)/);
+        console.log(regex.test(sessionStorage.getItem('alreadyReleasedPrize')))
+
+        console.log((typeof regex.test(sessionStorage.getItem('alreadyReleasedPrize'))) === 'boolean')
+        if (regex.test(sessionStorage.getItem('alreadyReleasedPrize'))) {
+          this.alreadyReleasedPrize = eval(sessionStorage.getItem('alreadyReleasedPrize'));
+          this.rewardCode = sessionStorage.getItem('rewardCode');
+          this.rewardStr = sessionStorage.getItem('rewardStr');
+        }
+        if (regex.test(sessionStorage.getItem('alreadyReceivedPrize'))) {
+          this.alreadyReleasedPrize = eval(sessionStorage.getItem('alreadyReceivedPrize'));
+        }
+        if (regex.test(sessionStorage.getItem('rewardCode'))) {
+          this.alreadyReleasedPrize = eval(sessionStorage.getItem('rewardCode'));
+        } else {
+          this.tryAgain();
+        }
+      },
+      tryAgain() {
+        sessionStorage.removeItem('alreadyReleasedPrize')
+        sessionStorage.removeItem('alreadyReceivedPrize')
+        sessionStorage.removeItem('rewardCode')
+        sessionStorage.removeItem('rewardStr')
+        this.dialogFlag = false;
+        this.phoneNumberReceiveFlag = false
+        this.tokenReceiveFlag = false;
       }
     }
   }

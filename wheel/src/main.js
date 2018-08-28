@@ -5,13 +5,13 @@ import FastClick from 'fastclick'
 // import axios from 'axios'
 import moment from 'moment';
 import {ConfirmPlugin} from 'vux'
-import Swiper from 'swiper';
+// import Swiper from 'swiper';
 
 import App from './App'
 import router from './router/router'
 import service from './js/request'
 import util from './js/util';
-// import store from './store/store'
+import store from './store/store'
 import CommonLoading from './components/common/CommonLoading.vue'
 
 
@@ -36,7 +36,7 @@ Vue.component('CommonLoading', CommonLoading);
 new Vue({
   el: '#app',
   router,
-  // store,
+  store,
   template: '<App/>',
   components: {App}
 })

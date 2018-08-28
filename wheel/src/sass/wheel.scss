@@ -423,13 +423,24 @@
 .wheel_winningdialog_wrapper {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
   position: absolute;
   top: 0;
   z-index: 1;
+  &:before{
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 100%;
+    vertical-align: middle;
+  }
   .login {
-    margin: 7rem auto 0;
+    display: inline-block;
+    //margin: 7rem auto 0;
+    margin: 0 auto;
     width: 9rem;
     height: 10rem;
+    vertical-align: middle;
     background-image: url("./image/wheel/winningdialogbg_00000.png");
     background-size: 100%;
     background-repeat: no-repeat;
@@ -481,13 +492,15 @@
             border-radius: 0.2rem;
           }
           .smscode {
-            width: 3rem;
-            flex: 1;
+            width: 4rem;
+            //flex: 1;
 
           }
         }
         .smscodebutton {
           margin: 0.2rem 0 0 1rem;
+          padding: 0;
+          width: 3rem;
           &.disable {
             background-color: #999;
           }
@@ -497,7 +510,7 @@
 
   }
   .acceptprize {
-    margin: 5rem auto 0;
+    margin: 0rem auto 0;
     width: 8rem;
     h1 {
       text-align: center;
@@ -516,6 +529,9 @@
       margin: 0.2rem 0;
       font-size: 0.6rem;
       color: #F94007;
+      span{
+        float: left;
+      }
       a {
         float: right;
         color: #F94007;
@@ -575,17 +591,20 @@
     margin: 1rem auto;
     width: 90%;
     h1 {
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       color: #333;
+      //font-weight: bolder;
     }
     ul {
       margin: 0.5rem 0;
       text-align: center;
+      display: flex;
+      justify-content: space-between;
       li {
-        display: inline-block;
+
         a {
           display: inline-block;
-          padding: 0.2rem 1rem;
+          padding: 0.3rem 1rem;
           width: 4rem;
           background-color: #ffb54c;
           color: #fff;
@@ -620,6 +639,9 @@
     .hint {
       color: #999;
       font-size: 0.5rem;
+      span{
+        padding: 0 0.2rem;
+      }
     }
   }
   .empty{
@@ -652,7 +674,7 @@
     width: 14.5rem;
     h1{
       margin: 0.3rem 0;
-      font-size: 0.6rem;
+      font-size: 0.7rem;
     }
     .main {
       li {

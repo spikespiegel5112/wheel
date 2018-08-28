@@ -1,5 +1,6 @@
 <template>
   <div class="wheel_accpetprize_wrapper">
+    <CommonLoading :loading="loading"/>
     <div class="common_header_wrapper">
       <div class="left_wrapper">
         <div class="previous">
@@ -15,13 +16,13 @@
     <div v-if="!emptyPrizeFlag" class="prizedescribe">
       <ul class="main">
         <!--<h1 class="title">奖品描述</h1>-->
-        <li>
+        <li v-for="item in prizeData">
           <div class="prizetitle">
-            <img class="icon" src="../image/wheel/0WVZG5OI3QSWS1H3YS)RSNR.png"/>
+            <img class="icon" :src="item.rewardImage+'-style_100x100'"/>
             <div class="title">
-              <label>腾讯视频会员卡(年卡)</label>
+              <label>{{item.rewardName}}</label>
               <div class="prize">
-                <span>￥126.00</span>
+                <span>￥{{item.rewardValue}}</span>
                 <a>免费领取</a>
               </div>
             </div>
@@ -36,7 +37,7 @@
         </li>
       </ul>
     </div>
-    <div class="empty">
+    <div v-if="!loading" class="empty">
       <div class="main">
         <h1>暂无奖品</h1>
         <img src="../image/wheel/emptyPrize_00000.png"/>
@@ -56,11 +57,11 @@
     data: function () {
       return {
         queryRewardTraceByLoginIdRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTraceByLoginId',
-        getThirdLinkProductRequest: 'promotion-service/1.0.0/third_link/getThirdLinkProduct',
         rotatingFlag: false,
         accessToken: '',
         emptyPrizeFlag: true,
-        prizeData:[]
+        prizeData: [],
+        loading: false
       }
     },
     computed: {
@@ -97,25 +98,28 @@
 
     },
     mounted() {
-
       this.$remResizing({
         fontSize: 20,
       });
       console.log(this.$route.query.token)
-      this.getMyprizeData();
-
+      this.getMyPrizeData();
     },
     methods: {
-      getMyprizeData() {
-        this.$http.get(this.$baseUrl + this.getThirdLinkProductRequest + `/${this.$route.query.loginId}`, {
+      getMyPrizeData() {
+        this.loading = true;
+        this.$http.get(this.$baseUrl + this.queryRewardTraceByLoginIdRequest, {
+          params: {
+            loginId: this.$route.query.loginId,
+          },
           headers: {
             'Authorization': 'Bearer ' + Cookies.get('wheel-accessToken')
           }
         }).then(response => {
           console.log(response)
+          this.loading = false;
           response = response.data;
           this.emptyPrizeFlag = response === null
-          this.prizeData=response;
+          this.prizeData = response;
         }).catch(error => {
           this.loading = false;
           this.$vux.confirm.show({

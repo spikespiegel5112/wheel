@@ -210,40 +210,41 @@ input:-webkit-autofill {
 	}
 }
 
-.common_blocktitle_item {
-  display: flex;
-  padding: 0 0.2rem;
-	width: 100%;
-	height: 1.5rem;
-	text-align: center;
-  box-sizing: border-box;
-	span {
-    flex: 1;
-    //margin: 0 0.5rem;
-		width: 5rem;
-		height: 90%;
-		vertical-align: middle;
-		font-size: 1rem;
-		position: relative;
-		i {
-      display: inline-flex;
-      width: 100%;
-			height: 1px;
-      line-height: 1.5rem;
-			background: #fff;
-			vertical-align: middle;
-		}
-	}
-	p {
-    display: inline-flex;
-    margin: 0 0.5rem;
-    text-align: center;
-		color: #fff;
-    line-height: 1.3rem;
-    font-size: 0.8rem;
-		vertical-align: middle;
-	}
-}
+//.common_blocktitle_item {
+//  display: flex;
+//  padding: 0 0.2rem;
+//	width: 100%;
+//	height: 1.5rem;
+//	text-align: center;
+//  box-sizing: border-box;
+//	span {
+//    flex: 1;
+//    //margin: 0 0.5rem;
+//		width: 5rem;
+//		height: 100%;
+//    line-height: 1.2rem;
+//		vertical-align: middle;
+//		font-size: 1rem;
+//		position: relative;
+//		i {
+//      display: inline-flex;
+//      width: 100%;
+//			height: 1px;
+//      line-height: 1.5rem;
+//			background: #fff;
+//			vertical-align: middle;
+//		}
+//	}
+//	p {
+//    display: inline-flex;
+//    margin: 0 0.5rem;
+//    text-align: center;
+//		color: #fff;
+//    line-height: 1.3rem;
+//    font-size: 0.8rem;
+//		vertical-align: middle;
+//	}
+//}
 .common_loading_wrapper{
   width: 100%;
   height: 100%;
@@ -281,7 +282,7 @@ input:-webkit-autofill {
     flex: 1;
     //margin: 0 0.5rem;
     width: 5rem;
-    height: 90%;
+    height: 100%;
     vertical-align: middle;
     font-size: 1rem;
     position: relative;
