@@ -6,13 +6,6 @@ Vue.use(VueRouter)
 
 const routes = [{
   path: '/',
-  // redirect: '/wheel',
-  name: 'index',
-  // component: Share,
-  component: () => import('../components/Wheel.vue')
-
-}, {
-  path: '/wheel',
   name: 'wheel',
   component: () => import('../components/Wheel.vue')
 }, {
@@ -36,7 +29,7 @@ const routes = [{
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  // mode: 'history'
 });
 
 

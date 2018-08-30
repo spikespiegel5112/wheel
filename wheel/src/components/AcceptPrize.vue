@@ -20,13 +20,13 @@
       <ul>
         <CommonLoading :loading="loading"/>
         <li>
-          <a :href="$store.state.appDownloadLocation.ios" target="_blank">
+          <a :href="$store.state.appDownloadLocation.android" target="_blank">
             <span class="android"></span>
             <label>立即领取</label>
           </a>
         </li>
         <li>
-          <a :href="$store.state.appDownloadLocation.android" target="_blank">
+          <a :href="$store.state.appDownloadLocation.ios" target="_blank">
             <span class="ios"></span>
             <label>立即领取</label>
           </a>
@@ -39,20 +39,22 @@
     <div class="prizedescribe">
       <h1 class="title">奖品描述</h1>
       <ul class="main">
-        <li>
+        <li v-if="prizeData!=={}">
           <div class="prizetitle">
             <img class="icon" :src="prizeData.icon+'-style_100x100'"/>
             <div class="title">
               <label>恭喜你，抽中{{prizeData.name}}</label>
               <div class="prize">
                 <span>￥{{prizeData.originalPrice}}</span>
-                <a>免费领取</a>
+                <!--<a>免费领取</a>-->
               </div>
             </div>
           </div>
           <div class="productfeature">
-            <h1>产品特点</h1>
-            <!--<a class="receive">立即领取</a>-->
+            <div class="title">
+              <h1>产品特点</h1>
+              <a class="wheel_product_button">立即领取</a>
+            </div>
             <div class="productbanner">
               <img :src="prizeData.image+'-style_600x300'"/>
             </div>
@@ -93,7 +95,7 @@
     },
     methods: {
       getRewardProduct() {
-        this.$http.get(this.$baseUrl + this.getRewardProductRequest + `/${this.$route.query.rewardCode}`, {}).then(response => {
+        this.$http.get(this.$baseUrl + this.getRewardProductRequest + `/${this.$route.query.rewardStr}`, {}).then(response => {
           console.log(response)
           this.prizeData = response.data;
         })

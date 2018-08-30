@@ -39,19 +39,19 @@ service.interceptors.response.use(
     return response.data
   },
   error => {
-    console.log(error)
-    const result_response = error.response;
-
-    if (result_response.status === 401) {
-    }
-
-    console.log('err' + error)// for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
-    return Promise.reject(error)
+  //   console.log(error)
+  //   const result_response = error.response;
+  //
+  //   if (result_response.status === 401) {
+  //   }
+  //
+  //   console.log('err' + error)// for debug
+  //   // Message({
+  //   //   message: error.message,
+  //   //   type: 'error',
+  //   //   duration: 5 * 1000
+  //   // })
+    return Promise.reject(error.response)
   }
 )
 

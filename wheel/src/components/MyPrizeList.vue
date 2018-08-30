@@ -22,22 +22,26 @@
             <div class="title">
               <label>{{item.rewardName}}</label>
               <div class="prize">
-                <span>￥{{item.rewardValue}}</span>
-                <a>免费领取</a>
+                <span>￥{{item.product.price}}</span>
               </div>
             </div>
           </div>
           <div class="productfeature">
-            <h1>产品特点</h1>
-            <!--<a class="receive">立即领取</a>-->
+            <div class="title">
+              <h1>产品特点</h1>
+              <a class="wheel_product_button">立即领取</a>
+            </div>
+
+
             <div class="productbanner">
-              <img src="../image/wheel/prizepreview_00000.jpg"/>
+              <img class="icon" :src="item.product.image+'-style_600x300'"/>
+              <!--<img src="../image/wheel/prizepreview_00000.jpg"/>-->
             </div>
           </div>
         </li>
       </ul>
     </div>
-    <div v-if="!loading" class="empty">
+    <div v-if="!loading&&emptyPrizeFlag" class="empty">
       <div class="main">
         <h1>暂无奖品</h1>
         <img src="../image/wheel/emptyPrize_00000.png"/>
@@ -106,10 +110,12 @@
     },
     methods: {
       getMyPrizeData() {
+        let that=this;
         this.loading = true;
         this.$http.get(this.$baseUrl + this.queryRewardTraceByLoginIdRequest, {
           params: {
             loginId: this.$route.query.loginId,
+            productDetail:'all'
           },
           headers: {
             'Authorization': 'Bearer ' + Cookies.get('wheel-accessToken')
@@ -122,12 +128,21 @@
           this.prizeData = response;
         }).catch(error => {
           this.loading = false;
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: error.message,
-            onConfirm() {
-            }
-          })
+          console.log(error)
+          if(error.status===401){
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '当前手机号失效，请重新登录',
+              onConfirm() {
+                that.$router.push({
+                  name:'wheel'
+                });
+                Cookies.remove('wheel-accessToken');
+                Cookies.remove('wheel-loginId');
+              }
+            })
+          }
+
         })
       }
     }
