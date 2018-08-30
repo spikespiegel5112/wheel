@@ -16,7 +16,7 @@
               </a>
             </div>
             <div class="prizechance">
-              <h1>{{Number(dailyLimit)!==0?`获得${dailyLimit}次抽奖机会`:'领奖次数已用完'}}</h1>
+              <h1 v-if="dailyLimit!=='-1'">{{Number(dailyLimit)!==0?`获得1次抽奖机会`:'领奖次数已达上限'}}</h1>
               <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY.MM.DD')}}~{{$moment(activityInfo.endDate).format('YYYY.MM.DD')}}</label>
             </div>
           </div>
@@ -49,7 +49,7 @@
                   </span>
               </li>
             </ul>
-            <p>同城相遇，趣谷有你</p>
+            <p>同程相遇，趣谷有你</p>
           </div>
           <div class='common_blocktitle_item'>
             <span><i></i></span>
@@ -74,14 +74,14 @@
           <div class="crown"></div>
           <div class="dialog_wrapper inputphonenumber">
             <p class="hint">
-              已抽中{{prizeData.rewardName}}
+              恭喜{{phoneNumber}}已抽中{{prizeData.rewardName}}
             </p>
             <div class="form">
               <div class="inputitem">
                 <input class="phone" placeholder="请输入手机号" v-model="phoneNumber"/>
               </div>
               <div class="inputitem">
-                <input class="smscode" placeholder="" v-model="verificationCode"/>
+                <input class="smscode" placeholder="验证码" v-model="verificationCode"/>
                 <a class="button smscodebutton" :class="{disable:smsCodeState}" @click="sendSmsCode">{{smsCodeState?smsCodeCountDown+'s':'获取'}}</a>
               </div>
               <a class="button" @click="receivePrizeByForm">免费领取</a>
@@ -91,7 +91,7 @@
         <div v-if="tokenReceiveFlag" class="">
           <div class="crown"></div>
           <div class="dialog_wrapper acceptprize">
-            <p class="hint">已抽中{{prizeData.rewardName}}</p>
+            <p class="hint">恭喜{{phoneNumber}} 免费获得“{{prizeData.rewardName}}”一份奖品</p>
             <div class="banner">
               <img src="../image/wheel/prize.png"/>
             </div>
@@ -112,7 +112,7 @@
                 <input class="phone" placeholder="请输入手机号" v-model="phoneNumber"/>
               </div>
               <div class="inputitem">
-                <input class="smscode" placeholder="" v-model="verificationCode"/>
+                <input class="smscode" placeholder="验证码" v-model="verificationCode"/>
                 <a class="button smscodebutton" :class="{disable:smsCodeState}" @click="sendSmsCode">{{smsCodeState?smsCodeCountDown+'s':'获取'}}</a>
               </div>
               <a class="button" @click="loginAndGetMyPrize">确定</a>
@@ -135,7 +135,7 @@
   import Cookies from 'js-cookie'
 
   export default {
-    name: "Promotion",
+    name: "Wheel",
     data() {
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
@@ -235,7 +235,8 @@
         alreadyReceivedPrize: false,
         rewardCode: '',
         actualRotate: 0,
-        dailyLimit: ''
+        dailyLimit: '',
+        pageFingerPrint: ''
 
       }
     },
@@ -327,6 +328,7 @@
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
 
+      this.checkUUID();
       this.getRewardRecordList();
       this.getStatisticImageUrl();
       this.getCacheData();
@@ -342,7 +344,7 @@
           this.activityInfo = response.activityInfo;
           // alert(JSON.parse(sessionStorage.getItem('dailyLimit')))
 
-          if (JSON.parse(sessionStorage.getItem('dailyLimit')==='null')) {
+          if (JSON.parse(sessionStorage.getItem('dailyLimit') === 'null')) {
             this.dailyLimit = response.activityInfo.dailyLimit;
           }
           response.rewardList.forEach((item, index) => {
@@ -351,7 +353,6 @@
               image: item.rewardImage !== null ? item.rewardImage + '-style_100x100' : '',
               // image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
               value: item.activityRewardMappingId,
-
             })
           });
 
@@ -386,6 +387,7 @@
           },
         }).then(response => {
           console.log(response)
+
           this.loading = false;
           let responseMetaData = response;
           response = response.data;
@@ -519,6 +521,8 @@
           }]
         }).then(response => {
           console.log(response)
+          this.recordStatisticEvent();
+
           switch (response.code) {
             case 10000:
               Cookies.set('wheel-accessToken', response.data.accessToken);
@@ -596,7 +600,7 @@
               Cookies.set('wheel-loginId', this.phoneNumber);
               this.$vux.confirm.show({
                 showCancelButton: false,
-                title: '账号已变更，请重新领取',
+                title: response.message,
                 onConfirm() {
                   that.cleanCache();
 
@@ -630,7 +634,7 @@
           })
         });
       },
-      receivePrizeByToken() {
+      async receivePrizeByToken() {
         let that = this;
         if (this.alreadyReceivedPrize) {
           // alert('direct')
@@ -657,6 +661,9 @@
           }).then(response => {
             console.log('receivePrizeByToken', response)
             let that = this;
+
+            this.recordStatisticEvent();
+
             switch (response.code) {
               case 10000:
                 this.alreadyReleasedPrize = true;
@@ -696,8 +703,11 @@
 
                 break;
               case 10010:
-                Cookies.set('wheel-accessToken', response.data.accessToken);
-                Cookies.set('wheel-loginId', this.phoneNumber);
+                if (response.data !== null) {
+                  Cookies.set('wheel-accessToken', response.data.accessToken);
+                  Cookies.set('wheel-loginId', this.phoneNumber);
+                }
+
                 this.$vux.confirm.show({
                   showCancelButton: false,
                   title: response.message,
@@ -706,8 +716,10 @@
                 });
                 break;
               case 10011:
-                Cookies.set('wheel-accessToken', response.data.accessToken);
-                Cookies.set('wheel-loginId', this.phoneNumber);
+                if (response.data !== null) {
+                  Cookies.set('wheel-accessToken', response.data.accessToken);
+                  Cookies.set('wheel-loginId', this.phoneNumber);
+                }
                 this.$vux.confirm.show({
                   showCancelButton: false,
                   title: response.message,
@@ -716,8 +728,10 @@
                 });
                 break;
               case 10012:
-                Cookies.set('wheel-accessToken', response.data.accessToken);
-                Cookies.set('wheel-loginId', this.phoneNumber);
+                if (response.data !== null) {
+                  Cookies.set('wheel-accessToken', response.data.accessToken);
+                  Cookies.set('wheel-loginId', this.phoneNumber);
+                }
                 this.$vux.confirm.show({
                   showCancelButton: false,
                   title: response.message,
@@ -726,18 +740,23 @@
                 });
                 break;
               case 10013:
-                Cookies.set('wheel-accessToken', response.data.accessToken);
-                Cookies.set('wheel-loginId', this.phoneNumber);
+                if (response.data !== null) {
+                  Cookies.set('wheel-accessToken', response.data.accessToken);
+                  Cookies.set('wheel-loginId', this.phoneNumber);
+                }
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  // title: response.message,
-                  title: '账号已变更，请重新领取',
+                  title: response.message,
                   onConfirm() {
                     that.cleanCache();
                   }
                 });
                 break;
               case 10014:
+                if (response.data !== null) {
+                  Cookies.set('wheel-accessToken', response.data.accessToken);
+                  Cookies.set('wheel-loginId', this.phoneNumber);
+                }
                 this.$vux.confirm.show({
                   showCancelButton: false,
                   title: response.message,
@@ -1066,9 +1085,8 @@
           })
         })
       },
-      getStatisticImageUrl() {
-        this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
-      },
+
+
       getCacheData() {
         let regex = new RegExp(/(true)|(false)/);
         console.log(regex.test(sessionStorage.getItem('alreadyReleasedPrize')))
@@ -1095,12 +1113,11 @@
 
       },
       cleanCache() {
-        // alert('clean')
 
         this.alreadyReleasedPrize = false;
         this.alreadyReceivedPrize = false;
         this.dialogFlag = false;
-        this.phoneNumberReceiveFlag = false
+        this.phoneNumberReceiveFlag = false;
         this.tokenReceiveFlag = false;
         setTimeout(() => {
           sessionStorage.removeItem('alreadyReleasedPrize')
@@ -1109,12 +1126,29 @@
           sessionStorage.removeItem('rewardStr')
           sessionStorage.removeItem('prizeData')
           sessionStorage.removeItem('actualRotate')
+          sessionStorage.removeItem('dailyLimit')
         }, 500)
-        // this.$nextTick(() => {
-        //
-        // })
 
-      }
+      },
+      getStatisticImageUrl() {
+        this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
+      },
+      recordStatisticEvent() {
+        let imageTag = document.createElement("img");
+        imageTag.className = 'statistic';
+        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&webId=${this.pageFingerPrint}`;
+        imageTag.width = 0;
+        imageTag.height = 0;
+        document.body.appendChild(imageTag);
+      },
+      checkUUID() {
+        if (!Cookies.get('Wheel-pageFingerPrint')) {
+          this.pageFingerPrint = this.$generateUUID();
+          Cookies.set('Wheel-pageFingerPrint', this.pageFingerPrint)
+        } else {
+          this.pageFingerPrint = Cookies.get('Wheel-pageFingerPrint');
+        }
+      },
     }
   }
 

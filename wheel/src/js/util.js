@@ -2,6 +2,45 @@ import $ from 'jquery';
 
 let util = {};
 util.install = function (Vue) {
+  Vue.prototype.$generateUUID=(options)=> {
+    options = Object.assign({
+      len: 32,
+      radix: 16
+    }, options);
+    let result;
+    let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+    let uuid = [], i;
+    let len = options.len;
+    let radix = options.radix || chars.length;
+
+    if (len) {
+      // Compact form
+      for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+    } else {
+      // rfc4122, version 4 form
+      let r;
+
+      // rfc4122 requires these characters
+      uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+      uuid[14] = '4';
+
+      // Fill in random data. At i==19 set the high bits of clock sequence as
+      // per rfc4122, sec. 4.1.5
+      for (i = 0; i < 36; i++) {
+        if (!uuid[i]) {
+          r = 0 | Math.random() * 16;
+          uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r];
+        }
+      }
+    }
+
+    result = uuid.join('');
+    return result;
+  }
+
+
+
+
   Vue.prototype.$getDevice=(options)=>{
     //判断访问终端
     let u = navigator.userAgent,
