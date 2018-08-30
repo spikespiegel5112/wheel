@@ -16,8 +16,8 @@
               </a>
             </div>
             <div class="prizechance">
-              <h1 v-if="dailyLimit!=='-1'">{{Number(dailyLimit)!==0?`获得1次抽奖机会`:'领奖次数已达上限'}}</h1>
-              <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY.MM.DD')}}~{{$moment(activityInfo.endDate).format('YYYY.MM.DD')}}</label>
+              <h1>{{Number(dailyLimit)!==0?`您今天还有1次抽奖机会`:'您今天还有0次抽奖机会'}}</h1>
+              <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY年MM月DD日')}}-{{$moment(activityInfo.endDate).format('YYYY年MM月DD日')}}</label>
             </div>
           </div>
           <div class="operator">
@@ -59,8 +59,8 @@
           <div class="winninglist">
             <ul>
               <li v-for="item in rewardRecordList">
-                <label>{{item.loginId.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')}}</label>
-                <span>获得{{item.rewardName}}</span>
+                <label>恭喜{{item.loginId.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')}}</label>
+                <span>免费获得"{{item.rewardName}}"奖品</span>
               </li>
             </ul>
           </div>
@@ -74,7 +74,8 @@
           <div class="crown"></div>
           <div class="dialog_wrapper inputphonenumber">
             <p class="hint">
-              恭喜{{phoneNumber}}已抽中{{prizeData.rewardName}}
+              已抽中"{{prizeData.rewardName}}"<br/>
+              <span>登录即可免费获得</span>
             </p>
             <div class="form">
               <div class="inputitem">
@@ -91,7 +92,9 @@
         <div v-if="tokenReceiveFlag" class="">
           <div class="crown"></div>
           <div class="dialog_wrapper acceptprize">
-            <p class="hint">恭喜{{phoneNumber}} 免费获得“{{prizeData.rewardName}}”一份奖品</p>
+            <p class="hint">
+              已抽中"{{prizeData.rewardName}}"
+            </p>
             <div class="banner">
               <img src="../image/wheel/prize.png"/>
             </div>

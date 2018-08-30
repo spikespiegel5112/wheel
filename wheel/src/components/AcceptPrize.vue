@@ -20,14 +20,14 @@
       <ul>
         <CommonLoading :loading="loading"/>
         <li>
-          <a :href="statisticDownloadLink.android" target="_blank">
-            <span class="android"></span>
+          <a :href="statisticDownloadLink.ios" target="_blank">
+            <span class="ios"></span>
             <label>立即领取</label>
           </a>
         </li>
         <li>
-          <a :href="statisticDownloadLink.ios" target="_blank">
-            <span class="ios"></span>
+          <a :href="statisticDownloadLink.android" target="_blank">
+            <span class="android"></span>
             <label>立即领取</label>
           </a>
         </li>

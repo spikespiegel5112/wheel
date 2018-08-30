@@ -22,7 +22,7 @@
             <div class="title">
               <label>{{item.rewardName}}</label>
               <div class="prize">
-                <span>￥{{item.product.price}}</span>
+                <span>￥{{item.product.originalPrice}}</span>
               </div>
             </div>
           </div>

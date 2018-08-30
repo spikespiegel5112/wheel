@@ -71,12 +71,12 @@
       text-align: center;
       color: #fff;
       h1 {
-        font-size: 0.6rem;
-        line-height: 0.3rem;
+        font-size: 0.65rem;
+        line-height: 0.7rem;
       }
       label {
-        font-size: 0.5rem;
-        color: #ccc;
+        font-size: 0.45rem;
+        color: #fff;
       }
     }
 
@@ -159,7 +159,7 @@
     }
     p {
       display: inline-flex;
-      color: #ddd;
+      color: #cacaca;
       font-size: 0.5rem;
       line-height: 1.2rem;
     }
@@ -423,16 +423,21 @@
     li {
       display: flex;
       margin: 0.5rem 0;
-      color: #eee;
+      color: #fff;
       font-size: 0.5rem;
       label {
         flex: 1;
-        padding: 0 1rem;
+        padding: 0 0.7rem;
         max-width: 4rem;
         text-align: right;
       }
       span {
         display: inline-flex;
+      }
+      p{
+        width: 100%;
+        text-align: center;
+        font-size: 0.45rem;
       }
     }
   }
@@ -477,11 +482,11 @@
       left: -2rem;
     }
     .dialog_wrapper {
-      padding: 1rem 0 0 0;
+      padding: 1.3rem 0 0 0;
       overflow: hidden;
     }
     .hint {
-      margin: 0.6rem 0 0 0;
+      margin: 0.3rem 0 0 0;
       height: 1.4rem;
       text-align: center;
       font-size: 0.6rem;
@@ -490,9 +495,13 @@
     .inputphonenumber {
       .hint {
         margin: 0;
+        span{
+          font-size: 0.4rem;
+          color: #666;
+        }
       }
       .form {
-        margin: 1rem auto;
+        margin: 0.5rem auto;
         width: 8rem;
         font-size: 0.6rem;
 
@@ -547,7 +556,8 @@
     }
     .userinfo {
       margin: 0.2rem 0;
-      font-size: 0.6rem;
+      font-size: 0.45rem;
+      line-height: 0.7rem;
       color: #F94007;
       span{
         float: left;
@@ -555,7 +565,7 @@
       a {
         float: right;
         color: #F94007;
-        font-size: 0.5rem;
+        font-size: 0.45rem;
         label {
           text-decoration: underline;
         }
@@ -611,7 +621,7 @@
     margin: 1rem auto;
     width: 90%;
     h1 {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: #333;
       //font-weight: bolder;
     }
@@ -626,6 +636,7 @@
           display: inline-block;
           padding: 0.3rem 1rem;
           width: 4rem;
+          line-height: 0.9rem;
           background-color: #ffb54c;
           color: #fff;
           font-size: 0.6rem;
@@ -633,8 +644,8 @@
           border-radius: 0.3rem;
           span {
             display: inline-block;
-            width: 0.5rem;
-            height: 0.6rem;
+            width: 0.7rem;
+            height: 0.8rem;
             vertical-align: middle;
             &.ios {
               background-image: url("./image/wheel/ios.png");
@@ -657,8 +668,8 @@
       }
     }
     .hint {
-      color: #999;
-      font-size: 0.5rem;
+      color: #4D4C4C;
+      font-size: 0.45rem;
       span{
         padding: 0 0.2rem;
       }
@@ -694,7 +705,7 @@
     width: 14.5rem;
     h1{
       margin: 0.25rem 0;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
     }
     .main {
       li {
@@ -706,8 +717,8 @@
         h1 {
           display: inline-block;
           //margin: 0.5rem 0;
-          font-size: 0.6rem;
-          color: #999;
+          font-size: 0.5rem;
+          color: #000;
         }
         .main {
           padding: 1rem;
@@ -722,6 +733,7 @@
           .icon {
             display: inline-block;
             width: 3.5rem;
+            height: 2rem;
             vertical-align: top;
           }
           .title {
@@ -735,7 +747,7 @@
             > label {
               display: block;
               margin: 0 0 0.5rem 0;
-              font-size: 0.6rem;
+              font-size: 0.5rem;
             }
             .prize {
               display: inline-block;
@@ -743,12 +755,11 @@
                 display: inline-block;
                 width: 4rem;
                 text-decoration: line-through;
-                font-size: 0.6rem;
+                font-size: 0.5rem;
               }
               a{
                 color: red;
-                font-size: 0.6rem;
-
+                font-size: 0.5rem;
               }
             }
           }
@@ -801,7 +812,7 @@
     list-style-type: decimal;
     li {
       margin: 0.5rem 0;
-      font-size: 0.7rem;
+      font-size: 0.55rem;
     }
   }
 }
