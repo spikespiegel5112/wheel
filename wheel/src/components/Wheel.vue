@@ -16,7 +16,7 @@
               </a>
             </div>
             <div class="prizechance">
-              <h1>{{activityInfo.dailyLimit!==0?`获得${activityInfo.dailyLimit}次抽奖机会`:'领奖次数已用完'}}</h1>
+              <h1>{{Number(dailyLimit)!==0?`获得${dailyLimit}次抽奖机会`:'领奖次数已用完'}}</h1>
               <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY.MM.DD')}}~{{$moment(activityInfo.endDate).format('YYYY.MM.DD')}}</label>
             </div>
           </div>
@@ -295,6 +295,10 @@
       },
       prizeData(value) {
         sessionStorage.setItem('prizeData', JSON.stringify(value))
+      },
+      dailyLimit(value) {
+        // alert(value)
+        sessionStorage.setItem('dailyLimit', value)
       }
     },
     created() {
@@ -336,6 +340,11 @@
           response = response.data;
           this.wheelData = [];
           this.activityInfo = response.activityInfo;
+          // alert(JSON.parse(sessionStorage.getItem('dailyLimit')))
+
+          if (JSON.parse(sessionStorage.getItem('dailyLimit')==='null')) {
+            this.dailyLimit = response.activityInfo.dailyLimit;
+          }
           response.rewardList.forEach((item, index) => {
             this.wheelData.push({
               name: item.rewardName,
@@ -359,6 +368,7 @@
           this.getCachedCircleNumber();
 
         }).catch(error => {
+          console.log(error)
           this.loading = false;
           this.$vux.confirm.show({
             showCancelButton: false,
@@ -390,6 +400,7 @@
                     this.alreadyReceivedPrize = false;
                     this.alreadyReleasedPrize = true;
 
+                    this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
                     this.rewardStr = response.rewardStr;
                     this.$store.commit('turnOffWinningPrizeChance');
 
@@ -872,7 +883,7 @@
             ctx.fillText(this.wheelData[index].name, -ctx.measureText(this.wheelData[index].name).width / 2, 22);
             // let currentImageUrlData=this.wheelCanvas.getContext('2d').toDataURL('image/png', 1);
             // console.log(currentImageUrlData)
-            ctx.drawImage(imageSequence[index], -this.remUnit * 2 * 0.5, this.remUnit*1.3, this.remUnit * 2, this.remUnit * 2);
+            ctx.drawImage(imageSequence[index], -this.remUnit * 2 * 0.5, this.remUnit * 1.3, this.remUnit * 2, this.remUnit * 2);
             ctx.shadowColor = '#000'; // green for demo purposes
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 0;
@@ -1070,6 +1081,9 @@
         }
         if (regex.test(sessionStorage.getItem('alreadyReceivedPrize'))) {
           this.alreadyReceivedPrize = eval(sessionStorage.getItem('alreadyReceivedPrize'));
+        }
+        if (typeof Number(sessionStorage.getItem('dailyLimit')) === 'number') {
+          this.dailyLimit = sessionStorage.getItem('dailyLimit');
         }
         if (typeof JSON.parse(sessionStorage.getItem('prizeData')) === 'object') {
           this.alreadyReleasedPrize = eval(sessionStorage.getItem('alreadyReleasedPrize'));

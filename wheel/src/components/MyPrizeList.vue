@@ -110,12 +110,12 @@
     },
     methods: {
       getMyPrizeData() {
-        let that=this;
+        let that = this;
         this.loading = true;
         this.$http.get(this.$baseUrl + this.queryRewardTraceByLoginIdRequest, {
           params: {
             loginId: this.$route.query.loginId,
-            productDetail:'all'
+            productDetail: 'all'
           },
           headers: {
             'Authorization': 'Bearer ' + Cookies.get('wheel-accessToken')
@@ -124,18 +124,18 @@
           console.log(response)
           this.loading = false;
           response = response.data;
-          this.emptyPrizeFlag = response === null
+          this.emptyPrizeFlag = response.length === 0;
           this.prizeData = response;
         }).catch(error => {
           this.loading = false;
           console.log(error)
-          if(error.status===401){
+          if (error.status === 401) {
             this.$vux.confirm.show({
               showCancelButton: false,
               title: '当前手机号失效，请重新登录',
               onConfirm() {
                 that.$router.push({
-                  name:'wheel'
+                  name: 'wheel'
                 });
                 Cookies.remove('wheel-accessToken');
                 Cookies.remove('wheel-loginId');
