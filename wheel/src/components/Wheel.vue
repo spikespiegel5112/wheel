@@ -16,7 +16,7 @@
               </a>
             </div>
             <div class="prizechance">
-              <h1>{{Number(dailyLimit)!==0?`您今天还有1次抽奖机会`:'您今天还有0次抽奖机会'}}</h1>
+              <h1>{{Number(dailyLimit)>0||Number(dailyLimit)===-1?`您今天还有1次抽奖机会`:'您今天还有0次抽奖机会'}}</h1>
               <label>活动时间：{{$moment(activityInfo.startDate).format('YYYY年MM月DD日')}}-{{$moment(activityInfo.endDate).format('YYYY年MM月DD日')}}</label>
             </div>
           </div>
@@ -223,7 +223,7 @@
         canvasReadyFlag: false,
         rotatingFlag: false,
         verificationCode: '',
-        rotateDuration: 1000,
+        rotateDuration: 3000,
         dialogFlag: false,
         phoneNumber: '',
         phoneNumberReceiveFlag: false,
@@ -335,6 +335,8 @@
       this.getRewardRecordList();
       this.getStatisticImageUrl();
       this.getCacheData();
+      this.recordStatisticEvent();
+
     },
     methods: {
       getPrizeList() {
@@ -394,6 +396,7 @@
           this.loading = false;
           let responseMetaData = response;
           response = response.data;
+
           switch (responseMetaData.code) {
             case 10000:
               this.prizeData = response;
@@ -436,6 +439,8 @@
       },
       receivePrize() {
         this.loading = false;
+        this.recordStatisticEvent();
+
         if (Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
           this.dialogFlag = true;
           this.phoneNumberReceiveFlag = true;
@@ -498,6 +503,34 @@
           });
           return
         }
+
+        if (/^[1-9]+[0-9]*]*$/.test(this.phoneNumber) === false) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '手机号不是数字',
+            onConfirm() {
+            }
+          });
+          return
+        }
+        if (/^[1-9]+[0-9]*]*$/.test(this.verificationCode) === false) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码不是数字',
+            onConfirm() {
+            }
+          });
+          return
+        }
+        if (/^\d{6}$/.test(this.verificationCode) === false) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码不为6位数字',
+            onConfirm() {
+            }
+          });
+          return
+        }
         if (this.verificationCode === '') {
           this.$vux.confirm.show({
             showCancelButton: false,
@@ -524,7 +557,6 @@
           }]
         }).then(response => {
           console.log(response)
-          this.recordStatisticEvent();
 
           switch (response.code) {
             case 10000:
@@ -665,7 +697,6 @@
             console.log('receivePrizeByToken', response)
             let that = this;
 
-            this.recordStatisticEvent();
 
             switch (response.code) {
               case 10000:
@@ -1050,6 +1081,55 @@
         }
       },
       loginAndGetMyPrize() {
+        this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
+        this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
+        if (this.phoneNumber === '') {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '手机号未填写',
+            onConfirm() {
+            }
+          });
+          return
+        }
+
+        if (/^[1-9]+[0-9]*]*$/.test(this.phoneNumber) === false) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '手机号不是数字',
+            onConfirm() {
+            }
+          });
+          return
+        }
+        if (/^[1-9]+[0-9]*]*$/.test(this.verificationCode) === false) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码不是数字',
+            onConfirm() {
+            }
+          });
+          return
+        }
+        if (/^\d{6}$/.test(this.verificationCode) === false) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码不为6位数字',
+            onConfirm() {
+            }
+          });
+          return
+        }
+        if (this.verificationCode === '') {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '验证码未填写',
+            onConfirm() {
+            }
+          });
+          return
+        }
+
         this.$http.post(this.$baseUrl + this.loginToGetRewardRecordListRequest, {
           grant_type: 'sms',
           username: this.phoneNumber,
@@ -1082,7 +1162,7 @@
         }).catch(error => {
           this.$vux.confirm.show({
             showCancelButton: false,
-            title: error.data.message,
+            title: error.data.error_description || error.data.message,
             onConfirm() {
             }
           })
@@ -1152,6 +1232,7 @@
           this.pageFingerPrint = Cookies.get('Wheel-pageFingerPrint');
         }
       },
+
     }
   }
 
