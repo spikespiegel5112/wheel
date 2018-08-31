@@ -1222,7 +1222,7 @@
         imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&webId=${this.pageFingerPrint}`;
         imageTag.width = 0;
         imageTag.height = 0;
-        document.body.appendChild(imageTag);
+        document.querySelector('.wheel_realpage_container').appendChild(imageTag);
       },
       checkUUID() {
         if (!Cookies.get('Wheel-pageFingerPrint')) {
