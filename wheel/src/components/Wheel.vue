@@ -1216,7 +1216,7 @@
       recordStatisticEvent(eventCode) {
         let imageTag = document.createElement("img");
         imageTag.className = 'statistic';
-        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&webId=${this.pageFingerPrint}&eventId=${eventCode}`;
+        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&eventId=${eventCode}&webId=${this.pageFingerPrint}&eventId=${eventCode}`;
         imageTag.width = 0;
         imageTag.height = 0;
         document.querySelector('.wheel_realpage_container').appendChild(imageTag);
