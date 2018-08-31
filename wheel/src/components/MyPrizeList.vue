@@ -22,14 +22,16 @@
             <div class="title">
               <label>{{item.rewardName}}</label>
               <div class="prize">
-                <span>￥{{item.product.price}}</span>
+                <span>￥{{item.product.originalPrice}}</span>
               </div>
             </div>
           </div>
           <div class="productfeature">
             <div class="title">
               <h1>产品特点</h1>
-              <a class="wheel_product_button">立即领取</a>
+              <router-link class="wheel_product_button" :to="{name:'acceptPrize',query:{rewardStr:item.rewardStr}}">
+                立即领取
+              </router-link>
             </div>
 
 

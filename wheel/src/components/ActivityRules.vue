@@ -31,7 +31,7 @@
         rulesArticle: [{
           content: '本次活动由同程旅游网和趣谷APP联合举办，所有奖品由趣谷APP提供。',
         }, {
-          content: '本次活动对象仅限同程旅游网的用户。',
+          content: '本次活动对象仅限同程旅游网的用户，参与抽奖即可免费获得转盘奖品',
         }, {
           content: '凡参与本次活动，则视为同意活动规则及免费声明条款。',
         }, {
@@ -43,10 +43,6 @@
     },
 
     watch: {},
-    beforeMount() {
-
-
-    },
     mounted() {
       this.$remResizing({
         fontSize: 20,
