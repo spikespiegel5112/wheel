@@ -127,9 +127,6 @@
         </div>
       </div>
     </div>
-    <img v-show="false"
-         :src="statisticImageUrl"
-         width="0" height="0"/>
   </div>
 
 </template>
