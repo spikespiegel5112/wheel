@@ -18,7 +18,7 @@
         <!--<h1 class="title">奖品描述</h1>-->
         <li v-for="item in prizeData">
           <div class="prizetitle">
-            <img class="icon" :src="item.rewardImage+'-style_100x100'"/>
+            <img class="icon" :src="item.product.icon+'-style_100x100'"/>
             <div class="title">
               <label>{{item.rewardName}}</label>
               <div class="prize">
