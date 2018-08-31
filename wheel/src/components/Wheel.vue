@@ -332,7 +332,7 @@
       this.getRewardRecordList();
       this.getStatisticImageUrl();
       this.getCacheData();
-      this.recordStatisticEvent();
+      this.recordStatisticEvent('onLoad');
 
     },
     methods: {
@@ -436,7 +436,7 @@
       },
       receivePrize() {
         this.loading = false;
-        this.recordStatisticEvent();
+        this.recordStatisticEvent('receivePrize');
 
         if (Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
           this.dialogFlag = true;
@@ -1213,10 +1213,10 @@
       getStatisticImageUrl() {
         this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
       },
-      recordStatisticEvent() {
+      recordStatisticEvent(eventCode) {
         let imageTag = document.createElement("img");
         imageTag.className = 'statistic';
-        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&webId=${this.pageFingerPrint}`;
+        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&webId=${this.pageFingerPrint}&eventId=${eventCode}`;
         imageTag.width = 0;
         imageTag.height = 0;
         document.querySelector('.wheel_realpage_container').appendChild(imageTag);
