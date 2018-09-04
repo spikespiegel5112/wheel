@@ -39,7 +39,7 @@
     <div class="prizedescribe">
       <h1 class="title">恭喜你，抽中{{prizeData.name}}</h1>
       <ul class="main">
-        <li v-if="prizeData!=={}">
+        <li v-if="Object.keys(prizeData).length>0">
           <div class="prizetitle">
             <img class="icon" :src="prizeData.icon+'-style_100x100'"/>
             <div class="title">
