@@ -829,7 +829,7 @@
         let canvasHeight = this.remUnit * 13.5;
         // console.log(canvasWidth)
         // console.log(canvasHeight)
-        
+
         ctx.font = this.remUnit;
 
         ctx2.beginPath();
