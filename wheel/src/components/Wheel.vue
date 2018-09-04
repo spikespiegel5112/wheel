@@ -873,7 +873,7 @@
           let imageObj = new Image();
           imageObj.width = '150';
           imageObj.height = '150';
-          imageObj.src = this.wheelData[index].image;
+          imageObj.src = this.$replaceProtocol(this.wheelData[index].image);
           imageObj.transparency = 0.2;
           imageSequence.push(imageObj);
         });
