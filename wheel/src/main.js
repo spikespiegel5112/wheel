@@ -26,7 +26,9 @@ Vue.config.productionTip = false;
 Vue.prototype.$moment = moment;
 Vue.prototype.$http = service;
 // Vue.prototype.$baseUrl = 'http://gateway.zan-qian.com/';
-Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/';
+Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.fnvalley.com/' : 'http://testgate.zan-qian.com/';
+Vue.prototype.$redirectBaseUrl = process.env.NODE_ENV === 'production' ? 'https://redirect.fnvalley.com/' : 'https://redirect.fnvalley.com/';
+
 Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
 
 Vue.component('CommonLoading', CommonLoading);
