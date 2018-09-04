@@ -78,8 +78,8 @@
         loading: false,
         prizeData: {},
         statisticDownloadLink: {
-          android: `http://redirect.zan-qian.com/redirect?target=http%3A%2F%2Fa.app.qq.com%2Fo%2Fsimple.jsp%3Fpkgname%3Dio.cityzone.android&loginId=&eventId=tongchengRewardAndroid&webId=${Cookies.get('Wheel-pageFingerPrint')}`,
-          ios: `http://redirect.zan-qian.com/redirect?target=https%3a%2f%2fitunes.apple.com%2fcn%2fapp%2f%e8%b6%a3%e8%b0%b7-%e4%b8%80%e4%b8%aa%e6%87%82%e4%bd%a0%e7%9a%84app%2fid1397292579%3fmt%3d8&loginId=&eventId=tongchengRewardIos&webId=${Cookies.get('Wheel-pageFingerPrint')}`
+          android: `${this.$redirectBaseUrl}redirect?target=http%3A%2F%2Fa.app.qq.com%2Fo%2Fsimple.jsp%3Fpkgname%3Dio.cityzone.android&loginId=&eventId=tongchengRewardAndroid&webId=${Cookies.get('Wheel-pageFingerPrint')}`,
+          ios: `${this.$redirectBaseUrl}redirect?target=https%3a%2f%2fitunes.apple.com%2fcn%2fapp%2f%e8%b6%a3%e8%b0%b7-%e4%b8%80%e4%b8%aa%e6%87%82%e4%bd%a0%e7%9a%84app%2fid1397292579%3fmt%3d8&loginId=&eventId=tongchengRewardIos&webId=${Cookies.get('Wheel-pageFingerPrint')}`
         }
       }
     },
