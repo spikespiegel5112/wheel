@@ -41,7 +41,7 @@
       <ul class="main">
         <li v-if="Object.keys(prizeData).length>0">
           <div class="prizetitle">
-            <img class="icon" :src="prizeData.icon+'-style_100x100'"/>
+            <img class="icon" :src="$replaceProtocol(prizeData.icon)+'-style_100x100'"/>
             <div class="title">
               <label>{{prizeData.desc}}</label>
               <div class="prize">
@@ -56,7 +56,7 @@
               <!--<a class="wheel_product_button">立即领取</a>-->
             </div>
             <div class="productbanner">
-              <img :src="prizeData.image+'-style_600x300'"/>
+              <img :src="$replaceProtocol(prizeData.image)+'-style_600x300'"/>
             </div>
           </div>
         </li>
@@ -103,7 +103,8 @@
           console.log(response)
           this.prizeData = response.data;
         })
-      }
+      },
+
     }
   }
 

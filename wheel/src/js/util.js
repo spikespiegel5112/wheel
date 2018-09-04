@@ -2,7 +2,14 @@ import $ from 'jquery';
 
 let util = {};
 util.install = function (Vue) {
-  Vue.prototype.$generateUUID=(options)=> {
+  Vue.prototype.$replaceProtocol = (url) => {
+    let result;
+    // result = process.env.NODE_ENV === 'production' ? url.replace('http://', 'https://').replace('zan-qian.com', 'fnvalley.com') : url;
+    result = url.replace('http://', 'https://').replace('zan-qian.com', 'fnvalley.com');
+    return result;
+  }
+
+  Vue.prototype.$generateUUID = (options) => {
     options = Object.assign({
       len: 32,
       radix: 16
@@ -39,9 +46,7 @@ util.install = function (Vue) {
   }
 
 
-
-
-  Vue.prototype.$getDevice=(options)=>{
+  Vue.prototype.$getDevice = (options) => {
     //判断访问终端
     let u = navigator.userAgent,
       app = navigator.appVersion;
@@ -53,7 +58,7 @@ util.install = function (Vue) {
       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
       android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
-      iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
+      iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
       iPad: u.indexOf('iPad') > -1, //是否iPad
       webApp: u.indexOf('Safari') === -1, //是否web应该程序，没有头部与底部
       weixin: u.indexOf('MicroMessenger') > -1, //是否微信 （2015-01-22新增）

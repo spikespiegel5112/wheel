@@ -18,7 +18,7 @@
         <!--<h1 class="title">奖品描述</h1>-->
         <li v-for="item in prizeData">
           <div class="prizetitle">
-            <img class="icon" :src="item.product.icon+'-style_100x100'"/>
+            <img class="icon" :src="$replaceProtocol(item.product.icon)+'-style_100x100'"/>
             <div class="title">
               <label>{{item.rewardName}}</label>
               <div class="prize">
@@ -36,7 +36,7 @@
 
 
             <div class="productbanner">
-              <img class="icon" :src="item.product.image+'-style_600x300'"/>
+              <img class="icon" :src="$replaceProtocol(item.product.image)+'-style_600x300'"/>
               <!--<img src="../image/wheel/prizepreview_00000.jpg"/>-->
             </div>
           </div>
