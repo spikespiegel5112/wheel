@@ -14,7 +14,7 @@
       </div>
     </div>
     <div v-if="!emptyPrizeFlag" class="prizedescribe">
-      <ul class="main">
+      <ul class="main" v-if="prizeData.length>0">
         <!--<h1 class="title">奖品描述</h1>-->
         <li v-for="item in prizeData">
           <div class="prizetitle">
