@@ -138,8 +138,6 @@
     name: "Wheel",
     data() {
       return {
-        baseUrl: 'http://gateway.zan-qian.com/',
-
         getActivityInfoRequest: 'promotion-service/1.0.0/rotary_table_activity/getActivityInfo',
         participate_activityRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_activity',
         verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
