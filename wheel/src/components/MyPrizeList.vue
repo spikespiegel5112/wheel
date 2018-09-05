@@ -1,18 +1,18 @@
 <template>
   <div class="wheel_accpetprize_wrapper">
     <CommonLoading :loading="loading"/>
-    <div class="common_header_wrapper">
-      <div class="left_wrapper">
-        <div class="previous">
-          <router-link :to="{path:'/'}">
-            <x-icon type="ios-arrow-left" size="30"></x-icon>
-          </router-link>
-        </div>
-      </div>
-      <div class="middle_wrapper">
-        我的奖品
-      </div>
-    </div>
+    <!--<div class="common_header_wrapper">-->
+      <!--<div class="left_wrapper">-->
+        <!--<div class="previous">-->
+          <!--<router-link :to="{path:'/'}">-->
+            <!--<x-icon type="ios-arrow-left" size="30"></x-icon>-->
+          <!--</router-link>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="middle_wrapper">-->
+        <!--我的奖品-->
+      <!--</div>-->
+    <!--</div>-->
     <div v-if="!emptyPrizeFlag" class="prizedescribe">
       <ul class="main" v-if="prizeData.length>0">
         <!--<h1 class="title">奖品描述</h1>-->

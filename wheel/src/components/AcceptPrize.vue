@@ -1,17 +1,17 @@
 <template>
   <div class="wheel_accpetprize_wrapper">
-    <div class="common_header_wrapper">
-      <div class="left_wrapper">
-        <div class="previous">
-          <router-link :to="{path:'/'}">
-            <x-icon type="ios-arrow-left" size="30"></x-icon>
-          </router-link>
-        </div>
-      </div>
-      <div class="middle_wrapper">
-        我要领奖
-      </div>
-    </div>
+    <!--<div class="common_header_wrapper">-->
+      <!--<div class="left_wrapper">-->
+        <!--<div class="previous">-->
+          <!--<router-link :to="{path:'/'}">-->
+            <!--<x-icon type="ios-arrow-left" size="30"></x-icon>-->
+          <!--</router-link>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="middle_wrapper">-->
+        <!--我要领奖-->
+      <!--</div>-->
+    <!--</div>-->
     <div class="banner">
       <img src="../image/wheel/accept_prize_banner_00000.png"/>
     </div>
@@ -78,8 +78,8 @@
         loading: false,
         prizeData: {},
         statisticDownloadLink: {
-          android: `${this.$redirectBaseUrl}redirect?target=http%3A%2F%2Fa.app.qq.com%2Fo%2Fsimple.jsp%3Fpkgname%3Dio.cityzone.android&loginId=&eventId=tongchengRewardAndroid&webId=${Cookies.get('Wheel-pageFingerPrint')}`,
-          ios: `${this.$redirectBaseUrl}redirect?target=https%3a%2f%2fitunes.apple.com%2fcn%2fapp%2f%e8%b6%a3%e8%b0%b7-%e4%b8%80%e4%b8%aa%e6%87%82%e4%bd%a0%e7%9a%84app%2fid1397292579%3fmt%3d8&loginId=&eventId=tongchengRewardIos&webId=${Cookies.get('Wheel-pageFingerPrint')}`
+          android: `${this.$redirectBaseUrl}redirect/androiddownload?source=tongcheng&webId=${Cookies.get('Wheel-pageFingerPrint')}`,
+          ios: `${this.$redirectBaseUrl}redirect/iosdownload?source=tongcheng&webId=${Cookies.get('Wheel-pageFingerPrint')}`
         }
       }
     },
