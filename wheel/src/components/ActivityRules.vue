@@ -1,17 +1,17 @@
 <template>
   <div class="wheel_rules_wrapper">
-    <div class="common_header_wrapper">
-      <div class="left_wrapper">
-        <div class="previous">
-          <router-link :to="{path:'/'}">
-            <x-icon type="ios-arrow-left" size="30"></x-icon>
-          </router-link>
-        </div>
-      </div>
-      <div class="middle_wrapper">
-        活动规则
-      </div>
-    </div>
+    <!--<div class="common_header_wrapper">-->
+      <!--<div class="left_wrapper">-->
+        <!--<div class="previous">-->
+          <!--<router-link :to="{path:'/'}">-->
+            <!--<x-icon type="ios-arrow-left" size="30"></x-icon>-->
+          <!--</router-link>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="middle_wrapper">-->
+        <!--活动规则-->
+      <!--</div>-->
+    <!--</div>-->
     <ol>
       <li v-for="item in rulesArticle">{{item.content}}</li>
     </ol>
