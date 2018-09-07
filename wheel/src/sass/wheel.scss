@@ -49,7 +49,7 @@
           font-size: 0.5rem;
         }
       }
-      .continue{
+      .continue {
         display: inline-block;
         width: 4rem;
         height: 4rem;
@@ -434,7 +434,7 @@
       span {
         display: inline-flex;
       }
-      p{
+      p {
         width: 100%;
         text-align: center;
         font-size: 0.45rem;
@@ -450,7 +450,7 @@
   position: absolute;
   top: 0;
   z-index: 1;
-  &:before{
+  &:before {
     content: '';
     display: inline-block;
     width: 0;
@@ -495,7 +495,7 @@
     .inputphonenumber {
       .hint {
         margin: 0;
-        span{
+        span {
           font-size: 0.4rem;
           color: #666;
         }
@@ -559,7 +559,7 @@
       font-size: 0.45rem;
       line-height: 0.7rem;
       color: #F94007;
-      span{
+      span {
         float: left;
       }
       a {
@@ -572,6 +572,7 @@
       }
     }
   }
+
   .button {
     display: flex;
     justify-content: center;
@@ -608,7 +609,7 @@
   }
 }
 
-.wheel_accpetprize_wrapper {
+.wheel_acceptprize_wrapper {
 
   .banner {
     img {
@@ -617,7 +618,7 @@
       width: 12rem;
     }
   }
-  .accpetprize {
+  .acceptprize {
     margin: 1rem auto;
     width: 90%;
     h1 {
@@ -670,30 +671,66 @@
     .hint {
       color: #4D4C4C;
       font-size: 0.45rem;
-      span{
+      span {
         padding: 0 0.2rem;
       }
     }
   }
-  .empty{
-    .main{
+  .acceptprizewithoutbutton {
+    margin: 0.5rem auto 0;
+    padding: 0.2rem;
+    width: 14rem;
+    background-color: #e8e8e8;
+    border: 1px dashed #888;
+    .logo {
+      display: inline-block;
+      margin: 0 0.2rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      vertical-align: middle;
+      img {
+        display: inline-block;
+        width: 100%;
+      }
+    }
+    .desc {
+      display: inline-block;
+      width: 11.5rem;
+      //height: 2rem;
+      font-size: 0.5rem;
+      vertical-align: middle;
+      .main {
+        margin: 0.2rem 0;
+        font-size: 0.7rem;
+        color: #7D7D7D;
+        span {
+          color: #E92D31;
+        }
+      }
+      label {
+        color: #616161;
+      }
+    }
+  }
+  .empty {
+    .main {
       margin: 4rem auto 0;
       width: 80%;
       text-align: center;
       font-size: 0.8rem;
       position: relative;
-      h1{
+      h1 {
         width: 100%;
         position: absolute;
         top: 1rem;
         color: #999;
       }
-      img{
+      img {
         display: block;
         margin: 0 auto;
         width: 8rem;
       }
-      p{
+      p {
         margin: 1rem 0;
         font-size: 0.5rem;
       }
@@ -703,7 +740,7 @@
   .prizedescribe {
     margin: 0 auto;
     width: 14.5rem;
-    h1{
+    h1 {
       margin: 0.25rem 0;
       font-size: 0.6rem;
     }
@@ -757,7 +794,7 @@
                 text-decoration: line-through;
                 font-size: 0.5rem;
               }
-              a{
+              a {
                 color: red;
                 font-size: 0.5rem;
               }
@@ -789,12 +826,13 @@
         width: 100%;
       }
     }
-    .wheel_product_button{
+    .wheel_product_button {
       float: right;
     }
   }
 
 }
+
 .wheel_product_button {
   display: inline-block;
   padding: 0.4rem 0.7rem;

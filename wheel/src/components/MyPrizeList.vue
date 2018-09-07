@@ -1,5 +1,5 @@
 <template>
-  <div class="wheel_accpetprize_wrapper">
+  <div class="wheel_acceptprize_wrapper">
     <CommonLoading :loading="loading"/>
     <!--<div class="common_header_wrapper">-->
       <!--<div class="left_wrapper">-->
@@ -46,7 +46,7 @@
     <div v-if="!loading&&emptyPrizeFlag" class="empty">
       <div class="main">
         <h1>暂无奖品</h1>
-        <img src="../image/wheel/emptyPrize_00000.png"/>
+        <img src="../image/wheel/emptyprize_00000.png"/>
         <p>领取奖品手机号：{{$route.query.loginId}}</p>
       </div>
     </div>

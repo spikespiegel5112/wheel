@@ -1,5 +1,5 @@
 <template>
-  <div class="wheel_accpetprize_wrapper">
+  <div class="wheel_acceptprize_wrapper">
     <!--<div class="common_header_wrapper">-->
       <!--<div class="left_wrapper">-->
         <!--<div class="previous">-->
@@ -15,27 +15,40 @@
     <div class="banner">
       <img src="../image/wheel/accept_prize_banner_00000.png"/>
     </div>
-    <div class="accpetprize">
+    <div class="acceptprize">
       <h1>下载趣谷APP,领取奖品</h1>
-      <ul>
-        <CommonLoading :loading="loading"/>
-        <li>
-          <a :href="statisticDownloadLink.ios" target="_blank">
-            <span class="ios"></span>
-            <label>立即领取</label>
-          </a>
-        </li>
-        <li>
-          <a :href="statisticDownloadLink.android" target="_blank">
-            <span class="android"></span>
-            <label>立即领取</label>
-          </a>
-        </li>
-      </ul>
-      <div class="hint">
-        已有超过{{1234+parseInt(1234*Math.random())}}人下载趣谷APP，领取了奖品
+
+      <div class="acceptprizewithoutbutton">
+        <div class="logo">
+          <img src="../image/wheel/qugulogo.png" />
+        </div>
+        <div class="desc">
+          <p class="main">
+            前往应用市场搜索“<span>趣谷</span>”下载领取
+          </p>
+          <label>应用市场包含苹果AppStore、应用宝、手机自带应用市场等</label>
+        </div>
       </div>
+      <!--<ul>-->
+        <!--<CommonLoading :loading="loading"/>-->
+        <!--<li>-->
+          <!--<a :href="statisticDownloadLink.ios" target="_blank">-->
+            <!--<span class="ios"></span>-->
+            <!--<label>立即领取</label>-->
+          <!--</a>-->
+        <!--</li>-->
+        <!--<li>-->
+          <!--<a :href="statisticDownloadLink.android" target="_blank">-->
+            <!--<span class="android"></span>-->
+            <!--<label>立即领取</label>-->
+          <!--</a>-->
+        <!--</li>-->
+      <!--</ul>-->
+      <!--<div class="hint">-->
+        <!--已有超过{{1234+parseInt(1234*Math.random())}}人下载趣谷APP，领取了奖品-->
+      <!--</div>-->
     </div>
+
     <div class="prizedescribe">
       <h1 class="title">恭喜你，抽中{{prizeData.name}}</h1>
       <ul class="main">
