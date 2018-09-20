@@ -24,9 +24,11 @@ FastClick.attach(document.body);
 Vue.config.productionTip = false;
 Vue.prototype.$moment = moment;
 Vue.prototype.$http = service;
-Vue.prototype.$baseUrl = 'http://gateway.zan-qian.com/';
-// Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/';
+// Vue.prototype.$baseUrl = 'http://gateway.zan-qian.com/';
+Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.fnvalley.com/' : 'http://testgate.fnvalley.com/';
+Vue.prototype.$domainUrl= process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com' : 'http://testactivity.fnvalley.com',
 Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
+
 
 /* eslint-disable no-new */
 new Vue({

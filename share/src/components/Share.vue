@@ -187,6 +187,7 @@
     data: function () {
       return {
         baseUrl: 'http://gateway.zan-qian.com/',
+        domainUrl: process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com' : 'http://testactivity.fnvalley.com',
         sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
         acceptShareUserActivityRewardRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityReward',
@@ -316,7 +317,7 @@
         // alert(value)
         console.log(value)
         if (value === 'shareredirect') {
-          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
         } else {
           this.redirectingFlag = false;
           this.getUserInfoAndReceivePrize();
@@ -400,7 +401,7 @@
 
             wx.onMenuShareTimeline({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-              link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
 
               success: function () {
@@ -411,7 +412,7 @@
             wx.onMenuShareAppMessage({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               desc: '千万不要错过哦', // 分享描述
-              link: 'http://activity.fnvalley.com/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -500,7 +501,7 @@
           if (response.code === 10008 && this.isWechat()) {
             // if (response.code === 10008) {
 
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
 
             // this.$vux.confirm.show({
             //   showCancelButton: false,
@@ -688,7 +689,7 @@
         // return this.$prodEnv;
       },
       changeUrl() {
-        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com&response_type=code&scope=snsapi_base&state=' + this.stateCode + '#wechat_redirect';
+        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_base&state=' + this.stateCode + '#wechat_redirect';
         window.history.pushState({}, 0, url);
       },
       getDownloadUrl() {
