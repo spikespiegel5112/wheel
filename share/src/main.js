@@ -26,7 +26,7 @@ Vue.prototype.$moment = moment;
 Vue.prototype.$http = service;
 // Vue.prototype.$baseUrl = 'http://gateway.zan-qian.com/';
 Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.fnvalley.com/' : 'http://testgate.fnvalley.com/';
-Vue.prototype.$domainUrl= process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com' : 'http://testactivity.fnvalley.com',
+Vue.prototype.$domainUrl= process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com' : 'http://testactivity.fnvalley.com';
 Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
 
 

@@ -151,6 +151,9 @@
 
         loginToGetRewardRecordListRequest: 'uaa/oauth/token',
 
+        getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
+
+
         statisticImageUrl: '',
 
         redirectingFlag: false,
@@ -331,6 +334,7 @@
       this.getStatisticImageUrl();
       this.getCacheData();
       this.recordStatisticEvent('onLoad');
+      this.initJSSDK();
 
     },
     methods: {
@@ -1226,7 +1230,80 @@
           this.pageFingerPrint = Cookies.get('Wheel-pageFingerPrint');
         }
       },
+      initJSSDK() {
+        console.log('777', location.href.split('#')[0])
+        let wx = this.$wechat;
+        this.$http.post(this.$baseUrl + this.getSignatureRequest, {
+          url: location.href.split('#')[0],
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          transformRequest: [function (data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+        }).then(response => {
+          console.log(response)
 
+          wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
+            timestamp: response.data.timestamp, // 必填，生成签名的时间戳
+            nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
+            signature: response.data.signature,// 必填，签名
+            jsApiList: [
+              'closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'
+            ] // 必填，需要使用的JS接口列表
+          });
+          wx.error(error => {
+            console.log(error)
+            alert('error')
+          });
+          wx.ready((e) => {
+            console.log(e)
+            // alert('dsds')
+            wx.checkJsApi({
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+              success: function (res) {
+                // alert('check')
+                // 以键值对的形式返回，可用的api值true，不可用为false
+                // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+//		    	alert(JSON.stringify(res));
+              }
+
+            });
+
+            wx.onMenuShareTimeline({
+              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+
+              success: function () {
+
+              }
+            });
+
+            wx.onMenuShareAppMessage({
+              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              desc: '千万不要错过哦', // 分享描述
+              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              type: '', // 分享类型,music、video或link，不填默认为link
+              dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+              success: function () {
+                // alert('ddd')
+// 用户点击了分享后执行的回调函数
+              }
+            });
+          })
+
+        });
+
+      },
     }
   }
 
