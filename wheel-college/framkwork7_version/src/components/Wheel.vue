@@ -2,8 +2,6 @@
   <div>
     <div class="common_main_container">
       <div class="content" id="app">
-        <div class="bg"></div>
-
         <div class="wheel_realpage_container">
           <!--<img id="pointer" src='../image/wheel/pointer_00000.png' style="display: none"/>-->
           <div class="header">
@@ -54,15 +52,9 @@
           </div>
 
           <div class='common_blocktitle_item'>
-            <div>
-              <span></span>
-              <i></i>
-            </div>
+            <span><i></i></span>
             <p>中奖名单</p>
-            <div>
-              <i></i>
-              <span></span>
-            </div>
+            <span><i></i></span>
           </div>
           <div class="winninglist">
             <ul>
@@ -141,6 +133,7 @@
 
 <script>
   import Cookies from 'js-cookie'
+  import wx from 'weixin-js-sdk'
 
   export default {
     name: "Wheel",
@@ -322,9 +315,9 @@
       this.initializing = false;
 
       this.$nextTick(() => {
-        // this.$autoHeight({
-        //   target: '.wheel_realpage_container'
-        // });
+        this.$autoHeight({
+          target: '.wheel_realpage_container'
+        });
         this.$autoHeight({
           target: '.wheel_winningdialog_wrapper'
         });
@@ -1240,7 +1233,6 @@
       },
       initJSSDK() {
         console.log('777', location.href.split('#')[0])
-        let wx = this.$wechat;
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           url: location.href.split('#')[0],
         }, {

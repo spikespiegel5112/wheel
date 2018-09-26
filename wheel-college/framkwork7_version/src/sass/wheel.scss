@@ -1,17 +1,6 @@
-.bg{
-  width: 16rem;
-  height: 42rem;
-  background-image: url('./image/wheel/bg_00000.jpg');
-  background-size: contain;
-  position: absolute;
-  top: 0;
-}
 .wheel_realpage_container {
   margin: 0 auto;
-  z-index: 1;
-
   .header {
-    position: relative;
     .nav {
       padding: 0.3rem 0.5rem;
       font-size: 0;
@@ -95,14 +84,13 @@
     top: 1rem;
   }
   .wheel_wrapper {
-    margin: 0 auto 0.5rem;
+    margin: 0 auto 1rem;
     width: 15rem;
-    height: 19rem;
+    height: 18rem;
     background-image: url('./image/wheel/ribbon_00000.png');
     background-size: 100%;
     background-repeat: no-repeat;
     overflow: hidden;
-    position: relative;
     .wheel {
       margin: 1.6rem auto 0.7rem;
       width: 13.5rem;
@@ -153,10 +141,8 @@
       }
     }
     .prizechance {
-      margin: 1.2rem 0 0 0;
       text-align: center;
       color: #fff;
-      position: relative;
       h1 {
         font-size: 0.75rem;
         line-height: 0.7rem;
