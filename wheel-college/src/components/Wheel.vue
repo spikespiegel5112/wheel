@@ -12,12 +12,14 @@
                 <router-link class="a" :to="{name:'activityRules'}">
                   活动规则
                 </router-link>
+                <!--<a @click="test">获取AndroidToken</a>-->
               </div>
               <div class="right">
                 <a class="a" @click="loginToCheckMyPrize">
                   我的奖品
                 </a>
               </div>
+              <!--{{window.webkit?window.webkit:''}}-->
             </div>
             <div class="chance">
               <div class="decoration">
@@ -31,7 +33,8 @@
                 </span>
               </div>
               <p>
-                您有<span>3</span>次领奖机会
+                <!--{{checkEnvironment()==='android'?window.android.getToken():''}}-->
+                您有<span>33</span>次领奖机会
               </p>
             </div>
 
@@ -158,14 +161,12 @@
         queryRewardTraceByLoginIdRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTraceByLoginIdRequest',
 
 
-        loginToGetRewardRecordListRequest: 'uaa/oauth/token',
-
         getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
         participate_accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_accept_reward',
 
 
-        accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
+        // accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
 
 
         // accessToken: '1fac3597-fb4c-4c55-aefe-8439bd3c17fa',
@@ -257,12 +258,31 @@
         environment: '',
         stateCodeData: {},
         openId: '',
-        loginId: ''
+        loginId: '',
+        userInfo: {},
+        environmentDictionary: [{
+          name: 'ios',
+          method: "window.webkit.messageHandlers.token.postMessage('')",
+          checker: 'window.webkit',
+          status: false
+        }, {
+          name: 'android',
+          method: 'window.android.getToken()',
+          checker: 'window.android',
+          status: false
+        }, {
+          name: 'wechat',
+          checker: "console",
+          status: false
+        }]
       }
     },
     computed: {
       activityId() {
         return this.$route.query.activityId || 3;
+      },
+      channel() {
+        return this.$route.query.channel || '';
       },
       userActivityId() {
         return this.$route.query.state;
@@ -307,7 +327,6 @@
         })
       },
       alreadyReceivedPrize(value) {
-        // alert(value)
         this.$nextTick(() => {
           sessionStorage.setItem('alreadyReceivedPrize', value)
         })
@@ -332,9 +351,6 @@
       this.redirectInfo = this.$route.query.routeto;
     },
     beforeMount() {
-      alert(window.location.href);
-      alert(window.location.href.length)
-      alert(window.location.href.indexOf('#/'))
       let fullPath = window.location.href;
 
       // if (window.location.href.indexOf('#/') === window.location.href.length - 2) {
@@ -360,19 +376,42 @@
       this.$nextTick(() => {
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
-      this.processStateCode();
-      alert(this.wechatAuthCode)
-      this.getToken({
-        type: 'wechat_code',
-        params: {
-          code: this.wechatAuthCode
-        }
-      });
+      this.getCacheData();
+      if (this.checkUserAgent() === 'wechat') {
+        this.processStateCode();
+      }
+      this.checkEnvironment();
+      if (!this.alreadyReceivedPrize && this.checkEnvironment() === 'wechat') {
+        alert(this.wechatAuthCode)
+        this.getWechatToken({
+          type: 'wechat_code',
+          params: {
+            code: this.wechatAuthCode
+          }
+        });
+      } else {
+        this.$nextTick(()=>{
+          let os = this.checkEnvironment()
+          if (os !== 'wechat') {
+            switch (this.checkEnvironment()) {
+              case 'android':
+                this.accessToken = window.android.getToken();
+                break;
+              case 'ios':
+                this.accessToken = window.webkit.messageHandlers.token.postMessage('')
+            }
+            alert('this.accessToken+' + this.accessToken)
+
+            alert('method+' + this.checkEnvironment())
+          }
+        });
+
+      }
+
       // this.getLoginId();
       this.checkUUID();
       this.getRewardRecordList();
       this.getStatisticImageUrl();
-      this.getCacheData();
       this.recordStatisticEvent('onLoad');
       this.initJSSDK();
 
@@ -383,14 +422,15 @@
         let code = decodeURIComponent(this.stateCode)
 
         code.split('^').forEach(item => {
-          console.log(item)
           result[item.split('=')[0]] = item.split('=')[1]
         });
         this.stateCodeData = result;
+        this.channel = result.channel;
+        this.activityId = result.activityId;
         console.log(result)
         console.log(code)
       },
-      getToken(options) {
+      getWechatToken(options) {
         return new Promise((resolve, reject) => {
           options = Object.assign({
             type: '',
@@ -428,7 +468,7 @@
                   this.cleanCache();
 
                   reject(error);
-                  alert(error.data.error)
+                  // alert(error.data.error)
                   break;
                 case 2:
                   this.dialogFlag = true;
@@ -438,15 +478,18 @@
 
                   // this.reinitializePage();
                   reject(error);
-                  alert(error.data.error)
+                  // alert(error.data.error)
                   break;
                 case 3:
+                  this.cleanCache();
 
+                  reject(error);
+                  // alert(error.data.error)
                   break;
               }
             })
           } else {
-            alert('未知环境')
+            alert('当前不是微信环境')
           }
         })
       },
@@ -470,43 +513,7 @@
           console.log(error)
         })
       },
-      checkEnvironment() {
-        let environment;
-        let environmentDictionary = [{
-          name: 'ios',
-          method: 'window.webkit',
-          status: false
-        }, {
-          name: 'android',
-          method: 'window.android',
-          status: false
-        }, {
-          name: 'wechat',
-          method: "console",
-          status: false
-        }];
 
-        environment = environmentDictionary.filter(item => eval(item.method) !== undefined)[0].name;
-        switch (environment) {
-          case 'ios':
-            console.warn(environment)
-            break;
-          case 'android':
-            console.warn(environment)
-            break;
-          case 'wechat':
-            console.warn(environment)
-            break;
-        }
-
-
-        //假设是ios 写死为ios,写死token到cookie里
-
-        // environment = 'ios'
-        // Cookies.set('wheel-accessToken', this.accessToken)
-        this.environment = environment;
-        return environment;
-      },
       getPrizeList() {
         this.loading = true;
         this.$http.get(this.$baseUrl + this.getActivityInfoRequest, {
@@ -633,61 +640,7 @@
           this.dialogFlag = true;
           this.loginToGetPrizeListFlag = true;
         } else {
-          this.$http.post(this.$baseUrl + this.participate_accept_rewardRequest + `/3`, {}, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              Authorization: `Bearer ${this.accessToken}`
-            }
-          }).then(response => {
-            console.log('participate_accept_rewardRequest', response)
-            let responseMetaData = response;
-            response = response.data;
-            switch (responseMetaData.code) {
-              case 10000:
-                console.log('10000', this.wheelData)
-                this.rewardCode = response.rewardCode;
-                this.wheelData.forEach((item1, index1) => {
-                  if (item1.value === response.rewardStr) {
-                    // if (item1.value === 10) {
-
-                    this.rotateWheel(index1).then(() => {
-                      this.alreadyReceivedPrize = true;
-                      this.alreadyReleasedPrize = true;
-
-                      this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
-                      this.rewardStr = response.rewardStr;
-                      this.prizeData = Object.assign(response, {
-                        rewardName: item1.name
-                      });
-                      alert('csds')
-
-                      this.$store.commit('turnOffWinningPrizeChance');
-
-                      this.receivePrize();
-                    })
-                  }
-                });
-                break;
-              case 10002:
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: responseMetaData.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-              case 10004:
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: responseMetaData.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-            }
-          }).catch(error => {
-            console.log(error)
-          })
+          this.receivePrizeByToken();
         }
 
       },
@@ -779,7 +732,7 @@
           return
         }
 
-        this.getToken({
+        this.getWechatToken({
           type: 'sms',
           params: {
             username: this.phoneNumber,
@@ -787,12 +740,13 @@
             source: 'zhinengxiaoyuan',
             promotionCode: '',
             openId: this.openId,
-            channel: this.stateCodeData.channel,
-            activityId: this.stateCodeData.activityId
+            channel: this.channel,
+            activityId: this.activityId
           }
         }).then(response => {
           this.dialogFlag = false;
           this.loginToGetPrizeListFlag = false;
+          sessionStorage.setItem('userInfo', JSON.stringify(response))
           this.receivePrizeByToken();
         });
       },
@@ -807,7 +761,7 @@
             }
           })
         } else {
-          this.$http.post(this.$baseUrl + this.participate_accept_rewardRequest + `/3`, {}, {
+          this.$http.post(this.$baseUrl + this.participate_accept_rewardRequest + `/${this.activityId}`, {}, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
               Authorization: `Bearer ${this.accessToken}`
@@ -833,7 +787,6 @@
                       this.prizeData = Object.assign(response, {
                         rewardName: item1.name
                       });
-                      alert('csds')
 
                       this.$store.commit('turnOffWinningPrizeChance');
 
@@ -1192,7 +1145,7 @@
         }
 
 
-        this.getToken({
+        this.getWechatToken({
           type: 'sms',
           params: {
             username: this.phoneNumber,
@@ -1200,11 +1153,11 @@
             source: 'zhinengxiaoyuan',
             promotionCode: '',
             openId: this.openId,
-            channel: this.stateCodeData.channel,
-            activityId: this.stateCodeData.activityId
+            channel: this.channel,
+            activityId: this.activityId
           }
         }).then(response => {
-          this.$http.post(this.$baseUrl + this.loginToGetRewardRecordListRequest, {
+          this.$http.post(this.$baseUrl + this.oauthTokenRequest, {
             grant_type: 'sms',
             username: this.phoneNumber,
             code: this.verificationCode
@@ -1223,7 +1176,6 @@
           }).then(response => {
             console.log(response)
             Cookies.set('wheel-accessToken', response.access_token);
-            Cookies.set('wheel-loginId', this.phoneNumber);
             Cookies.set('wheel-loginId', this.phoneNumber);
             this.$router.push({
               name: 'myPrizeList',
@@ -1269,6 +1221,9 @@
           console.log(Object.keys(JSON.parse(sessionStorage.getItem('prizeData'))).length > 0)
           this.cleanCache();
         }
+        if (typeof JSON.parse(sessionStorage.getItem('userInfo')) === 'object') {
+          this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        }
 
 
       },
@@ -1286,6 +1241,7 @@
           sessionStorage.removeItem('prizeData')
           sessionStorage.removeItem('actualRotate')
           sessionStorage.removeItem('dailyLimit')
+          sessionStorage.removeItem('userInfo')
         }, 500)
       },
       getStatisticImageUrl() {
@@ -1381,6 +1337,65 @@
         });
 
       },
+      checkUserAgent() {
+        let ua = navigator.userAgent;
+        let environment
+        // 安卓
+        let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;
+// IOS
+        let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+        let isWechat = !!ua.match(/MicroMessenger/i) === "micromessenger";
+        if (isAndroid) {
+          environment = 'android'
+          alert('Android');
+        } else if (isiOS) {
+          environment = 'ios'
+          alert('iOS');
+        } else if (isWechat) {
+          alert('wechat');
+          environment = 'wechat'
+        } else {
+          alert('web');
+          environment = 'web'
+        }
+
+        this.environment = environment;
+        return environment;
+      },
+      checkEnvironment() {
+        let environment;
+
+
+        environment = this.environmentDictionary.filter(item => eval(item.checker) !== undefined)[0].name;
+        switch (environment) {
+          case 'ios':
+            console.warn(environment)
+            alert('environment+' + environment)
+            break;
+          case 'android':
+            console.warn(environment)
+            alert('environment+' + environment)
+            break;
+          case 'wechat':
+            console.warn(environment)
+            alert('environment+' + environment)
+            break;
+        }
+
+
+        //假设是ios 写死为ios,写死token到cookie里
+
+        // environment = 'ios'
+        // Cookies.set('wheel-accessToken', this.accessToken)
+        this.environment = environment;
+        return environment;
+      },
+      // test(){
+      //   alert('window.android+'+window.android)
+      //   alert('window.android.getTokennnnbnnn+'+window.android.getToken)
+      //
+      //   alert('window.android.getToken()+'+window.android.getToken())
+      // }
     }
   }
 

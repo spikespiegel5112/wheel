@@ -18,10 +18,10 @@
         <!--<h1 class="title">奖品描述</h1>-->
         <li v-for="item in prizeData">
           <div class="prizetitle">
-            <img class="icon" :src="$replaceProtocol(item.product.icon)+'-style_100x100'"/>
+            <img v-if="item.product!==null" class="icon" :src="$replaceProtocol(item.product.icon)+'-style_100x100'"/>
             <div class="title">
-              <label>{{item.rewardName}}</label>
-              <div class="prize">
+              <label>{{item.rewardValue}}{{item.rewardDescription}}</label>
+              <div class="prize" v-if="item.product!==null">
                 <span>￥{{item.product.originalPrice}}</span>
               </div>
             </div>
@@ -33,9 +33,7 @@
                 立即领取
               </router-link>
             </div>
-
-
-            <div class="productbanner">
+            <div class="productbanner" v-if="item.product!==null">
               <img class="icon" :src="$replaceProtocol(item.product.image)+'-style_600x300'"/>
               <!--<img src="../image/wheel/prizepreview_00000.jpg"/>-->
             </div>
