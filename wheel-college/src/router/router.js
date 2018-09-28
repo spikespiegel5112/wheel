@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import Share from '@/components/Share'
 
 Vue.use(VueRouter)
 
 const routes = [{
+  path: '/collegewheel/index.html',
+  alias: '/',
+  name: 'wheel',
+  component: () => import('../components/Wheel.vue')
+}, {
   path: '/',
   name: 'wheel',
   component: () => import('../components/Wheel.vue')

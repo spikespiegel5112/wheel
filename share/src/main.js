@@ -1,7 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import FastClick from 'fastclick'
+// import FastClick from 'fastclick'
 // import axios from 'axios'
 import moment from 'moment';
 import {ConfirmPlugin} from 'vux'
@@ -19,7 +19,7 @@ Vue.use(util);
 
 Vue.use(ConfirmPlugin);
 // moment.locale("zh-cn");
-FastClick.attach(document.body);
+// FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
 Vue.prototype.$moment = moment;

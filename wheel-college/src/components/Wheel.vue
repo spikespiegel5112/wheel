@@ -26,7 +26,7 @@
                   <label></label>
                 </span>
                 <span class="right">
-                   <label></label>
+                  <label></label>
                   <i></i>
                 </span>
               </div>
@@ -40,7 +40,8 @@
           <div class="wheel_wrapper">
             <div class="wheel">
               <canvas id="wheelcanvas" :width="remUnit*13.5" :height="remUnit*13.5">抱歉！浏览器不支持。</canvas>
-              <a v-if="!alreadyReleasedPrize" class="begin" @click="drawPrize">
+
+              <a v-if="!alreadyReleasedPrize&&!alreadyReceivedPrize" class="begin" @click="drawAndReceivePrize">
                 <!--<span>开始抽奖</span>-->
               </a>
               <a v-else class="continue" @click="receivePrize">
@@ -101,6 +102,7 @@
           <div class="crown"></div>
           <div class="dialog_wrapper acceptprize">
             <p class="hint">
+
               已抽中"{{prizeData.rewardName}}"
             </p>
             <div class="banner">
@@ -109,7 +111,7 @@
             <a class="button" @click="receivePrizeByToken">免费领取</a>
             <div class="userinfo">
               <span>{{jsCookieInstance.get('wheel-loginId')}}</span>
-              <a @click="changeUser"><label>立即修改</label>></a>
+              <!--<a @click="changeUser"><label>立即修改</label>></a>-->
             </div>
           </div>
         </div>
@@ -126,7 +128,7 @@
                 <input class="smscode" placeholder="验证码" v-model="verificationCode"/>
                 <a class="button smscodebutton" :class="{disable:smsCodeState}" @click="sendSmsCode">{{smsCodeState?smsCodeCountDown+'s':'获取'}}</a>
               </div>
-              <a class="button" @click="loginAndGetMyPrize">确定</a>
+              <a class="button" @click="receivePrizeByForm">确定</a>
             </div>
           </div>
         </div>
@@ -146,12 +148,11 @@
     name: "Wheel",
     data() {
       return {
+        getUserInfoByTokenRequest: 'uaa/user',
+        oauthTokenRequest: 'uaa/oauth/token',
         getActivityInfoRequest: 'promotion-service/1.0.0/rotary_table_activity/getActivityInfo',
         participate_activityRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_activity',
         verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
-
-        accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
-
 
         queryRewardTraceRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTrace',
         queryRewardTraceByLoginIdRequest: 'promotion-service/1.0.0/rotary_table_activity/queryRewardTraceByLoginIdRequest',
@@ -161,7 +162,14 @@
 
         getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
+        participate_accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_accept_reward',
 
+
+        accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
+
+
+        // accessToken: '1fac3597-fb4c-4c55-aefe-8439bd3c17fa',
+        accessToken: '',
         statisticImageUrl: '',
 
         redirectingFlag: false,
@@ -245,11 +253,17 @@
         rewardCode: '',
         actualRotate: 0,
         dailyLimit: '',
-        pageFingerPrint: ''
-
+        pageFingerPrint: '',
+        environment: '',
+        stateCodeData: {},
+        openId: '',
+        loginId: ''
       }
     },
     computed: {
+      activityId() {
+        return this.$route.query.activityId || 3;
+      },
       userActivityId() {
         return this.$route.query.state;
       },
@@ -257,6 +271,7 @@
         return this.$route.query.state;
       },
       wechatAuthCode() {
+        console.log(this.$route)
         return this.$route.query.code
       },
       stateCode() {
@@ -304,6 +319,8 @@
         sessionStorage.setItem('rewardStr', value)
       },
       prizeData(value) {
+        console.log('prizeData', value)
+        sessionStorage.removeItem('prizeData')
         sessionStorage.setItem('prizeData', JSON.stringify(value))
       },
       dailyLimit(value) {
@@ -315,7 +332,14 @@
       this.redirectInfo = this.$route.query.routeto;
     },
     beforeMount() {
+      alert(window.location.href);
+      alert(window.location.href.length)
+      alert(window.location.href.indexOf('#/'))
+      let fullPath = window.location.href;
 
+      // if (window.location.href.indexOf('#/') === window.location.href.length - 2) {
+      //   window.assign()
+      // }
 
     },
     mounted() {
@@ -336,7 +360,15 @@
       this.$nextTick(() => {
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
-
+      this.processStateCode();
+      alert(this.wechatAuthCode)
+      this.getToken({
+        type: 'wechat_code',
+        params: {
+          code: this.wechatAuthCode
+        }
+      });
+      // this.getLoginId();
       this.checkUUID();
       this.getRewardRecordList();
       this.getStatisticImageUrl();
@@ -346,9 +378,142 @@
 
     },
     methods: {
+      processStateCode() {
+        let result = [];
+        let code = decodeURIComponent(this.stateCode)
+
+        code.split('^').forEach(item => {
+          console.log(item)
+          result[item.split('=')[0]] = item.split('=')[1]
+        });
+        this.stateCodeData = result;
+        console.log(result)
+        console.log(code)
+      },
+      getToken(options) {
+        return new Promise((resolve, reject) => {
+          options = Object.assign({
+            type: '',
+            params: {}
+          }, options);
+          let that = this;
+          if (this.checkEnvironment() === 'wechat') {
+            this.$http.post(this.$baseUrl + this.oauthTokenRequest, Object.assign({
+              grant_type: options.type
+            }, options.params), {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization: 'Basic YW5kcm9pZDphZG1pbg=='
+              },
+              transformRequest: [function (data) {
+                let ret = '';
+                for (let it in data) {
+                  ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+              }]
+            }).then(response => {
+              console.log('oauthTokenRequest', response)
+              this.accessToken = response.access_token;
+              Cookies.set('wheel-accessToken', response.access_token);
+
+              resolve(response);
+            }).catch(error => {
+              console.log('error', error)
+              switch (error.data.code) {
+                case 1:
+                  this.dialogFlag = true;
+                  this.loginToGetPrizeListFlag = true;
+                  this.openId = error.data.openId;
+                  this.cleanCache();
+
+                  reject(error);
+                  alert(error.data.error)
+                  break;
+                case 2:
+                  this.dialogFlag = true;
+                  this.loginToGetPrizeListFlag = true;
+                  this.openId = error.data.openId;
+                  this.cleanCache();
+
+                  // this.reinitializePage();
+                  reject(error);
+                  alert(error.data.error)
+                  break;
+                case 3:
+
+                  break;
+              }
+            })
+          } else {
+            alert('未知环境')
+          }
+        })
+      },
+      reinitializePage() {
+        let stateCode = `channel=${this.loginId}^activityId=${this.activityId}`
+        location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + stateCode + '#wechat_redirect')
+      },
+      getLoginId() {
+        this.$http.get(this.$baseUrl + this.getUserInfoByTokenRequest, {
+          params: {
+            access_token: this.accessToken
+          },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(response => {
+          console.log(response)
+          this.loginId = response.name;
+          Cookies.set('wheel-loginId', this.loginId)
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      checkEnvironment() {
+        let environment;
+        let environmentDictionary = [{
+          name: 'ios',
+          method: 'window.webkit',
+          status: false
+        }, {
+          name: 'android',
+          method: 'window.android',
+          status: false
+        }, {
+          name: 'wechat',
+          method: "console",
+          status: false
+        }];
+
+        environment = environmentDictionary.filter(item => eval(item.method) !== undefined)[0].name;
+        switch (environment) {
+          case 'ios':
+            console.warn(environment)
+            break;
+          case 'android':
+            console.warn(environment)
+            break;
+          case 'wechat':
+            console.warn(environment)
+            break;
+        }
+
+
+        //假设是ios 写死为ios,写死token到cookie里
+
+        // environment = 'ios'
+        // Cookies.set('wheel-accessToken', this.accessToken)
+        this.environment = environment;
+        return environment;
+      },
       getPrizeList() {
         this.loading = true;
-        this.$http.get(this.$baseUrl + this.getActivityInfoRequest).then(response => {
+        this.$http.get(this.$baseUrl + this.getActivityInfoRequest, {
+          params: {
+            activityId: 3
+          }
+        }).then(response => {
           console.log(response)
           this.loading = false;
           response = response.data;
@@ -364,7 +529,7 @@
               name: item.rewardName,
               image: item.rewardImage !== null ? item.rewardImage + '-style_100x100' : '',
               // image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
-              value: item.activityRewardMappingId,
+              value: item.rewardStr,
             })
           });
 
@@ -409,7 +574,7 @@
               this.prizeData = response;
               this.rewardCode = response.rewardCode;
               this.wheelData.forEach((item1, index1) => {
-                if (item1.value === response.activityRewardMappingId) {
+                if (item1.value === response.rewardStr) {
                   // if (item1.value === 10) {
                   this.rotateWheel(index1).then(() => {
                     this.alreadyReceivedPrize = false;
@@ -447,17 +612,83 @@
       receivePrize() {
         this.loading = false;
         this.recordStatisticEvent('receivePrize');
+        alert(Cookies.get('wheel-accessToken'))
 
-        if (Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
+        if (Cookies.get('wheel-accessToken') !== undefined) {
           this.dialogFlag = true;
-          this.phoneNumberReceiveFlag = true;
-          this.tokenReceiveFlag = false;
-        } else {
-          this.dialogFlag = true;
-          this.phoneNumberReceiveFlag = false;
+          // this.phoneNumberReceiveFlag = false;
           this.tokenReceiveFlag = true;
+        } else if (Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
+          this.dialogFlag = true;
+          // this.phoneNumberReceiveFlag = true;
+          this.tokenReceiveFlag = false;
         }
 
+
+      },
+      drawAndReceivePrize() {
+        alert('drawAndReceivePrize')
+        let tempPrizeData;
+        if (this.accessToken === '') {
+          this.dialogFlag = true;
+          this.loginToGetPrizeListFlag = true;
+        } else {
+          this.$http.post(this.$baseUrl + this.participate_accept_rewardRequest + `/3`, {}, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: `Bearer ${this.accessToken}`
+            }
+          }).then(response => {
+            console.log('participate_accept_rewardRequest', response)
+            let responseMetaData = response;
+            response = response.data;
+            switch (responseMetaData.code) {
+              case 10000:
+                console.log('10000', this.wheelData)
+                this.rewardCode = response.rewardCode;
+                this.wheelData.forEach((item1, index1) => {
+                  if (item1.value === response.rewardStr) {
+                    // if (item1.value === 10) {
+
+                    this.rotateWheel(index1).then(() => {
+                      this.alreadyReceivedPrize = true;
+                      this.alreadyReleasedPrize = true;
+
+                      this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
+                      this.rewardStr = response.rewardStr;
+                      this.prizeData = Object.assign(response, {
+                        rewardName: item1.name
+                      });
+                      alert('csds')
+
+                      this.$store.commit('turnOffWinningPrizeChance');
+
+                      this.receivePrize();
+                    })
+                  }
+                });
+                break;
+              case 10002:
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: responseMetaData.message,
+                  onConfirm() {
+                  }
+                });
+                break;
+              case 10004:
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: responseMetaData.message,
+                  onConfirm() {
+                  }
+                });
+                break;
+            }
+          }).catch(error => {
+            console.log(error)
+          })
+        }
 
       },
       getCachedCircleNumber() {
@@ -548,135 +779,24 @@
           return
         }
 
-        this.$http.post(this.$baseUrl + this.accept_rewardRequest + `/${this.phoneNumber}`, {
-          verificationCode: this.verificationCode,
-          rewardCode: this.rewardCode
-        }, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          transformRequest: [function (data) {
-            let ret = '';
-            for (let it in data) {
-              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-            }
-            return ret
-          }]
-        }).then(response => {
-          console.log(response)
-
-          switch (response.code) {
-            case 10000:
-              Cookies.set('wheel-accessToken', response.data.accessToken);
-              Cookies.set('wheel-loginId', this.phoneNumber);
-              this.alreadyReleasedPrize = true;
-              this.alreadyReceivedPrize = true;
-              this.activityInfo.dailyLimit = Number(this.activityInfo.dailyLimit - 1) === 0 ? Number(this.activityInfo.dailyLimit - 1) : Number(this.activityInfo.dailyLimit);
-
-              this.rewardStr = response.data.rewardStr;
-
-              this.$nextTick(() => {
-                this.$router.push({
-                  name: 'acceptPrize',
-                  query: {
-                    rewardStr: this.rewardStr
-                  }
-                });
-              });
-
-              break;
-            case 10002:
-              Cookies.set('wheel-accessToken', response.data.accessToken);
-              Cookies.set('wheel-loginId', this.phoneNumber);
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
-            case 10004:
-              Cookies.set('wheel-accessToken', response.data.accessToken);
-              Cookies.set('wheel-loginId', this.phoneNumber);
-
-              this.alreadyReceivedPrize = false;
-              this.alreadyReleasedPrize = true;
-
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
-            case 10010:
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
-            case 10011:
-              Cookies.set('wheel-accessToken', response.data.accessToken);
-              Cookies.set('wheel-loginId', this.phoneNumber);
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
-            case 10012:
-              Cookies.set('wheel-accessToken', response.data.accessToken);
-              Cookies.set('wheel-loginId', this.phoneNumber);
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
-            case 10013:
-              Cookies.set('wheel-accessToken', response.data.accessToken);
-              Cookies.set('wheel-loginId', this.phoneNumber);
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                  that.cleanCache();
-
-                }
-              });
-              break;
-            case 10014:
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
-            default:
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              });
-              break;
+        this.getToken({
+          type: 'sms',
+          params: {
+            username: this.phoneNumber,
+            code: this.verificationCode,
+            source: 'zhinengxiaoyuan',
+            promotionCode: '',
+            openId: this.openId,
+            channel: this.stateCodeData.channel,
+            activityId: this.stateCodeData.activityId
           }
-        }).catch(error => {
-          console.log(error)
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: error.data.message,
-            onConfirm() {
-            }
-          })
+        }).then(response => {
+          this.dialogFlag = false;
+          this.loginToGetPrizeListFlag = false;
+          this.receivePrizeByToken();
         });
       },
-      async receivePrizeByToken() {
+      receivePrizeByToken() {
         let that = this;
         if (this.alreadyReceivedPrize) {
           // alert('direct')
@@ -687,128 +807,58 @@
             }
           })
         } else {
-          this.$http.post(this.$baseUrl + this.accept_rewardRequest + '?access_token=' + Cookies.get('wheel-accessToken'), {
-            rewardCode: this.rewardCode
-          }, {
+          this.$http.post(this.$baseUrl + this.participate_accept_rewardRequest + `/3`, {}, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            transformRequest: [function (data) {
-              let ret = '';
-              for (let it in data) {
-                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-              }
-              return ret
-            }]
+              Authorization: `Bearer ${this.accessToken}`
+            }
           }).then(response => {
-            console.log('receivePrizeByToken', response)
-            let that = this;
-
-
-            switch (response.code) {
+            console.log('participate_accept_rewardRequest', response)
+            let responseMetaData = response;
+            response = response.data;
+            switch (responseMetaData.code) {
               case 10000:
-                this.alreadyReleasedPrize = true;
-                this.alreadyReceivedPrize = true;
-                this.rewardStr = response.data.rewardStr;
+                console.log('10000', this.wheelData)
+                this.rewardCode = response.rewardCode;
+                this.wheelData.forEach((item1, index1) => {
+                  if (item1.value === response.rewardStr) {
+                    // if (item1.value === 10) {
 
-                setTimeout(() => {
-                  this.$router.push({
-                    name: 'acceptPrize',
-                    query: {
-                      rewardStr: this.rewardStr
-                    }
-                  });
-                }, 500);
+                    this.rotateWheel(index1).then(() => {
+                      this.alreadyReceivedPrize = true;
+                      this.alreadyReleasedPrize = true;
+
+                      this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
+                      this.rewardStr = response.rewardStr;
+                      this.prizeData = Object.assign(response, {
+                        rewardName: item1.name
+                      });
+                      alert('csds')
+
+                      this.$store.commit('turnOffWinningPrizeChance');
+
+                      this.receivePrize();
+                    })
+                  }
+                });
                 break;
               case 10002:
-                //因为cookie已经存有token所以不需要获取也不需要重新存储token
-                // Cookies.set('wheel-accessToken', response.data.accessToken);
-                // Cookies.set('wheel-loginId', this.phoneNumber);
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: response.message,
+                  title: responseMetaData.message,
                   onConfirm() {
                   }
                 });
                 break;
               case 10004:
-
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: response.message,
-                  // title: '账号已变更，请重新领取',
-                  onConfirm() {
-                    that.cleanCache();
-                  }
-                });
-
-                break;
-              case 10010:
-                if (response.data !== null) {
-                  Cookies.set('wheel-accessToken', response.data.accessToken);
-                  Cookies.set('wheel-loginId', this.phoneNumber);
-                }
-
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
+                  title: responseMetaData.message,
                   onConfirm() {
                   }
                 });
-                break;
-              case 10011:
-                if (response.data !== null) {
-                  Cookies.set('wheel-accessToken', response.data.accessToken);
-                  Cookies.set('wheel-loginId', this.phoneNumber);
-                }
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-              case 10012:
-                if (response.data !== null) {
-                  Cookies.set('wheel-accessToken', response.data.accessToken);
-                  Cookies.set('wheel-loginId', this.phoneNumber);
-                }
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-              case 10013:
-                if (response.data !== null) {
-                  Cookies.set('wheel-accessToken', response.data.accessToken);
-                  Cookies.set('wheel-loginId', this.phoneNumber);
-                }
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                    that.cleanCache();
-                  }
-                });
-                break;
-              case 10014:
-                if (response.data !== null) {
-                  Cookies.set('wheel-accessToken', response.data.accessToken);
-                  Cookies.set('wheel-loginId', this.phoneNumber);
-                }
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-              default:
                 break;
             }
-            this.phoneNumberReceiveFlag = false;
           }).catch(error => {
             console.log(error)
             if (error.status === 401) {
@@ -817,12 +867,13 @@
                 title: '当前登录信息已失效',
                 onConfirm() {
                   that.tokenReceiveFlag = false;
-                  that.phoneNumberReceiveFlag = true;
+                  // that.phoneNumberReceiveFlag = true;
                 }
               })
             }
-
           });
+
+
         }
       },
       drawCanvas() {
@@ -1050,7 +1101,7 @@
       changeUser() {
         this.phoneNumber = '';
         this.verificationCode = '';
-        this.phoneNumberReceiveFlag = true;
+        // this.phoneNumberReceiveFlag = true;
         this.tokenReceiveFlag = false;
         Cookies.remove('')
       },
@@ -1067,12 +1118,15 @@
       },
       close() {
         this.dialogFlag = false;
-        this.phoneNumberReceiveFlag = false;
+        // this.phoneNumberReceiveFlag = false;
         this.tokenReceiveFlag = false;
         this.loginToGetPrizeListFlag = false;
       },
+      checkAuthorized() {
+        return Cookies.get('wheel-accessToken') === 'undefined' || Cookies.get('wheel-accessToken') === undefined;
+      },
       loginToCheckMyPrize() {
-        if (Cookies.get('wheel-accessToken') === 'undefined' || Cookies.get('wheel-loginId') === 'undefined' || Cookies.get('wheel-accessToken') === undefined || Cookies.get('wheel-loginId') === undefined) {
+        if (this.checkAuthorized()) {
           this.dialogFlag = true;
           this.loginToGetPrizeListFlag = true;
 
@@ -1086,7 +1140,8 @@
           })
         }
       },
-      loginAndGetMyPrize() {
+      login() {
+
         this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
         this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
         if (this.phoneNumber === '') {
@@ -1136,43 +1191,59 @@
           return
         }
 
-        this.$http.post(this.$baseUrl + this.loginToGetRewardRecordListRequest, {
-          grant_type: 'sms',
-          username: this.phoneNumber,
-          code: this.verificationCode
-        }, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic YW5kcm9pZDphZG1pbg=='
-          },
-          transformRequest: [function (data) {
-            let ret = '';
-            for (let it in data) {
-              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-            }
-            return ret
-          }]
+
+        this.getToken({
+          type: 'sms',
+          params: {
+            username: this.phoneNumber,
+            code: this.verificationCode,
+            source: 'zhinengxiaoyuan',
+            promotionCode: '',
+            openId: this.openId,
+            channel: this.stateCodeData.channel,
+            activityId: this.stateCodeData.activityId
+          }
         }).then(response => {
-          console.log(response)
-          Cookies.set('wheel-accessToken', response.access_token);
-          Cookies.set('wheel-loginId', this.phoneNumber);
-          Cookies.set('wheel-loginId', this.phoneNumber);
-          this.$router.push({
-            name: 'myPrizeList',
-            query: {
-              loginId: Cookies.get('wheel-loginId'),
-              pageNo: 0,
-              token: response.access_token
-            }
-          })
-        }).catch(error => {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: error.data.error_description || error.data.message,
-            onConfirm() {
-            }
+          this.$http.post(this.$baseUrl + this.loginToGetRewardRecordListRequest, {
+            grant_type: 'sms',
+            username: this.phoneNumber,
+            code: this.verificationCode
+          }, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Authorization': 'Basic YW5kcm9pZDphZG1pbg=='
+            },
+            transformRequest: [function (data) {
+              let ret = '';
+              for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+              }
+              return ret
+            }]
+          }).then(response => {
+            console.log(response)
+            Cookies.set('wheel-accessToken', response.access_token);
+            Cookies.set('wheel-loginId', this.phoneNumber);
+            Cookies.set('wheel-loginId', this.phoneNumber);
+            this.$router.push({
+              name: 'myPrizeList',
+              query: {
+                loginId: Cookies.get('wheel-loginId'),
+                pageNo: 0,
+                token: response.access_token
+              }
+            })
+          }).catch(error => {
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: error.data.error_description || error.data.message,
+              onConfirm() {
+              }
+            })
           })
         })
+
+
       },
 
 
@@ -1202,7 +1273,6 @@
 
       },
       cleanCache() {
-
         this.alreadyReleasedPrize = false;
         this.alreadyReceivedPrize = false;
         this.dialogFlag = false;
@@ -1217,7 +1287,6 @@
           sessionStorage.removeItem('actualRotate')
           sessionStorage.removeItem('dailyLimit')
         }, 500)
-
       },
       getStatisticImageUrl() {
         this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
@@ -1231,11 +1300,11 @@
         document.querySelector('.wheel_realpage_container').appendChild(imageTag);
       },
       checkUUID() {
-        if (!Cookies.get('Wheel-pageFingerPrint')) {
+        if (!Cookies.get('wheel-pageFingerPrint')) {
           this.pageFingerPrint = this.$generateUUID();
-          Cookies.set('Wheel-pageFingerPrint', this.pageFingerPrint)
+          Cookies.set('wheel-pageFingerPrint', this.pageFingerPrint)
         } else {
-          this.pageFingerPrint = Cookies.get('Wheel-pageFingerPrint');
+          this.pageFingerPrint = Cookies.get('wheel-pageFingerPrint');
         }
       },
       initJSSDK() {
@@ -1320,6 +1389,6 @@
 
 <style scoped lang="scss">
   /*.chance{*/
-    /*font-size: 0;*/
+  /*font-size: 0;*/
   /*}*/
 </style>
