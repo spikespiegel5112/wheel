@@ -12,7 +12,7 @@
                 <router-link class="a" :to="{name:'activityRules'}">
                   活动规则
                 </router-link>
-                <!--<a @click="test">获取AndroidToken</a>-->
+                <a>{{accessToken}}</a>
               </div>
               <div class="right">
                 <a class="a" @click="loginToCheckMyPrize">
@@ -34,7 +34,7 @@
               </div>
               <p>
                 <!--{{checkEnvironment()==='android'?window.android.getToken():''}}-->
-                您有<span>33</span>次领奖机会
+                您有<span>{{dailyTimes!==-1?dailyTimes:'无限'}}</span>次领奖机会
               </p>
             </div>
 
@@ -118,7 +118,7 @@
             </div>
           </div>
         </div>
-        <div v-if="loginToGetPrizeListFlag" class="">
+        <div v-if="loginToGetPrizeFlag" class="">
           <div class="dialog_wrapper inputphonenumber">
             <p class="hint">
               登 录
@@ -131,7 +131,9 @@
                 <input class="smscode" placeholder="验证码" v-model="verificationCode"/>
                 <a class="button smscodebutton" :class="{disable:smsCodeState}" @click="sendSmsCode">{{smsCodeState?smsCodeCountDown+'s':'获取'}}</a>
               </div>
-              <a class="button" @click="receivePrizeByForm">确定</a>
+
+              <a v-if="loginToGetPrizeListFlag" class="button" @click="login">确定</a>
+              <a v-if="loginToGetPrizeFlag" class="button" @click="receivePrizeByForm">确定</a>
             </div>
           </div>
         </div>
@@ -164,6 +166,8 @@
         getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
         participate_accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/participate_accept_reward',
+
+        get_daily_numberRequest: 'promotion-service/1.0.0/activity_participate_number/get_daily_number',
 
 
         // accept_rewardRequest: 'promotion-service/1.0.0/rotary_table_activity/accept_reward',
@@ -243,6 +247,7 @@
         phoneNumber: '',
         phoneNumberReceiveFlag: false,
         tokenReceiveFlag: false,
+        loginToGetPrizeFlag: false,
         loginToGetPrizeListFlag: false,
         smsCodeCountDown: 0,
         smsCodeCountDownDuration: 60,
@@ -274,16 +279,17 @@
           name: 'wechat',
           checker: "console",
           status: false
-        }]
+        }],
+        dailyTimes: 0,
+        channel: '',
+        activityId: ''
       }
     },
     computed: {
-      activityId() {
-        return this.$route.query.activityId || 3;
-      },
-      channel() {
-        return this.$route.query.channel || '';
-      },
+      // activityId() {
+      //   return this.$route.query.activityId || 3;
+      // },
+
       userActivityId() {
         return this.$route.query.state;
       },
@@ -295,6 +301,7 @@
         return this.$route.query.code
       },
       stateCode() {
+        alert(this.$route.query.state)
         return this.$route.query.state
       },
 
@@ -345,10 +352,26 @@
       dailyLimit(value) {
         // alert(value)
         sessionStorage.setItem('dailyLimit', value)
+      },
+      redirectInfo(value) {
+        // alert('dsds')
+        // alert(value)
+        console.log(value)
+        if (value === 'shareredirect') {
+          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+        }
+      },
+      accessToken(value) {
+        if (value !== '') {
+          Cookies.set('wheel-accessToken', value)
+        }
       }
     },
     created() {
       this.redirectInfo = this.$route.query.routeto;
+      this.channel = this.$route.query.channel;
+      this.activityId = this.$route.query.activityId;
+
     },
     beforeMount() {
       let fullPath = window.location.href;
@@ -377,22 +400,68 @@
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
       this.getCacheData();
-      if (this.checkUserAgent() === 'wechat') {
+      if (this.checkEnvironment() === 'wechat') {
         this.processStateCode();
       }
       this.checkEnvironment();
+
       if (!this.alreadyReceivedPrize && this.checkEnvironment() === 'wechat') {
-        alert(this.wechatAuthCode)
+        alert('this.getWechatToken', this.wechatAuthCode)
         this.getWechatToken({
           type: 'wechat_code',
           params: {
             code: this.wechatAuthCode
           }
-        });
+        }).then(response => {
+          console.log('this.getWechatToken', response)
+          this.accessToken = response.access_token;
+          let that=this;
+          this.$http.get(this.$baseUrl + this.get_daily_numberRequest + `/${this.activityId}`, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Authorization': 'Bearer ' + response.access_token
+            }
+          }).then(response => {
+            console.log('get_daily_numberRequest', response)
+            this.dailyTimes = response.data;
+          }).catch(error => {
+            console.log(error)
+            if (error.status === 401) {
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: '当前登录信息已失效',
+                onConfirm() {
+                  that.tokenReceiveFlag = false;
+                }
+              });
+              switch (this.checkEnvironment()) {
+                case 'android':
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: '当前登录信息已失效',
+                    onConfirm() {
+                      that.tokenReceiveFlag = false;
+                      window.android.refreshToken()
+                    }
+                  });
+                  break;
+                case 'ios':
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: '当前登录信息已失效',
+                    onConfirm() {
+                      that.tokenReceiveFlag = false;
+                      window.android.refreshToken()
+                    }
+                  });
+                  break;
+              }
+            }
+          });
+        })
       } else {
-        this.$nextTick(()=>{
-          let os = this.checkEnvironment()
-          if (os !== 'wechat') {
+        this.$nextTick(() => {
+          if (this.checkEnvironment() !== 'wechat') {
             switch (this.checkEnvironment()) {
               case 'android':
                 this.accessToken = window.android.getToken();
@@ -400,15 +469,14 @@
               case 'ios':
                 this.accessToken = window.webkit.messageHandlers.token.postMessage('')
             }
+            Cookies.set('wheel-accessToken', this.accessToken)
             alert('this.accessToken+' + this.accessToken)
-
-            alert('method+' + this.checkEnvironment())
+            // alert('method+' + this.checkEnvironment())
           }
         });
-
+        this.getLoginId();
       }
 
-      // this.getLoginId();
       this.checkUUID();
       this.getRewardRecordList();
       this.getStatisticImageUrl();
@@ -427,7 +495,8 @@
         this.stateCodeData = result;
         this.channel = result.channel;
         this.activityId = result.activityId;
-        console.log(result)
+        console.log('processStateCode', result)
+        console.log('channel', this.channel)
         console.log(code)
       },
       getWechatToken(options) {
@@ -436,7 +505,6 @@
             type: '',
             params: {}
           }, options);
-          let that = this;
           if (this.checkEnvironment() === 'wechat') {
             this.$http.post(this.$baseUrl + this.oauthTokenRequest, Object.assign({
               grant_type: options.type
@@ -455,7 +523,8 @@
             }).then(response => {
               console.log('oauthTokenRequest', response)
               this.accessToken = response.access_token;
-              Cookies.set('wheel-accessToken', response.access_token);
+              // Cookies.set('wheel-accessToken', response.access_token);
+              this.getLoginId();
 
               resolve(response);
             }).catch(error => {
@@ -463,33 +532,42 @@
               switch (error.data.code) {
                 case 1:
                   this.dialogFlag = true;
-                  this.loginToGetPrizeListFlag = true;
+                  this.loginToGetPrizeFlag = true;
                   this.openId = error.data.openId;
                   this.cleanCache();
 
                   reject(error);
-                  // alert(error.data.error)
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: error.data.error,
+                    onConfirm() {}
+                  });
                   break;
                 case 2:
                   this.dialogFlag = true;
-                  this.loginToGetPrizeListFlag = true;
-                  this.openId = error.data.openId;
+                  this.loginToGetPrizeFlag = true;
                   this.cleanCache();
-
                   // this.reinitializePage();
                   reject(error);
-                  // alert(error.data.error)
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: error.data.error,
+                    onConfirm() {}
+                  });
                   break;
                 case 3:
                   this.cleanCache();
-
                   reject(error);
-                  // alert(error.data.error)
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: error.data.error,
+                    onConfirm() {}
+                  });
                   break;
               }
             })
           } else {
-            alert('当前不是微信环境')
+            alert('当前不是微信环境也不是原生环境')
           }
         })
       },
@@ -500,10 +578,11 @@
       getLoginId() {
         this.$http.get(this.$baseUrl + this.getUserInfoByTokenRequest, {
           params: {
-            access_token: this.accessToken
+            access_token: Cookies.get('wheel-accessToken')
           },
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + this.accessToken
           }
         }).then(response => {
           console.log(response)
@@ -511,14 +590,38 @@
           Cookies.set('wheel-loginId', this.loginId)
         }).catch(error => {
           console.log(error)
-        })
+          if (error.status === 401) {
+            switch (this.checkEnvironment()) {
+              case 'android':
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效',
+                  onConfirm() {
+                    that.tokenReceiveFlag = false;
+                    window.android.refreshToken()
+                  }
+                });
+                break;
+              case 'ios':
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效',
+                  onConfirm() {
+                    that.tokenReceiveFlag = false;
+                    window.android.refreshToken()
+                  }
+                });
+                break;
+            }
+          }
+        });
       },
 
       getPrizeList() {
         this.loading = true;
         this.$http.get(this.$baseUrl + this.getActivityInfoRequest, {
           params: {
-            activityId: 3
+            activityId: this.activityId
           }
         }).then(response => {
           console.log(response)
@@ -619,7 +722,7 @@
       receivePrize() {
         this.loading = false;
         this.recordStatisticEvent('receivePrize');
-        alert(Cookies.get('wheel-accessToken'))
+        // alert(Cookies.get('wheel-accessToken'))
 
         if (Cookies.get('wheel-accessToken') !== undefined) {
           this.dialogFlag = true;
@@ -634,11 +737,11 @@
 
       },
       drawAndReceivePrize() {
-        alert('drawAndReceivePrize')
+        // alert('drawAndReceivePrize')
         let tempPrizeData;
         if (this.accessToken === '') {
           this.dialogFlag = true;
-          this.loginToGetPrizeListFlag = true;
+          this.loginToGetPrizeFlag = true;
         } else {
           this.receivePrizeByToken();
         }
@@ -681,74 +784,140 @@
           }
         })
       },
+      validateForm() {
+        return new Promise((resolve, reject) => {
+          this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
+          this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
+          if (this.phoneNumber === '') {
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '手机号未填写',
+              onConfirm() {
+              }
+            });
+            reject();
+            return
+          }
+
+          if (/^[1-9]+[0-9]*]*$/.test(this.phoneNumber) === false) {
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '手机号不是数字',
+              onConfirm() {
+              }
+            });
+            reject();
+            return
+          }
+          if (/^[1-9]+[0-9]*]*$/.test(this.verificationCode) === false) {
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '验证码不是数字',
+              onConfirm() {
+              }
+            });
+            reject();
+            return
+          }
+          if (/^\d{6}$/.test(this.verificationCode) === false) {
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '验证码不为6位数字',
+              onConfirm() {
+              }
+            });
+            reject();
+            return
+          }
+          if (this.verificationCode === '') {
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '验证码未填写',
+              onConfirm() {
+              }
+            });
+            reject();
+
+          }
+          resolve()
+        })
+      },
       receivePrizeByForm() {
         let that = this;
-        this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
-        this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
-        if (this.phoneNumber === '') {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '手机号未填写',
-            onConfirm() {
+        console.log('this.channel', this.channel)
+        this.validateForm().then(() => {
+          this.getWechatToken({
+            type: 'sms',
+            params: {
+              username: this.phoneNumber,
+              code: this.verificationCode,
+              source: 'zhinengxiaoyuan',
+              promotionCode: '',
+              openId: this.openId,
+              channel: this.channel,
+              activityId: this.activityId
             }
+          }).then(response => {
+            this.dialogFlag = false;
+            this.loginToGetPrizeFlag = false;
+            sessionStorage.setItem('userInfo', JSON.stringify(response))
+            this.receivePrizeByToken();
           });
-          return
-        }
+        })
 
-        if (/^[1-9]+[0-9]*]*$/.test(this.phoneNumber) === false) {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '手机号不是数字',
-            onConfirm() {
+      },
+      login() {
+        this.validateForm().then(() => {
+          this.getWechatToken({
+            type: 'sms',
+            params: {
+              username: this.phoneNumber,
+              code: this.verificationCode,
+              source: 'zhinengxiaoyuan',
+              promotionCode: '',
+              openId: this.openId,
+              channel: this.channel,
+              activityId: this.activityId
             }
-          });
-          return
-        }
-        if (/^[1-9]+[0-9]*]*$/.test(this.verificationCode) === false) {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '验证码不是数字',
-            onConfirm() {
-            }
-          });
-          return
-        }
-        if (/^\d{6}$/.test(this.verificationCode) === false) {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '验证码不为6位数字',
-            onConfirm() {
-            }
-          });
-          return
-        }
-        if (this.verificationCode === '') {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '验证码未填写',
-            onConfirm() {
-            }
-          });
-          return
-        }
-
-        this.getWechatToken({
-          type: 'sms',
-          params: {
-            username: this.phoneNumber,
-            code: this.verificationCode,
-            source: 'zhinengxiaoyuan',
-            promotionCode: '',
-            openId: this.openId,
-            channel: this.channel,
-            activityId: this.activityId
-          }
-        }).then(response => {
-          this.dialogFlag = false;
-          this.loginToGetPrizeListFlag = false;
-          sessionStorage.setItem('userInfo', JSON.stringify(response))
-          this.receivePrizeByToken();
-        });
+          }).then(response => {
+            this.$http.post(this.$baseUrl + this.oauthTokenRequest, {
+              grant_type: 'sms',
+              username: this.phoneNumber,
+              code: this.verificationCode
+            }, {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic YW5kcm9pZDphZG1pbg=='
+              },
+              transformRequest: [function (data) {
+                let ret = '';
+                for (let it in data) {
+                  ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+              }]
+            }).then(response => {
+              console.log(response)
+              Cookies.set('wheel-accessToken', response.access_token);
+              Cookies.set('wheel-loginId', this.phoneNumber);
+              this.$router.push({
+                name: 'myPrizeList',
+                query: {
+                  loginId: Cookies.get('wheel-loginId'),
+                  pageNo: 0,
+                  token: response.access_token
+                }
+              })
+            }).catch(error => {
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: error.data.error_description || error.data.message,
+                onConfirm() {
+                }
+              })
+            })
+          })
+        })
       },
       receivePrizeByToken() {
         let that = this;
@@ -815,14 +984,28 @@
           }).catch(error => {
             console.log(error)
             if (error.status === 401) {
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: '当前登录信息已失效',
-                onConfirm() {
-                  that.tokenReceiveFlag = false;
-                  // that.phoneNumberReceiveFlag = true;
-                }
-              })
+              switch (this.checkEnvironment()) {
+                case 'android':
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: '当前登录信息已失效',
+                    onConfirm() {
+                      that.tokenReceiveFlag = false;
+                      window.android.refreshToken()
+                    }
+                  });
+                  break;
+                case 'ios':
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: '当前登录信息已失效',
+                    onConfirm() {
+                      that.tokenReceiveFlag = false;
+                      window.android.refreshToken()
+                    }
+                  });
+                  break;
+              }
             }
           });
 
@@ -1056,12 +1239,12 @@
         this.verificationCode = '';
         // this.phoneNumberReceiveFlag = true;
         this.tokenReceiveFlag = false;
-        Cookies.remove('')
+        Cookies.remove('wheel-accessToken')
       },
       getRewardRecordList() {
         this.$http.get(this.$baseUrl + this.queryRewardTraceRequest, {
           params: {
-            activityId: ''
+            activityId: this.activityId
           }
         }).then(response => {
           console.log('getRewardRecordList', response)
@@ -1073,7 +1256,7 @@
         this.dialogFlag = false;
         // this.phoneNumberReceiveFlag = false;
         this.tokenReceiveFlag = false;
-        this.loginToGetPrizeListFlag = false;
+        this.loginToGetPrizeFlag = false;
       },
       checkAuthorized() {
         return Cookies.get('wheel-accessToken') === 'undefined' || Cookies.get('wheel-accessToken') === undefined;
@@ -1092,110 +1275,6 @@
             }
           })
         }
-      },
-      login() {
-
-        this.phoneNumber = this.phoneNumber.replace(/(^\s*)|(\s*$)/g, '');
-        this.verificationCode = this.verificationCode.replace(/(^\s*)|(\s*$)/g, '');
-        if (this.phoneNumber === '') {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '手机号未填写',
-            onConfirm() {
-            }
-          });
-          return
-        }
-
-        if (/^[1-9]+[0-9]*]*$/.test(this.phoneNumber) === false) {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '手机号不是数字',
-            onConfirm() {
-            }
-          });
-          return
-        }
-        if (/^[1-9]+[0-9]*]*$/.test(this.verificationCode) === false) {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '验证码不是数字',
-            onConfirm() {
-            }
-          });
-          return
-        }
-        if (/^\d{6}$/.test(this.verificationCode) === false) {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '验证码不为6位数字',
-            onConfirm() {
-            }
-          });
-          return
-        }
-        if (this.verificationCode === '') {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '验证码未填写',
-            onConfirm() {
-            }
-          });
-          return
-        }
-
-
-        this.getWechatToken({
-          type: 'sms',
-          params: {
-            username: this.phoneNumber,
-            code: this.verificationCode,
-            source: 'zhinengxiaoyuan',
-            promotionCode: '',
-            openId: this.openId,
-            channel: this.channel,
-            activityId: this.activityId
-          }
-        }).then(response => {
-          this.$http.post(this.$baseUrl + this.oauthTokenRequest, {
-            grant_type: 'sms',
-            username: this.phoneNumber,
-            code: this.verificationCode
-          }, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': 'Basic YW5kcm9pZDphZG1pbg=='
-            },
-            transformRequest: [function (data) {
-              let ret = '';
-              for (let it in data) {
-                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-              }
-              return ret
-            }]
-          }).then(response => {
-            console.log(response)
-            Cookies.set('wheel-accessToken', response.access_token);
-            Cookies.set('wheel-loginId', this.phoneNumber);
-            this.$router.push({
-              name: 'myPrizeList',
-              query: {
-                loginId: Cookies.get('wheel-loginId'),
-                pageNo: 0,
-                token: response.access_token
-              }
-            })
-          }).catch(error => {
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: error.data.error_description || error.data.message,
-              onConfirm() {
-              }
-            })
-          })
-        })
-
-
       },
 
 
@@ -1245,12 +1324,12 @@
         }, 500)
       },
       getStatisticImageUrl() {
-        this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=' + Date.parse(new Date())
+        this.statisticImageUrl = this.$baseUrl + 'message-service/1.0.0/statistics.jpg?source=zhinengxiaoyuan&timeStamp=' + Date.parse(new Date())
       },
       recordStatisticEvent(eventCode) {
         let imageTag = document.createElement("img");
         imageTag.className = 'statistic';
-        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=tongcheng&timeStamp=${Date.parse(new Date())}&eventId=${eventCode}&webId=${this.pageFingerPrint}`;
+        imageTag.src = `${this.$baseUrl}message-service/1.0.0/statistics.jpg?source=zhinengxiaoyuan&timeStamp=${Date.parse(new Date())}&eventId=${eventCode}&webId=${this.pageFingerPrint}`;
         imageTag.width = 0;
         imageTag.height = 0;
         document.querySelector('.wheel_realpage_container').appendChild(imageTag);
@@ -1309,10 +1388,10 @@
               }
 
             });
-
+            let stateCode = `channel=${this.loginId}^activityId=${this.activityId}`
             wx.onMenuShareTimeline({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$domainUrl + '/?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
 
               success: function () {
@@ -1347,15 +1426,15 @@
         let isWechat = !!ua.match(/MicroMessenger/i) === "micromessenger";
         if (isAndroid) {
           environment = 'android'
-          alert('Android');
+          // alert('Android');
         } else if (isiOS) {
           environment = 'ios'
-          alert('iOS');
+          // alert('iOS');
         } else if (isWechat) {
-          alert('wechat');
+          // alert('wechat');
           environment = 'wechat'
         } else {
-          alert('web');
+          // alert('web');
           environment = 'web'
         }
 
@@ -1370,15 +1449,15 @@
         switch (environment) {
           case 'ios':
             console.warn(environment)
-            alert('environment+' + environment)
+            // alert('environment+' + environment)
             break;
           case 'android':
             console.warn(environment)
-            alert('environment+' + environment)
+            // alert('environment+' + environment)
             break;
           case 'wechat':
             console.warn(environment)
-            alert('environment+' + environment)
+            // alert('environment+' + environment)
             break;
         }
 
@@ -1390,12 +1469,12 @@
         this.environment = environment;
         return environment;
       },
-      // test(){
-      //   alert('window.android+'+window.android)
-      //   alert('window.android.getTokennnnbnnn+'+window.android.getToken)
-      //
-      //   alert('window.android.getToken()+'+window.android.getToken())
-      // }
+      getAppToken() {
+        alert('window.android+' + window.android)
+        alert('window.android.getTokennnnbnnn+' + window.android.getToken)
+
+        alert(window.android.getToken())
+      }
     }
   }
 
