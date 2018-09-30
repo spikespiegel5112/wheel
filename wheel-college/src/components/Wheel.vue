@@ -12,7 +12,7 @@
                 <router-link class="a" :to="{name:'activityRules'}">
                   活动规则
                 </router-link>
-                <a>{{accessToken}}</a>
+                <!--<a>{{accessToken}}</a>-->
               </div>
               <div class="right">
                 <a class="a" @click="loginToCheckMyPrize">
@@ -133,7 +133,7 @@
               </div>
 
               <a v-if="loginToGetPrizeListFlag" class="button" @click="login">确定</a>
-              <a v-if="loginToGetPrizeFlag" class="button" @click="receivePrizeByForm">确定</a>
+              <a v-else class="button" @click="receivePrizeByForm">确定</a>
             </div>
           </div>
         </div>
@@ -282,7 +282,8 @@
         }],
         dailyTimes: 0,
         channel: '',
-        activityId: ''
+        activityId: '',
+        accessTokenReadyFlag: false
       }
     },
     computed: {
@@ -301,7 +302,7 @@
         return this.$route.query.code
       },
       stateCode() {
-        alert(this.$route.query.state)
+        // alert(this.$route.query.state)
         return this.$route.query.state
       },
 
@@ -354,7 +355,6 @@
         sessionStorage.setItem('dailyLimit', value)
       },
       redirectInfo(value) {
-        // alert('dsds')
         // alert(value)
         console.log(value)
         if (value === 'shareredirect') {
@@ -365,6 +365,9 @@
         if (value !== '') {
           Cookies.set('wheel-accessToken', value)
         }
+      },
+      accessTokenReadyFlag(value) {
+
       }
     },
     created() {
@@ -406,7 +409,8 @@
       this.checkEnvironment();
 
       if (!this.alreadyReceivedPrize && this.checkEnvironment() === 'wechat') {
-        alert('this.getWechatToken', this.wechatAuthCode)
+        // alert('this.getWechatToken+'+this.wechatAuthCode)
+
         this.getWechatToken({
           type: 'wechat_code',
           params: {
@@ -415,7 +419,7 @@
         }).then(response => {
           console.log('this.getWechatToken', response)
           this.accessToken = response.access_token;
-          let that=this;
+          let that = this;
           this.$http.get(this.$baseUrl + this.get_daily_numberRequest + `/${this.activityId}`, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -423,6 +427,7 @@
             }
           }).then(response => {
             console.log('get_daily_numberRequest', response)
+            alert(response.data)
             this.dailyTimes = response.data;
           }).catch(error => {
             console.log(error)
@@ -465,16 +470,18 @@
             switch (this.checkEnvironment()) {
               case 'android':
                 this.accessToken = window.android.getToken();
+                // alert(this.accessToken)
                 break;
               case 'ios':
                 this.accessToken = window.webkit.messageHandlers.token.postMessage('')
             }
             Cookies.set('wheel-accessToken', this.accessToken)
-            alert('this.accessToken+' + this.accessToken)
+            // alert('this.accessToken+' + this.accessToken)
             // alert('method+' + this.checkEnvironment())
           }
+          this.getLoginId();
         });
-        this.getLoginId();
+
       }
 
       this.checkUUID();
@@ -537,22 +544,19 @@
                   this.cleanCache();
 
                   reject(error);
-                  this.$vux.confirm.show({
-                    showCancelButton: false,
-                    title: error.data.error,
-                    onConfirm() {}
-                  });
                   break;
                 case 2:
-                  this.dialogFlag = true;
-                  this.loginToGetPrizeFlag = true;
+
+                  // this.dialogFlag = true;
+                  // this.loginToGetPrizeFlag = true;
                   this.cleanCache();
-                  // this.reinitializePage();
                   reject(error);
                   this.$vux.confirm.show({
                     showCancelButton: false,
-                    title: error.data.error,
-                    onConfirm() {}
+                    title: error.data.error + '，请关闭页面重新打开2',
+                    onConfirm() {
+                      // this.reInitializePage();
+                    }
                   });
                   break;
                 case 3:
@@ -560,10 +564,20 @@
                   reject(error);
                   this.$vux.confirm.show({
                     showCancelButton: false,
-                    title: error.data.error,
-                    onConfirm() {}
+                    title: error.data.error + '，请关闭页面重新打开3',
+                    onConfirm() {
+                    }
                   });
                   break;
+                default:
+                  this.cleanCache();
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: error.data.error_description,
+                    onConfirm() {
+                    }
+                  });
+                  reject(error);
               }
             })
           } else {
@@ -571,14 +585,16 @@
           }
         })
       },
-      reinitializePage() {
+      reInitializePage() {
         let stateCode = `channel=${this.loginId}^activityId=${this.activityId}`
         location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + stateCode + '#wechat_redirect')
       },
       getLoginId() {
+        let that = this;
+
         this.$http.get(this.$baseUrl + this.getUserInfoByTokenRequest, {
           params: {
-            access_token: Cookies.get('wheel-accessToken')
+            access_token: this.accessToken
           },
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -595,7 +611,7 @@
               case 'android':
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: '当前登录信息已失效',
+                  title: '当前登录信息已失效，请关闭再打开页面android',
                   onConfirm() {
                     that.tokenReceiveFlag = false;
                     window.android.refreshToken()
@@ -605,7 +621,7 @@
               case 'ios':
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: '当前登录信息已失效',
+                  title: '当前登录信息已失效，请关闭再打开页面',
                   onConfirm() {
                     that.tokenReceiveFlag = false;
                     window.android.refreshToken()
@@ -738,10 +754,16 @@
       },
       drawAndReceivePrize() {
         // alert('drawAndReceivePrize')
-        let tempPrizeData;
-        if (this.accessToken === '') {
+        if (this.accessToken === '' && this.openId !== '') {
           this.dialogFlag = true;
           this.loginToGetPrizeFlag = true;
+        } else if (this.accessToken === '' && this.openId === '') {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '获取不到用户信息，请关闭页面',
+            onConfirm() {
+            }
+          });
         } else {
           this.receivePrizeByToken();
         }
@@ -930,6 +952,10 @@
             }
           })
         } else {
+          if (this.accessToken === '' && this.accessToken === undefined) {
+            // alert('accessToken为空')
+            return;
+          }
           this.$http.post(this.$baseUrl + this.participate_accept_rewardRequest + `/${this.activityId}`, {}, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -988,7 +1014,7 @@
                 case 'android':
                   this.$vux.confirm.show({
                     showCancelButton: false,
-                    title: '当前登录信息已失效',
+                    title: '当前登录信息已失效，请关闭再打开页面',
                     onConfirm() {
                       that.tokenReceiveFlag = false;
                       window.android.refreshToken()
@@ -998,7 +1024,7 @@
                 case 'ios':
                   this.$vux.confirm.show({
                     showCancelButton: false,
-                    title: '当前登录信息已失效',
+                    title: '当前登录信息已失效，请关闭再打开页面',
                     onConfirm() {
                       that.tokenReceiveFlag = false;
                       window.android.refreshToken()
@@ -1373,7 +1399,7 @@
           });
           wx.error(error => {
             console.log(error)
-            alert('error')
+            // alert('error')
           });
           wx.ready((e) => {
             console.log(e)
@@ -1470,10 +1496,10 @@
         return environment;
       },
       getAppToken() {
-        alert('window.android+' + window.android)
-        alert('window.android.getTokennnnbnnn+' + window.android.getToken)
+        // alert('window.android+' + window.android)
+        // alert('window.android.getTokennnnbnnn+' + window.android.getToken)
 
-        alert(window.android.getToken())
+        // alert(window.android.getToken())
       }
     }
   }
