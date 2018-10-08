@@ -9,11 +9,12 @@ const routes = [{
   name: 'wheel',
   component: () => import('../components/Wheel.vue')
 }, {
-  path: '/',
-  name: 'wheel',
-  component: () => import('../components/Wheel.vue')
-}, {
-  path: '/acceptPrize',
+//   path: '/',
+//   name: 'wheel',
+//   component: () => import('../components/Wheel.vue')
+// }, {
+  path: '/collegewheel/acceptPrize',
+  alias: '/acceptPrize',
   name: 'acceptPrize',
   component: () => import('../components/AcceptPrize.vue')
 }, {

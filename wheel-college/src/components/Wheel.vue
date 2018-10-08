@@ -10,13 +10,13 @@
             <div class="nav">
               <div class="left">
                 <router-link class="a" :to="{name:'activityRules'}">
-                  活动规则
+                  活动规则6
                 </router-link>
                 <!--<a>{{accessToken}}</a>-->
               </div>
               <div class="right">
                 <a class="a" @click="loginToCheckMyPrize">
-                  我的奖品
+                  我的奖品{{testString}}
                 </a>
               </div>
               <!--{{window.webkit?window.webkit:''}}-->
@@ -105,7 +105,6 @@
           <div class="crown"></div>
           <div class="dialog_wrapper acceptprize">
             <p class="hint">
-
               已抽中"{{prizeData.rewardName}}"
             </p>
             <div class="banner">
@@ -148,6 +147,7 @@
 
 <script>
   import Cookies from 'js-cookie'
+  import wx from 'weixin-js-sdk'
 
   export default {
     name: "Wheel",
@@ -283,7 +283,8 @@
         dailyTimes: 0,
         channel: '',
         activityId: '',
-        accessTokenReadyFlag: false
+        accessTokenReadyFlag: false,
+        testString: 'xxx'
       }
     },
     computed: {
@@ -358,7 +359,7 @@
         // alert(value)
         console.log(value)
         if (value === 'shareredirect') {
-          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
         }
       },
       accessToken(value) {
@@ -385,6 +386,13 @@
 
     },
     mounted() {
+      // this.$vux.confirm.show({
+      //   showCancelButton: false,
+      //   title: 'dsdsdsdsds',
+      //   onConfirm() {
+      //     // this.reInitializePage();
+      //   }
+      // });
       this.initializing = false;
 
       this.$nextTick(() => {
@@ -403,86 +411,14 @@
         this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
       });
       this.getCacheData();
+
       if (this.checkEnvironment() === 'wechat') {
-        this.processStateCode();
+        this.parseStateCode();
       }
+
       this.checkEnvironment();
 
-      if (!this.alreadyReceivedPrize && this.checkEnvironment() === 'wechat') {
-        // alert('this.getWechatToken+'+this.wechatAuthCode)
-
-        this.getWechatToken({
-          type: 'wechat_code',
-          params: {
-            code: this.wechatAuthCode
-          }
-        }).then(response => {
-          console.log('this.getWechatToken', response)
-          this.accessToken = response.access_token;
-          let that = this;
-          this.$http.get(this.$baseUrl + this.get_daily_numberRequest + `/${this.activityId}`, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': 'Bearer ' + response.access_token
-            }
-          }).then(response => {
-            console.log('get_daily_numberRequest', response)
-            alert(response.data)
-            this.dailyTimes = response.data;
-          }).catch(error => {
-            console.log(error)
-            if (error.status === 401) {
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: '当前登录信息已失效',
-                onConfirm() {
-                  that.tokenReceiveFlag = false;
-                }
-              });
-              switch (this.checkEnvironment()) {
-                case 'android':
-                  this.$vux.confirm.show({
-                    showCancelButton: false,
-                    title: '当前登录信息已失效',
-                    onConfirm() {
-                      that.tokenReceiveFlag = false;
-                      window.android.refreshToken()
-                    }
-                  });
-                  break;
-                case 'ios':
-                  this.$vux.confirm.show({
-                    showCancelButton: false,
-                    title: '当前登录信息已失效',
-                    onConfirm() {
-                      that.tokenReceiveFlag = false;
-                      window.android.refreshToken()
-                    }
-                  });
-                  break;
-              }
-            }
-          });
-        })
-      } else {
-        this.$nextTick(() => {
-          if (this.checkEnvironment() !== 'wechat') {
-            switch (this.checkEnvironment()) {
-              case 'android':
-                this.accessToken = window.android.getToken();
-                // alert(this.accessToken)
-                break;
-              case 'ios':
-                this.accessToken = window.webkit.messageHandlers.token.postMessage('')
-            }
-            Cookies.set('wheel-accessToken', this.accessToken)
-            // alert('this.accessToken+' + this.accessToken)
-            // alert('method+' + this.checkEnvironment())
-          }
-          this.getLoginId();
-        });
-
-      }
+      this.getAccessToken();
 
       this.checkUUID();
       this.getRewardRecordList();
@@ -490,19 +426,123 @@
       this.recordStatisticEvent('onLoad');
       this.initJSSDK();
 
+
+      // setTimeout(function getAppToken(json) {
+      //   debugger
+      //   //alert("msg:"+json.token);
+      //   alert(json)
+      //   var gettoken = document.createElement('p');
+      //   gettoken.id = 'div_id';
+      //   gettoken.innerHTML = json.token;
+      //   document.body.appendChild(gettoken);
+      // }, 2000)
+
+
     },
     methods: {
-      processStateCode() {
+      getAccessToken(){
+        if (!this.alreadyReceivedPrize && this.checkEnvironment() === 'wechat') {
+          // alert('this.getWechatToken+'+this.wechatAuthCode)
+
+          this.getWechatToken({
+            type: 'wechat_code',
+            params: {
+              code: this.wechatAuthCode
+            }
+          }).then(response => {
+            console.log('this.getWechatToken', response)
+            this.accessToken = response.access_token;
+            let that = this;
+            this.$http.get(this.$baseUrl + this.get_daily_numberRequest + `/${this.activityId}`, {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + response.access_token
+              }
+            }).then(response => {
+              console.log('get_daily_numberRequest', response)
+              alert(response.data)
+              this.dailyTimes = response.data;
+            }).catch(error => {
+              console.log(error)
+              if (error.status === 401) {
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效',
+                  onConfirm() {
+                    that.tokenReceiveFlag = false;
+                  }
+                });
+                switch (this.checkEnvironment()) {
+                  case 'android':
+                    this.$vux.confirm.show({
+                      showCancelButton: false,
+                      title: '当前登录信息已失效',
+                      onConfirm() {
+                        that.tokenReceiveFlag = false;
+                        window.android.refreshToken()
+                      }
+                    });
+                    break;
+                  case 'ios':
+                    this.$vux.confirm.show({
+                      showCancelButton: false,
+                      title: '当前登录信息已失效',
+                      onConfirm() {
+                        that.tokenReceiveFlag = false;
+                        window.android.refreshToken()
+                      }
+                    });
+                    break;
+                }
+              }
+            });
+          })
+        } else {
+          let that = this;
+
+          this.$nextTick(() => {
+            if (this.checkEnvironment() !== 'wechat') {
+              switch (this.checkEnvironment()) {
+                case 'android':
+                  this.accessToken = window.android.getToken();
+                  alert('android_accesstoken,' + this.accessToken)
+                  this.getLoginId();
+                  break;
+                case 'ios':
+                  window.webkit.messageHandlers.token.postMessage('')
+                  window.getAppToken = function (json) {
+                    that.$vux.confirm.show({
+                      showCancelButton: false,
+                      title: 'getAppToken+   ' + json.token,
+                      onConfirm() {
+                        // this.reInitializePage();
+                      }
+                    });
+                    that.testString = json.token;
+                    that.accessToken = json.token;
+                  };
+                  getAppToken();
+                // this.accessToken = window.webkit.messageHandlers.token.postMessage('')
+              }
+              Cookies.set('wheel-accessToken', this.accessToken)
+              // alert('this.accessToken+' + this.accessToken)
+              // alert('method+' + this.checkEnvironment())
+            }
+          });
+
+        }
+      },
+      parseStateCode() {
         let result = [];
         let code = decodeURIComponent(this.stateCode)
 
-        code.split('^').forEach(item => {
+        code.split('$').forEach(item => {
           result[item.split('=')[0]] = item.split('=')[1]
         });
         this.stateCodeData = result;
         this.channel = result.channel;
         this.activityId = result.activityId;
-        console.log('processStateCode', result)
+        console.log('parseStateCode', result)
         console.log('channel', this.channel)
         console.log(code)
       },
@@ -621,7 +661,7 @@
               case 'ios':
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: '当前登录信息已失效，请关闭再打开页面',
+                  title: '当前登录信息已失效，请关闭再打开页面ios',
                   onConfirm() {
                     that.tokenReceiveFlag = false;
                     window.android.refreshToken()
@@ -765,7 +805,9 @@
             }
           });
         } else {
-          this.receivePrizeByToken();
+          if (!this.rotatingFlag) {
+            this.receivePrizeByToken();
+          }
         }
 
       },
@@ -1370,7 +1412,7 @@
       },
       initJSSDK() {
         console.log('777', location.href.split('#')[0])
-        let wx = this.$wechat;
+        // let wx = this.$wechat;
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           url: location.href.split('#')[0],
         }, {
@@ -1393,13 +1435,11 @@
             timestamp: response.data.timestamp, // 必填，生成签名的时间戳
             nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
             signature: response.data.signature,// 必填，签名
-            jsApiList: [
-              'closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'
-            ] // 必填，需要使用的JS接口列表
+            jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'] // 必填，需要使用的JS接口列表
           });
           wx.error(error => {
             console.log(error)
-            // alert('error')
+            alert('wechat error')
           });
           wx.ready((e) => {
             console.log(e)
@@ -1407,17 +1447,21 @@
             wx.checkJsApi({
               jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
               success: function (res) {
-                // alert('check')
+                alert('check')
                 // 以键值对的形式返回，可用的api值true，不可用为false
                 // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-//		    	alert(JSON.stringify(res));
+                // alert(JSON.stringify(res));
               }
 
             });
-            let stateCode = `channel=${this.loginId}^activityId=${this.activityId}`
+            // let stateCode = `channel=${this.loginId}^activityId=${this.activityId}`;
+            let stateCode = `channel`;
+
             wx.onMenuShareTimeline({
-              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              title: '免费领取奖品', // 分享标题
               link: this.$domainUrl + '/?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+
+              // link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=channel=123456^activityId=3#wechat_redirect', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
 
               success: function () {
@@ -1426,9 +1470,9 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-              desc: '千万不要错过哦', // 分享描述
-              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              title: '免费领取奖品', // 分享标题
+              desc: '免费领取奖品', // 分享描述
+              link: this.$domainUrl + '/?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -1470,12 +1514,23 @@
       checkEnvironment() {
         let environment;
 
+        let that = this;
+
 
         environment = this.environmentDictionary.filter(item => eval(item.checker) !== undefined)[0].name;
+        console.log('checkEnvironment', eval(that.environmentDictionary[0].checker) === undefined)
+        this.$vux.confirm.show({
+          showCancelButton: false,
+          title: 'checkEnvironment+   ' + eval(that.environmentDictionary[0].checker) === undefined,
+          onConfirm() {
+            // this.reInitializePage();
+          }
+        });
+
         switch (environment) {
           case 'ios':
             console.warn(environment)
-            // alert('environment+' + environment)
+            alert('environment+' + environment)
             break;
           case 'android':
             console.warn(environment)
@@ -1495,11 +1550,9 @@
         this.environment = environment;
         return environment;
       },
-      getAppToken() {
-        // alert('window.android+' + window.android)
-        // alert('window.android.getTokennnnbnnn+' + window.android.getToken)
+      getAppToken(json) {
 
-        // alert(window.android.getToken())
+        alert(json)
       }
     }
   }
@@ -1507,8 +1560,4 @@
 
 </script>
 
-<style scoped lang="scss">
-  /*.chance{*/
-  /*font-size: 0;*/
-  /*}*/
-</style>
+<style scoped lang="scss"></style>
