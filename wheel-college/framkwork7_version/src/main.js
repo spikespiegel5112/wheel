@@ -24,7 +24,7 @@ import AppStyles from './css/app.css';
 import App from './app';
 Vue.use(util);
 Vue.prototype.$http = service;
-Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.fnvalley.com/' : 'http://testgate.zan-qian.com/';
+Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.fnvalley.com/' : 'http://testgate.fnvalley.com/';
 Vue.prototype.$domainUrl = process.env.NODE_ENV === 'production' ? 'https://rotary.fnvalley.com' : 'http://testrotary.fnvalley.com';
 Vue.prototype.$redirectBaseUrl = process.env.NODE_ENV === 'production' ? 'https://redirect.fnvalley.com/' : 'https://redirect.fnvalley.com/';
 // Init F7 Vue Plugin

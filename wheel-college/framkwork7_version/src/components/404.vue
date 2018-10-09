@@ -40,7 +40,7 @@
     },
     data: function () {
       return {
-        baseUrl: 'http://gateway.zan-qian.com/',
+        baseUrl: 'http://gateway.fnvalley.com/',
         sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
         acceptShareUserActivityRewardRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityReward',

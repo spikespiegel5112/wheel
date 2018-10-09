@@ -25,7 +25,7 @@
     name: "Promotion",
     data: function () {
       return {
-        baseUrl: 'http://gateway.zan-qian.com/',
+        baseUrl: 'http://gateway.fnvalley.com/',
         sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         rotatingFlag: false,
         rulesArticle: [{

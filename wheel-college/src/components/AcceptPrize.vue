@@ -1,17 +1,17 @@
 <template>
   <div class="wheel_acceptprize_wrapper">
-    <!--<div class="common_header_wrapper">-->
-      <!--<div class="left_wrapper">-->
-        <!--<div class="previous">-->
-          <!--<router-link :to="{path:'/'}">-->
-            <!--<x-icon type="ios-arrow-left" size="30"></x-icon>-->
-          <!--</router-link>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="middle_wrapper">-->
-        <!--我要领奖-->
-      <!--</div>-->
-    <!--</div>-->
+    <div v-if="$checkEnvironment()==='wechat'" class="common_header_wrapper">
+      <div class="left_wrapper">
+        <div class="previous">
+          <router-link :to="{path:'/'}">
+            <x-icon type="ios-arrow-left" size="30"></x-icon>
+          </router-link>
+        </div>
+      </div>
+      <div class="middle_wrapper">
+        我要领奖
+      </div>
+    </div>
     <div class="banner">
       <img src="../image/wheel/accept_prize_banner_00000.png"/>
     </div>

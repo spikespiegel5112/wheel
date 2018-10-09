@@ -1,18 +1,18 @@
 <template>
   <div class="wheel_acceptprize_wrapper">
     <CommonLoading :loading="loading"/>
-    <!--<div class="common_header_wrapper">-->
-      <!--<div class="left_wrapper">-->
-        <!--<div class="previous">-->
-          <!--<router-link :to="{path:'/'}">-->
-            <!--<x-icon type="ios-arrow-left" size="30"></x-icon>-->
-          <!--</router-link>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="middle_wrapper">-->
-        <!--我的奖品-->
-      <!--</div>-->
-    <!--</div>-->
+    <div v-if="$checkEnvironment()==='wechat'" class="common_header_wrapper">
+      <div class="left_wrapper">
+        <div class="previous">
+          <a @click="goBack">
+            <x-icon type="ios-arrow-left" size="30"></x-icon>
+          </a>
+        </div>
+      </div>
+      <div class="middle_wrapper">
+        我的奖品
+      </div>
+    </div>
     <div v-if="!emptyPrizeFlag" class="prizedescribe">
       <ul class="main" v-if="prizeData.length>0">
         <!--<h1 class="title">奖品描述</h1>-->
@@ -114,11 +114,11 @@
         this.loading = true;
         this.$http.get(this.$baseUrl + this.queryRewardTraceByLoginIdRequest, {
           params: {
-            loginId: this.$route.query.loginId,
+            loginId: Cookies.get('wheel-accessToken'),
             productDetail: 'all'
           },
           headers: {
-            'Authorization': 'Bearer ' + Cookies.get('wheel-accessToken')
+            'Authorization': 'Bearer ' + sessionStorage.getItem('wheel-accessToken')
           }
         }).then(response => {
           console.log(response)
@@ -134,16 +134,17 @@
               showCancelButton: false,
               title: '当前手机号失效，请重新登录',
               onConfirm() {
-                that.$router.push({
-                  name: 'wheel'
-                });
-                Cookies.remove('wheel-accessToken');
+                that.$router.go(-1)
+                sessionStorage.removeItem('wheel-accessToken');
                 Cookies.remove('wheel-loginId');
               }
             })
           }
 
         })
+      },
+      goBack(){
+        this.$router.go(-1)
       }
     }
   }

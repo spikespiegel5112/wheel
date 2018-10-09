@@ -201,15 +201,15 @@
         }, {
           name: '炖排骨',
           value: 30,
-          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
+          image: 'http://resource.fnvalley.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: '小鸡炖蘑菇',
           value: 30,
-          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
+          image: 'http://resource.fnvalley.com/test/icon/1534327599157.jpeg-style_100x100'
         }, {
           name: '牛排',
           value: 30,
-          image: 'http://resource.zan-qian.com/test/icon/1534327599157.jpeg-style_100x100'
+          image: 'http://resource.fnvalley.com/test/icon/1534327599157.jpeg-style_100x100'
         }],
         sponsor: [{
           name: ''
@@ -1280,7 +1280,7 @@
             wx.onMenuShareTimeline({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              imgUrl: 'http://resource.fnvalley.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
 
               success: function () {
 
@@ -1291,7 +1291,7 @@
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               desc: '千万不要错过哦', // 分享描述
               link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              imgUrl: 'http://resource.fnvalley.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
               success: function () {

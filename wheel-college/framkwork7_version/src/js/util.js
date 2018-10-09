@@ -4,8 +4,8 @@ let util = {};
 util.install = function (Vue) {
   Vue.prototype.$replaceProtocol = (url) => {
     let result;
-    // result = process.env.NODE_ENV === 'production' ? url.replace('http://', 'https://').replace('zan-qian.com', 'fnvalley.com') : url;
-    result = url.replace('http://', 'https://').replace('zan-qian.com', 'fnvalley.com');
+    // result = process.env.NODE_ENV === 'production' ? url.replace('http://', 'https://').replace('fnvalley.com', 'fnvalley.com') : url;
+    result = url.replace('http://', 'https://').replace('fnvalley.com', 'fnvalley.com');
     return result;
   }
 
