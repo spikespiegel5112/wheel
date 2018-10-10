@@ -1,11 +1,11 @@
 import $ from 'jquery';
 import wx from 'weixin-js-sdk'
 // import service from "./request";
-import {ConfirmPlugin, WechatPlugin} from 'vux'
-import Vue from 'vue'
-
-Vue.use(ConfirmPlugin);
-Vue.use(WechatPlugin);
+// import {ConfirmPlugin, WechatPlugin} from 'vux'
+// import Vue2 from 'vue'
+//
+// Vue2.use(ConfirmPlugin);
+// Vue2.use(WechatPlugin);
 
 
 let util = {};
@@ -33,18 +33,9 @@ util.install = function (Vue) {
     }];
     let environment;
     let that = this;
-    // Vue.prototype.$vux.confirm.show({
-    //   showCancelButton: false,
-    //   title: eval(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.token),
-    //   onConfirm() {}
-    // });
-
-    // environment = environmentDictionary.filter(item => eval(item.checker) !== undefined)[0].name;
-
     for (let i = 0; i < environmentDictionary.length; i++) {
       let item = environmentDictionary[i];
       if (item.name === 'ios' && window.webkit !== undefined) {
-        window.webkit.messageHandlers.token.postMessage('');
         environment = eval(item.checker) ? item.name : '';
       } else {
         environment = eval(item.checker) !== undefined ? item.name : '';
@@ -53,15 +44,6 @@ util.install = function (Vue) {
         break;
       }
     }
-    alert('$checkEnvironment' + environment)
-    // environmentDictionary.forEach((item, index) => {
-    //   if (item.name === 'ios' && window.webkit !== undefined) {
-    //     window.webkit.messageHandlers.token.postMessage('');
-    //     environment = eval(item.checker) ? item.name : '';
-    //   } else {
-    //     environment = eval(item.checker) !== undefined ? item.name : '';
-    //   }
-    // });
 
     return environment;
   };
@@ -70,11 +52,11 @@ util.install = function (Vue) {
     options = Object.assign({
       state: ''
     }, options);
+
     console.log('777', location.href.split('#')[0])
-    let getSignatureRequest = 'account-service/1.0.0/weChat/getSignature';
     // let wx = this.$wechat;
-    let wechatRedirectLink = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=' + options.state + '#wechat_redirect';
-    Vue.prototype.$http.post(Vue.prototype.$baseUrl + getSignatureRequest, {
+    let wechatRedirectLink = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=channel=' + this.channel + '$activityId=' + this.activityId + '#wechat_redirect';
+    this.$http.post(this.$baseUrl + this.getSignatureRequest, {
       url: location.href.split('#')[0],
     }, {
       headers: {
@@ -108,19 +90,19 @@ util.install = function (Vue) {
         wx.checkJsApi({
           jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
           success: function (res) {
-            alert('check')
+            // alert('check')
             // 以键值对的形式返回，可用的api值true，不可用为false
             // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
             // alert(JSON.stringify(res));
           }
 
         });
-        // let stateCode = `channel=${this.loginId}^activityId=${this.activityId}`;
+        // let stateCode = `channel=${this.loginId}$activityId=${this.activityId}`;
         let stateCode = options.state;
 
         wx.onMenuShareTimeline({
-          title: '免费领取奖品', // 分享标题
-          link: this.$domainUrl + '?routeto=shareredirect&state=' + options.state, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          title: '边玩边赚，乐享生活', // 分享标题
+          link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
           // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
@@ -131,11 +113,10 @@ util.install = function (Vue) {
         });
 
         wx.onMenuShareAppMessage({
-          title: '免费领取奖品', // 分享标题
-          desc: '免费领取奖品', // 分享描述
-          link: this.$domainUrl + '?routeto=shareredirect&state=' + options.state, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-
-          // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          title: '边玩边赚，乐享生活', // 分享标题
+          desc: '边玩边赚，乐享生活', // 分享描述
+          // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
           type: '', // 分享类型,music、video或link，不填默认为link
           dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -148,7 +129,8 @@ util.install = function (Vue) {
 
     });
 
-  }
+  };
+
   Vue.prototype.$replaceProtocol = (url) => {
     let result;
     // result = process.env.NODE_ENV === 'production' ? url.replace('http://', 'https://').replace('fnvalley.com', 'fnvalley.com') : url;
