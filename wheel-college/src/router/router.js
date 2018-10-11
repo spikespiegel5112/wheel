@@ -18,7 +18,8 @@ const routes = [{
   name: 'acceptPrize',
   component: () => import('../components/AcceptPrize.vue')
 }, {
-  path: '/myPrizeList',
+  path: '/collegewheel/myPrizeList',
+  alias: '/myPrizeList',
   name: 'myPrizeList',
   component: () => import('../components/MyPrizeList.vue')
 }, {

@@ -50,7 +50,7 @@
     },
 
     watch: {},
-    computed:{
+    computed: {
       activityId() {
         return this.$route.query.activityId;
       },
@@ -74,15 +74,22 @@
       });
     },
     methods: {
-      goBack(){
+      goBack() {
         this.$router.go(-1)
       },
       initJSSDK() {
         console.log('777', location.href.split('#')[0])
+        // this.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: location.href.split('#')[0],
+        //   onConfirm() {
+        //   }
+        // });
         let wx = this.$wechat;
         let wechatRedirectLink = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=channel=' + this.channel + '$activityId=' + this.activityId + '#wechat_redirect';
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
-          url: location.href.split('#')[0],
+          // url: window.location.host,
+          url: location.href.split('#')[0]
         }, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -125,7 +132,7 @@
             let stateCode = `channel=${this.channel}$activityId=${this.activityId}`;
 
             wx.onMenuShareTimeline({
-              title: '边玩边赚，乐享生活', // 分享标题
+              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
               link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -137,8 +144,8 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '边玩边赚，乐享生活', // 分享标题
-              desc: '边玩边赚，乐享生活', // 分享描述
+              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
+              desc: '不做LYB，好友携手拿好礼。更有海淘精品等你免费来领取！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标

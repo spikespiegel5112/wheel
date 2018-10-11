@@ -3,8 +3,8 @@
     <div class="common_main_container">
       <div class="content" id="app">
         <div class="wheel_mainbg_item"></div>
-
-        <div class="wheel_realpage_container">
+        <div v-if="wechatRedirectingFlag" class="common_initializing_item"></div>
+        <div v-show="!wechatRedirectingFlag" class="wheel_realpage_container">
           <!--<img id="pointer" src='../image/wheel/pointer_00000.png' style="display: none"/>-->
           <div class="header">
             <div class="nav">
@@ -34,7 +34,10 @@
               </div>
               <p>
                 <!--{{checkEnvironment()==='android'?window.android.getToken():''}}-->
-                您有<span>{{dailyTimes!==-1?dailyTimes:'无限'}}</span>次领奖机会
+                <!--<div>点击</div>-->
+                <label v-if="!dailyTimesFlag">点击转盘开始抽奖</label>
+                <label v-else>您有<span>{{dailyTimes!==-1?dailyTimes:'无限'}}</span>次领奖机会</label>
+
               </p>
             </div>
 
@@ -80,6 +83,7 @@
         <CommonLoading :loading="loading"/>
       </div>
     </div>
+
     <div v-show="dialogFlag" class="wheel_winningdialog_wrapper">
       <div class="login">
         <div v-if="tokenReceiveFlag" class="">
@@ -122,8 +126,8 @@
               </div>
 
               <p class="hint">提示：同一个奖品只能领取一次, 名额有限,先到先得~ </p>
-              <a v-if="loginToGetPrizeListFlag" class="button" @click="login">登录1</a>
-              <a v-else class="button" @click="receivePrizeByForm">登录2</a>
+              <a v-if="loginToGetPrizeListFlag" class="button" @click="login">登录</a>
+              <a v-else class="button" @click="receivePrizeByForm">登录</a>
             </div>
           </div>
         </div>
@@ -168,8 +172,7 @@
         accessToken: '',
         statisticImageUrl: '',
 
-        redirectingFlag: false,
-        initializing: false,
+        wechatRedirectingFlag: true,
         loading: false,
         smsCodeState: false,
 
@@ -258,13 +261,15 @@
         userInfo: {},
 
         dailyTimes: 0,
+        dailyTimesFlag: false,
         channel: '',
         activityId: '',
         accessTokenReadyFlag: false,
-        testString: 'xxx'
+        testString: 'xxx',
       }
     },
     computed: {
+
       // activityId() {
       //   return this.$route.query.activityId || 3;
       // },
@@ -295,7 +300,7 @@
       weChatAuthorityURL(value) {
         console.log(value)
       },
-      initializing(value) {
+      wechatRedirectingFlag(value) {
         if (!value) {
         }
       },
@@ -327,9 +332,7 @@
       redirectInfo(value) {
         // alert(value)
         console.log(value)
-        if (value === 'shareredirect') {
-          this.reInitializePage()
-        }
+
       },
       // accessToken(value) {
       //   if (value !== '') {
@@ -344,15 +347,19 @@
       },
       channel(value) {
         Cookies.set('wheel-channel', value)
+      },
+      activityId(value) {
+        sessionStorage.setItem('activityId', value)
       }
     },
-    created() {
+    beforeCreate() {
       this.channel = this.$route.query.channel || '';
       this.activityId = this.$route.query.activityId || '';
 
     },
     beforeMount() {
       let fullPath = window.location.href;
+
 
       // if (window.location.href.indexOf('#/') === window.location.href.length - 2) {
       //   window.assign()
@@ -361,7 +368,6 @@
     },
     mounted() {
 
-      this.initializing = false;
 
 
       // alert('before')
@@ -370,6 +376,9 @@
           fontSize: 20,
         });
         this.$nextTick(() => {
+          // this.$autoHeight({
+          //   target: '.common_initializing_item'
+          // });
           this.$autoHeight({
             target: '.wheel_winningdialog_wrapper'
           });
@@ -399,33 +408,50 @@
         //     // this.reInitializePage();
         //   }
         // });
+        console.log('this.environment', this.environment)
 
         this.$nextTick(() => {
-          if (this.environment === 'wechat') {
-            this.redirectInfo = this.$route.query.routeto;
-            this.parseStateCode();
-          } else {
-            this.channel = this.$route.query.channel || '';
-            this.activityId = this.$route.query.activityId || '';
-          }
+
+
         });
+        if (this.environment === 'wechat') {
+          this.parseStateCode();
+
+          if (this.$route.query.routeto !== 'shareredirect') {
+            this.wechatRedirectingFlag = false;
+            this.$vux.loading.hide()
+          } else {
+            // alert(this.redirectInfo)
+            this.redirectInfo = this.$route.query.routeto
+            this.wechatRedirectingFlag = true;
+            this.$vux.loading.show({
+              text: 'Loading'
+            });
+            this.reInitializePage()
+          }
+
+        } else {
+          this.channel = this.$route.query.channel || '';
+          this.activityId = this.$route.query.activityId || '';
+        }
+        this.getRewardRecordList();
 
         if (this.accessToken === '') {
           this.getAccessToken();
+        } else {
+          this.getDailyTimes();
         }
-
-        this.$vux.confirm.show({
-          showCancelButton: false,
-          title: this.accessToken,
-          onConfirm() {
-          }
-        });
+        //
+        // this.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: this.accessToken,
+        //   onConfirm() {
+        //   }
+        // });
 
         // alert('after')
 
-
         this.checkUUID();
-        this.getRewardRecordList();
         this.getStatisticImageUrl();
         this.recordStatisticEvent('onLoad');
 
@@ -453,14 +479,11 @@
             'Authorization': 'Bearer ' + this.accessToken
           }
         }).then(response => {
-          console.log('getWechatToken', response)
+          console.log('getDailyTimes', response)
           // alert('getWechatToken+', response.data)
-
+          this.dailyTimesFlag = true;
           this.dailyTimes = response.data;
-          // this.$initJSSDK({
-          //   state: 'channel=' + this.channel + '$activityId=' + this.activityId
-          // });
-          // this.initJSSDK();
+          // sessionStorage.setItem('dailyTimes', this.dailyTimes)
         }).catch(error => {
           console.log(error)
           // alert('initJSSKD error')
@@ -476,20 +499,20 @@
               case 'android':
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: '当前登录信息已失效2',
+                  title: '当前登录信息已失效(android)',
                   onConfirm() {
                     that.tokenReceiveFlag = false;
                   }
                 });
                 break;
               case 'ios':
-                // this.$vux.confirm.show({
-                //   showCancelButton: false,
-                //   title: '当前登录信息已失效3',
-                //   onConfirm() {
-                //     that.tokenReceiveFlag = false;
-                //   }
-                // });
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效(ios)',
+                  onConfirm() {
+                    that.tokenReceiveFlag = false;
+                  }
+                });
                 break;
             }
           }
@@ -524,31 +547,33 @@
         // alert('alreadyReceivedPrize+' + this.alreadyReceivedPrize)
         if (this.environment === 'wechat') {
           // alert('this.getWechatToken+' + this.wechatAuthCode)
-          this.getWechatToken({
-            type: 'wechat_code',
-            params: {
-              code: this.wechatAuthCode
-            }
-          }).then(response => {
-            console.log('this.getWechatToken', response)
-            this.accessToken = response.access_token;
-            sessionStorage.setItem('wheel-accessToken', this.accessToken)
-            this.getDailyTimes();
-            this.getLoginId();
-          });
-          // this.$initJSSDK({
-          //   state: 'channel=' + this.channel + '$activityId=' + this.activityId
-          // });
-          this.initJSSDK()
+          if (!this.wechatRedirectingFlag) {
+            this.getWechatToken({
+              type: 'wechat_code',
+              params: {
+                code: this.wechatAuthCode
+              }
+            }).then(response => {
+              console.log('this.getWechatToken', response)
+              this.accessToken = response.access_token;
+              sessionStorage.setItem('wheel-accessToken', this.accessToken)
+              this.getDailyTimes();
+              this.getLoginId();
+            });
+            // this.$initJSSDK({
+            //   state: 'channel=' + this.channel + '$activityId=' + this.activityId
+            // });
+            this.initJSSDK()
+          }
+
 
         } else {
-          that.$vux.confirm.show({
-            showCancelButton: false,
-            title: 'begin to get token',
-            onConfirm() {
-              // this.reInitializePage();
-            }
-          });
+          // that.$vux.confirm.show({
+          //   showCancelButton: false,
+          //   title: 'begin to get token',
+          //   onConfirm() {
+          //   }
+          // });
           this.$nextTick(() => {
             switch (this.environment) {
               case 'android':
@@ -560,23 +585,21 @@
 
                 break;
               case 'ios':
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: 'environment+ios',
-                  onConfirm() {
-                    // this.reInitializePage();
-                  }
-                });
+                // this.$vux.confirm.show({
+                //   showCancelButton: false,
+                //   title: 'environment+ios',
+                //   onConfirm() {
+                //   }
+                // });
                 window.webkit.messageHandlers.token.postMessage('');
                 window.getAppToken = function (json) {
                   that.accessToken = json.token;
-                  that.$vux.confirm.show({
-                    showCancelButton: false,
-                    title: 'json+   ' + json.token,
-                    onConfirm() {
-                      // this.reInitializePage();
-                    }
-                  });
+                  // that.$vux.confirm.show({
+                  //   showCancelButton: false,
+                  //   title: 'json+   ' + json.token,
+                  //   onConfirm() {
+                  //   }
+                  // });
                   that.getLoginId();
                   that.getDailyTimes();
                   sessionStorage.setItem('wheel-accessToken', that.accessToken)
@@ -668,7 +691,7 @@
                   this.cleanCache();
                   this.$vux.confirm.show({
                     showCancelButton: false,
-                    title: error.data.error_description,
+                    title: 'data.error_description' + error.data.error_description,
                     onConfirm() {
                     }
                   });
@@ -687,13 +710,12 @@
       },
       getLoginId() {
         let that = this;
-        that.$vux.confirm.show({
-          showCancelButton: false,
-          title: 'begin to get loginId',
-          onConfirm() {
-            // this.reInitializePage();
-          }
-        });
+        // that.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: 'begin to get loginId',
+        //   onConfirm() {
+        //   }
+        // });
         this.$http.get(this.$baseUrl + this.getUserInfoByTokenRequest, {
           params: {
             access_token: this.accessToken
@@ -715,7 +737,7 @@
               case 'android':
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: '当前登录信息已失效，请关闭再打开页面android',
+                  title: '当前登录信息已失效，请关闭再打开页面(android)',
                   onConfirm() {
                   }
                 });
@@ -723,7 +745,7 @@
               case 'ios':
                 this.$vux.confirm.show({
                   showCancelButton: false,
-                  title: '当前登录信息已失效，请关闭再打开页面ios',
+                  title: '当前登录信息已失效，请关闭再打开页面(ios)',
                   onConfirm() {
                   }
                 });
@@ -979,7 +1001,7 @@
             }).catch(error => {
               this.$vux.confirm.show({
                 showCancelButton: false,
-                title: error.data.error_description || error.data.message,
+                title: 'login error' + error.data.error_description || 'login error' + error.data.message,
                 onConfirm() {
                 }
               })
@@ -1013,7 +1035,9 @@
                     this.alreadyReceivedPrize = true;
                     this.alreadyReleasedPrize = true;
 
-                    this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
+                    this.getDailyTimes();
+
+                    // this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
                     this.activityRewardMappingId = response.activityRewardMappingId;
                     this.prizeData = Object.assign(response, {
                       rewardName: item1.name
@@ -1022,6 +1046,7 @@
                     this.$store.commit('turnOffWinningPrizeChance');
 
                     this.checkoutPrizeDetail();
+
                   })
                 }
               });
@@ -1043,6 +1068,7 @@
               });
               break;
           }
+          this.getDailyTimes();
         }).catch(error => {
           // alert('抽奖失败')
           console.log(error)
@@ -1389,6 +1415,9 @@
             if (typeof Number(sessionStorage.getItem('dailyLimit')) === 'number') {
               this.dailyLimit = sessionStorage.getItem('dailyLimit');
             }
+            if (typeof Number(sessionStorage.getItem('activityId')) === 'number') {
+              this.activityId = sessionStorage.getItem('activityId');
+            }
             if (typeof JSON.parse(sessionStorage.getItem('prizeData')) === 'object') {
               this.alreadyReleasedPrize = eval(sessionStorage.getItem('alreadyReleasedPrize'));
             } else {
@@ -1404,6 +1433,10 @@
             if (Cookies.get('wheel-loginId') !== null) {
               this.loginId = Cookies.get('wheel-loginId');
             }
+            if (sessionStorage.getItem('dailyTimes') !== null && sessionStorage.getItem('dailyTimes') !== 'null') {
+              this.dailyTimes = sessionStorage.getItem('dailyTimes')
+            }
+
             resolve()
           }, 500)
 
@@ -1495,8 +1528,9 @@
             });
             let stateCode = `channel=${this.channel}$activityId=${this.activityId}`;
 
+            // alert(stateCode)
             wx.onMenuShareTimeline({
-              title: '边玩边赚，乐享生活', // 分享标题
+              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
               link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -1508,8 +1542,8 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '边玩边赚，乐享生活', // 分享标题
-              desc: '免费领取奖品', // 分享描述
+              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
+              desc: '不做LYB，好友携手拿好礼。更有海淘精品等你免费来领取！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标

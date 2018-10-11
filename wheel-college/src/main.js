@@ -4,7 +4,7 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 // import axios from 'axios'
 // import moment from 'moment';
-import {ConfirmPlugin, WechatPlugin} from 'vux'
+import {ConfirmPlugin, WechatPlugin, LoadingPlugin } from 'vux'
 // import Swiper from 'swiper';
 
 import App from './App'
@@ -16,6 +16,7 @@ import CommonLoading from './components/common/CommonLoading.vue'
 
 Vue.use(ConfirmPlugin);
 Vue.use(WechatPlugin);
+Vue.use(LoadingPlugin)
 Vue.use(util);
 
 
@@ -27,7 +28,7 @@ Vue.config.productionTip = false;
 Vue.prototype.$http = service;
 // Vue.prototype.$baseUrl = 'http://gateway.fnvalley.com/';
 Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? 'https://gateway.fnvalley.com/' : 'http://testgate.fnvalley.com/';
-Vue.prototype.$domainUrl = process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com/index.html' : 'http://activity.fnvalley.com/collegewheel/index.html';
+Vue.prototype.$domainUrl = process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com/collegewheel/index.html' : 'http://activity.fnvalley.com/collegewheel/index.html';
 Vue.prototype.$redirectBaseUrl = process.env.NODE_ENV === 'production' ? 'https://redirect.fnvalley.com/' : 'https://redirect.fnvalley.com/';
 
 Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';

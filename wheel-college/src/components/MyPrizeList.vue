@@ -29,7 +29,7 @@
           <div class="productfeature">
             <div v-if="item.product!==null" class="title">
               <h1>产品特点</h1>
-              <a class="wheel_product_button" :href="item.product.url">立即领取</a>
+              <a v-if="item.product.url!==''" class="wheel_product_button" @click="checkoutPrize(item)">立即领取</a>
             </div>
             <div class="productbanner" v-if="item.product!==null">
               <img class="icon" :src="$replaceProtocol(item.product.image)+'-style_600x300'"/>
@@ -43,7 +43,7 @@
       <div class="main">
         <h1>暂无奖品</h1>
         <img src="../image/wheel/emptyprize_00000.png"/>
-        <p>领取奖品手机号：{{$route.query.loginId}}</p>
+        <p>领取奖品手机号：{{loginId}}</p>
       </div>
     </div>
 
@@ -65,10 +65,14 @@
         accessToken: '',
         emptyPrizeFlag: true,
         prizeData: [],
-        loading: false
+        loading: false,
+        wechatRedirectLink: ''
       }
     },
     computed: {
+      loginId() {
+        return Cookies.get('wheel-loginId')
+      },
       activityId() {
         return this.$route.query.activityId;
       },
@@ -136,7 +140,7 @@
               showCancelButton: false,
               title: '当前手机号失效，请重新登录',
               onConfirm() {
-                that.$router.go(-1)
+                that.$router.go(-1);
                 sessionStorage.removeItem('wheel-accessToken');
                 Cookies.remove('wheel-loginId');
               }
@@ -145,14 +149,16 @@
 
         })
       },
-      goBack(){
+      goBack() {
         this.$router.go(-1)
       },
       initJSSDK() {
+
         console.log('777', location.href.split('#')[0])
         let wx = this.$wechat;
-        let wechatRedirectLink = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=channel=' + this.channel + '$activityId=' + this.activityId + '#wechat_redirect';
+        this.wechatRedirectLink = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=channel=' + this.channel + '$activityId=' + this.activityId + '#wechat_redirect';
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
+          // url: window.location.host,
           url: location.href.split('#')[0],
         }, {
           headers: {
@@ -196,7 +202,7 @@
             let stateCode = `channel=${this.channel}$activityId=${this.activityId}`;
 
             wx.onMenuShareTimeline({
-              title: '边玩边赚，乐享生活', // 分享标题
+              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
               link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -208,8 +214,8 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '边玩边赚，乐享生活', // 分享标题
-              desc: '边玩边赚，乐享生活', // 分享描述
+              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
+              desc: '不做LYB，好友携手拿好礼。更有海淘精品等你免费来领取！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
@@ -225,6 +231,11 @@
         });
 
       },
+      checkoutPrize(data) {
+        let homeUrl = this.$domainUrl + '?code=xxxx&state=channel=' + Cookies.get('wheel-channel') + '$activityId=' + sessionStorage.getItem('activityId');
+        history.replaceState({}, null, homeUrl);
+        location.assign(data.product.url)
+      }
     }
   }
 
