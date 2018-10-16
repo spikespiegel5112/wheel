@@ -100,7 +100,8 @@
               {{prizeData.rewardName}}
             </p>
             <div class="hint">提示：同一个奖品只能领取一次 名额有限,先到先得~</div>
-            <a class="button" :href="prizeData.rewardProduct!==null?prizeData.rewardProduct.url:''"
+            <a class="button" :class="{active:routing}"
+               :href="prizeData.rewardProduct!==null?prizeData.rewardProduct.url:''"
                @click="checkoutPrizeLink">免费领取</a>
           </div>
         </div>
@@ -266,17 +267,14 @@
         activityId: '',
         accessTokenReadyFlag: false,
         testString: 'xxx',
+        routing: false
       }
     },
     computed: {
-
       // activityId() {
-      //   return this.$route.query.activityId || 3;
+      //   return this.$route.query.activityId || '';
       // },
 
-      userActivityId() {
-        return this.$route.query.state;
-      },
       identityCode() {
         return this.$route.query.state;
       },
@@ -294,7 +292,6 @@
         this.$nextTick(() => {
           this.canvasWidth = value * 13.5 + 'px';
           this.canvasHeight = value * 13.5 + 'px';
-          this.getPrizeList();
         })
       },
       weChatAuthorityURL(value) {
@@ -346,6 +343,7 @@
         this.channel = value;
       },
       channel(value) {
+        // alert('set channel+ ' + value)
         Cookies.set('wheel-channel', value)
       },
       activityId(value) {
@@ -353,9 +351,9 @@
       }
     },
     beforeCreate() {
-      this.channel = this.$route.query.channel || '';
+      // this.channel = this.$route.query.channel || '';
       this.activityId = this.$route.query.activityId || '';
-
+      // alert(this.activityId)
     },
     beforeMount() {
       let fullPath = window.location.href;
@@ -408,38 +406,71 @@
         //     // this.reInitializePage();
         //   }
         // });
+
+        // this.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: 'this.environment+  ' + this.environment,
+        //   onConfirm() {}
+        // });
         console.log('this.environment', this.environment)
 
         this.$nextTick(() => {
-
-
         });
-        if (this.environment === 'wechat') {
-          this.parseStateCode();
+        this.parseStateCode();
 
+        if (this.environment === 'wechat') {
           if (this.$route.query.routeto !== 'shareredirect') {
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: 'this.$route.query.routeto+ ' + this.$route.query.routeto,
+            //   onConfirm() {
+            //   }
+            // });
             this.wechatRedirectingFlag = false;
             this.$vux.loading.hide()
           } else {
             // alert(this.redirectInfo)
-            this.redirectInfo = this.$route.query.routeto
-            this.wechatRedirectingFlag = true;
             this.$vux.loading.show({
               text: 'Loading'
             });
+            this.redirectInfo = this.$route.query.routeto;
+            this.wechatRedirectingFlag = true;
+
             this.reInitializePage()
           }
-
         } else {
-          this.channel = this.$route.query.channel || '';
-          this.activityId = this.$route.query.activityId || '';
+
+          // alert('routeto+' + this.$route.query.routeto)
+
+          this.wechatRedirectingFlag = false;
+
+          // alert('activityId+'+this.$route.query.activityId)
+          // alert('channel+'+this.$route.query.channel)
+
+          if (this.$route.query.channel !== undefined) {
+            this.channel = this.$route.query.channel;
+          }
+          if (this.$route.query.activityId !== undefined) {
+            this.activityId = this.$route.query.activityId;
+          } else {
+            // alert('activityId is undefined')
+          }
         }
+        this.getPrizeList();
+
         this.getRewardRecordList();
 
+        // alert('begin to check accessToken '+ this.accessToken)
         if (this.accessToken === '') {
+          // debugger
+          // alert('No accessToken+' + this.accessToken)
+
           this.getAccessToken();
         } else {
+          // debugger
+          // alert('check accessToken+' + this.accessToken)
           this.getDailyTimes();
+          this.initJSSDK()
         }
         //
         // this.$vux.confirm.show({
@@ -521,19 +552,24 @@
 
       parseStateCode() {
         let result = [];
-        let code = decodeURIComponent(this.stateCode)
+        // alert('stateCode+ ' + this.stateCode)
+        // alert('stateCode+ ' + this.$route.query.state)
+        if (this.stateCode !== undefined) {
+          let code = decodeURIComponent(this.stateCode)
 
-        code.split('$').forEach(item => {
-          result[item.split('=')[0]] = item.split('=')[1]
-        });
-        // alert('result.channel+' + result.channel)
-        // alert('result.activityId+' + result.activityId)
-        this.stateCodeData = result;
-        this.channel = result.channel;
-        this.activityId = result.activityId;
+          code.split('$').forEach(item => {
+            result[item.split('=')[0]] = item.split('=')[1]
+          });
+          // alert('result.channel+' + result.channel)
+          // alert('result.activityId+' + result.activityId)
+          this.stateCodeData = result;
+          this.channel = result.channel;
+          this.activityId = result.activityId;
+        }
         console.log('parseStateCode', result)
         console.log('channel', this.channel)
-        console.log(code)
+        // alert('channel+ ', this.channel)
+
       },
       getAccessToken() {
         let that = this;
@@ -544,7 +580,7 @@
         //     // this.reInitializePage();
         //   }
         // });
-        // alert('alreadyReceivedPrize+' + this.alreadyReceivedPrize)
+        // alert('getAccessToken+' + this.accessToken)
         if (this.environment === 'wechat') {
           // alert('this.getWechatToken+' + this.wechatAuthCode)
           if (!this.wechatRedirectingFlag) {
@@ -558,7 +594,7 @@
               this.accessToken = response.access_token;
               sessionStorage.setItem('wheel-accessToken', this.accessToken)
               this.getDailyTimes();
-              this.getLoginId();
+              this.getLoginIdByAccessToken();
             });
             // this.$initJSSDK({
             //   state: 'channel=' + this.channel + '$activityId=' + this.activityId
@@ -578,8 +614,8 @@
             switch (this.environment) {
               case 'android':
                 this.accessToken = window.android.getToken();
-                // alert('android_accesstoken,' + this.accessToken)
-                this.getLoginId();
+                // alert('android_accesstoken+' + this.accessToken)
+                this.getLoginIdByAccessToken();
                 this.getDailyTimes();
                 sessionStorage.setItem('wheel-accessToken', this.accessToken)
 
@@ -600,7 +636,7 @@
                   //   onConfirm() {
                   //   }
                   // });
-                  that.getLoginId();
+                  that.getLoginIdByAccessToken();
                   that.getDailyTimes();
                   sessionStorage.setItem('wheel-accessToken', that.accessToken)
                 };
@@ -649,7 +685,6 @@
               this.accessToken = response.access_token;
               sessionStorage.setItem('wheel-accessToken', response.access_token)
               // Cookies.set('wheel-accessToken', response.access_token);
-              this.getLoginId();
 
               resolve(response);
             }).catch(error => {
@@ -708,7 +743,7 @@
         // alert('reInitializePage.stateCode', stateCode)
         location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + stateCode + '#wechat_redirect')
       },
-      getLoginId() {
+      getLoginIdByAccessToken() {
         let that = this;
         // that.$vux.confirm.show({
         //   showCancelButton: false,
@@ -762,7 +797,7 @@
             activityId: this.activityId
           }
         }).then(response => {
-          console.log(response)
+          console.log('getPrizeList', response)
           this.loading = false;
           response = response.data;
           this.wheelData = [];
@@ -773,12 +808,19 @@
             this.dailyLimit = response.activityInfo.dailyLimit;
           }
           response.rewardList.forEach((item, index) => {
+            let name;
+            if (item.rewardType !== 'point') {
+              name = item.rewardName;
+            } else {
+              name = item.rewardValue + item.description;
+            }
             this.wheelData.push({
-              name: item.rewardName,
+              name: name,
               image: item.rewardImage !== null ? item.rewardImage + '-style_100x100' : '',
               // image: 'https://pic5.40017.cn/01/000/79/0a/rBLkBVpVuxmAUQqmAAARnUFXcFc487.png',
               value: item.activityRewardMappingId,
             })
+
           });
 
           this.drawCanvas();
@@ -787,12 +829,12 @@
         }).catch(error => {
           console.log(error)
           this.loading = false;
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: 'getPrizeList error+ ' + error.data.message,
-            onConfirm() {
-            }
-          })
+          // this.$vux.confirm.show({
+          //   showCancelButton: false,
+          //   title: 'getPrizeList error+ ' + error.data.message,
+          //   onConfirm() {
+          //   }
+          // })
         })
       },
 
@@ -808,6 +850,17 @@
       },
       checkoutPrizeLink() {
         console.log('checkoutPrizeLink', this.prizeData)
+        let homeUrl = this.$domainUrl + '?code=xxxx&state=channel=' + Cookies.get('wheel-channel') + '$activityId=' + sessionStorage.getItem('activityId');
+        // this.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: this.wechatRedirectLink,
+        //   onConfirm() {
+        //   }
+        // })
+        // alert(this.wechatRedirectLink)
+
+        this.routing = true;
+        history.replaceState({}, null, homeUrl);
         if (this.prizeData.rewardProduct !== null && this.prizeData.rewardProduct !== undefined) {
           location.assign(this.prizeData.url)
         }
@@ -951,6 +1004,8 @@
             sessionStorage.setItem('userInfo', JSON.stringify(response));
             // Cookies.set('wheel-loginId', this.loginId);
             this.receivePrizeByToken();
+            this.getLoginIdByAccessToken();
+
           });
         })
 
@@ -1030,7 +1085,13 @@
               this.rewardCode = response.rewardCode;
               this.wheelData.forEach((item1, index1) => {
                 if (item1.value === response.activityRewardMappingId) {
-                  // if (item1.value === 10) {
+                  //获取并缓存奖品信息不需要一定等到转盘转完再存
+                  this.prizeData = Object.assign(response, {
+                    rewardName: item1.name
+                  });
+                  this.activityRewardMappingId = response.activityRewardMappingId;
+                  this.channel = this.loginId;
+
                   this.rotateWheel(index1).then(() => {
                     this.alreadyReceivedPrize = true;
                     this.alreadyReleasedPrize = true;
@@ -1038,10 +1099,6 @@
                     this.getDailyTimes();
 
                     // this.dailyLimit = Number(this.dailyLimit) > 0 ? Number(this.dailyLimit) - 1 : this.dailyLimit;
-                    this.activityRewardMappingId = response.activityRewardMappingId;
-                    this.prizeData = Object.assign(response, {
-                      rewardName: item1.name
-                    });
 
                     this.$store.commit('turnOffWinningPrizeChance');
 
@@ -1173,7 +1230,7 @@
           let imageObj = new Image();
           imageObj.width = '150';
           imageObj.height = '150';
-          imageObj.src = this.$replaceProtocol(this.wheelData[index].image);
+          imageObj.src = this.wheelData[index].image;
           imageObj.transparency = 0.2;
           imageSequence.push(imageObj);
         });
@@ -1244,17 +1301,6 @@
           };
           ctx.restore();
           ctx.save();
-
-
-          // setInterval(()=>{
-          //   ctx.rotate(baseAngle*Math.PI/180);
-          // }, 1000);
-
-          // let pointer = new Image();
-          // pointer.url = 'http://localhost/static/img/pointer_00000.png';
-          // pointer.width = '100';
-          // pointer.height = '100';
-
 
         });
         this.getCachedCircleNumber();
@@ -1431,6 +1477,7 @@
               this.accessToken = sessionStorage.getItem('wheel-accessToken')
             }
             if (Cookies.get('wheel-loginId') !== null) {
+              // alert('Cookies loginId+ ' + Cookies.get('wheel-loginId'))
               this.loginId = Cookies.get('wheel-loginId');
             }
             if (sessionStorage.getItem('dailyTimes') !== null && sessionStorage.getItem('dailyTimes') !== 'null') {
@@ -1499,7 +1546,7 @@
             return ret
           }],
         }).then(response => {
-          console.log(response)
+          console.log('getSignatureRequest', response)
 
           wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -1515,7 +1562,8 @@
           });
           wx.ready((e) => {
             console.log(e)
-            // alert('dsds')
+            console.log('wechat ok!')
+            // alert('wechat ok!')
             wx.checkJsApi({
               jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
               success: function (res) {

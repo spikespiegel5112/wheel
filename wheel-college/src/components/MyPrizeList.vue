@@ -18,7 +18,7 @@
         <!--<h1 class="title">奖品描述</h1>-->
         <li v-for="item in prizeData">
           <div class="prizetitle">
-            <img v-if="item.product!==null" class="icon" :src="$replaceProtocol(item.product.icon)+'-style_100x100'"/>
+            <img v-if="item.product!==null" class="icon" :src="item.product.icon+'-style_100x100'"/>
             <div class="title">
               <label>{{item.rewardValue}}{{item.rewardDescription}}</label>
               <div class="prize" v-if="item.product!==null">
@@ -29,10 +29,11 @@
           <div class="productfeature">
             <div v-if="item.product!==null" class="title">
               <h1>产品特点</h1>
-              <a v-if="item.product.url!==''" class="wheel_product_button" @click="checkoutPrize(item)">立即领取</a>
+              <a v-if="item.product.url!==''" class="wheel_product_button" :class="{active:routing}"
+                 @click="checkoutPrize(item)">立即领取</a>
             </div>
             <div class="productbanner" v-if="item.product!==null">
-              <img class="icon" :src="$replaceProtocol(item.product.image)+'-style_600x300'"/>
+              <img class="icon" :src="item.product.image+'-style_600x300'"/>
               <!--<img src="../image/wheel/prizepreview_00000.jpg"/>-->
             </div>
           </div>
@@ -66,7 +67,7 @@
         emptyPrizeFlag: true,
         prizeData: [],
         loading: false,
-        wechatRedirectLink: ''
+        routing: false
       }
     },
     computed: {
@@ -74,10 +75,10 @@
         return Cookies.get('wheel-loginId')
       },
       activityId() {
-        return this.$route.query.activityId;
+        return sessionStorage.getItem('activityId')
       },
       channel() {
-        return this.$route.query.channel;
+        return Cookies.get('wheel-channel')
       },
       userActivityId() {
         return this.$route.query.state;
@@ -94,6 +95,9 @@
       },
       token() {
         return this.$route.query.token;
+      },
+      wechatRedirectLink() {
+        return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=channel=' + this.channel + '$activityId=' + this.activityId + '#wechat_redirect';
       }
     },
     watch: {
@@ -156,7 +160,7 @@
 
         console.log('777', location.href.split('#')[0])
         let wx = this.$wechat;
-        this.wechatRedirectLink = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=http://activity.fnvalley.com/collegewheel/index.html&response_type=code&scope=snsapi_userinfo&state=channel=' + this.channel + '$activityId=' + this.activityId + '#wechat_redirect';
+
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           // url: window.location.host,
           url: location.href.split('#')[0],
@@ -232,8 +236,21 @@
 
       },
       checkoutPrize(data) {
-        let homeUrl = this.$domainUrl + '?code=xxxx&state=channel=' + Cookies.get('wheel-channel') + '$activityId=' + sessionStorage.getItem('activityId');
+        // alert(Cookies.get('wheel-channel'))
+        // alert(sessionStorage.getItem('activityId'))
+
+        this.routing = true;
+        let homeUrl = this.$domainUrl + '?code=xxxx&state=channel=' + Cookies.get('wheel-channel') + '$activityId=' + sessionStorage.getItem('activityId') + '&timestamp=' + Date.parse(new Date());
+        // this.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: this.wechatRedirectLink,
+        //   onConfirm() {
+        //   }
+        // })
+        // alert(this.wechatRedirectLink)
+
         history.replaceState({}, null, homeUrl);
+
         location.assign(data.product.url)
       }
     }

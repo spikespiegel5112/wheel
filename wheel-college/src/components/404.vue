@@ -8,21 +8,19 @@
         趣福利
       </div>
     </div>
-    <div class="wheel_main_wrapper">
-      <div class="prize_wrapper">
-        <h1>404</h1>
-        <div class="main">
-          <div class="withpicture">
-            <div class="prizeimage">
-              <img src="../image/wheel/404.png"/>
-            </div>
-            <div class="detail">
-              <span>您所访问的页面不存在</span>
-            </div>
+    <div class="wheel_mainbg_item"></div>
+    <div class="common_404_wrapper">
+      <h1>404</h1>
+      <div class="main">
+        <div class="withpicture">
+          <div class="prizeimage">
+            <img src="../image/wheel/404.png"/>
+          </div>
+          <div class="detail">
+            <span>您所访问的页面不存在</span>
           </div>
         </div>
       </div>
-
     </div>
     <CommonLoading :loading="loading"/>
   </div>
