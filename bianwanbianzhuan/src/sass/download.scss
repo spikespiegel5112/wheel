@@ -1,0 +1,40 @@
+
+.main_container {
+
+  .switcher {
+    margin: 1rem auto;
+    width: 10.2rem;
+    font-size: 0;
+    height: 1.6rem;
+    border: 1px solid #f9535d;
+    border-radius: 0.8rem;
+    a {
+      display: inline-block;
+      padding: 0 0.3rem;
+
+      width: 4.5rem;
+      height: 100%;
+      line-height: 1.6rem;
+      font-size: 0.5rem;
+      &.active {
+        background-color: #f9535d;
+        color: #fff;
+
+      }
+      //width: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+    }
+  }
+  .segment {
+    width: 100%;
+    font-size: 0;
+    overflow: auto;
+    li {
+      //height: 50rem;
+    }
+    img {
+      width: 100%;
+    }
+  }
+}
