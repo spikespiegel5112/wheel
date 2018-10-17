@@ -2,7 +2,118 @@ import $ from 'jquery';
 
 let util = {};
 util.install = function (Vue) {
-  Vue.prototype.$getDevice=(options)=>{
+  Vue.prototype.$initJSSDK = () => {
+    let getSignatureRequest = 'account-service/1.0.0/weChat/getSignature';
+
+      console.log('initJSSDK', location.href.split('#')[0])
+    this.$http.post(this.$baseUrl + getSignatureRequest, {
+      url: location.href.split('#')[0],
+    }, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      transformRequest: [function (data) {
+        let ret = '';
+        for (let it in data) {
+          ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+        }
+        return ret
+      }],
+    }).then(response => {
+      console.log(response)
+
+      wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: 'wx67c26ff8068af257', // 必填，公众号的唯一标识
+        timestamp: response.data.timestamp, // 必填，生成签名的时间戳
+        nonceStr: response.data.nonceStr, // 必填，生成签名的随机串
+        signature: response.data.signature,// 必填，签名
+        jsApiList: [
+          'closeWindow', 'chooseWXPay', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'
+        ] // 必填，需要使用的JS接口列表
+      });
+      wx.error(error => {
+        console.log(error)
+        alert('error')
+      });
+      wx.ready((e) => {
+        console.log(e)
+        // alert('dsds')
+        wx.checkJsApi({
+          jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+          success: function (res) {
+            // alert('check')
+            // 以键值对的形式返回，可用的api值true，不可用为false
+            // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+//		    	alert(JSON.stringify(res));
+          }
+
+        });
+
+        wx.onMenuShareTimeline({
+          title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+          link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+
+          success: function () {
+
+          }
+        });
+
+        wx.onMenuShareAppMessage({
+          title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+          desc: '千万不要错过哦', // 分享描述
+          link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+          type: '', // 分享类型,music、video或link，不填默认为link
+          dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+          success: function () {
+            // alert('ddd')
+// 用户点击了分享后执行的回调函数
+          }
+        });
+      })
+    });
+  };
+
+
+  Vue.prototype.$checkEnvironment = () => {
+    let environmentDictionary = [{
+      name: 'ios',
+      method: "window.webkit.messageHandlers.token.postMessage('')",
+      checker: 'window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.token',
+      getter: 'window.webkit.messageHandlers.token',
+      status: false
+    }, {
+      name: 'android',
+      method: 'window.android.getToken()',
+      checker: 'window.android',
+      getter: 'window.android.getToken()',
+      status: false
+    }, {
+      name: 'wechat',
+      checker: "console",
+      getter: '',
+      status: false
+    }];
+    let environment;
+    let that = this;
+    for (let i = 0; i < environmentDictionary.length; i++) {
+      let item = environmentDictionary[i];
+      if (item.name === 'ios' && window.webkit !== undefined) {
+        environment = eval(item.checker) ? item.name : '';
+      } else {
+        environment = eval(item.checker) !== undefined ? item.name : '';
+      }
+      if (environment !== '') {
+        break;
+      }
+    }
+
+    return environment;
+  };
+
+  Vue.prototype.$getDevice = (options) => {
     //判断访问终端
     let u = navigator.userAgent,
       app = navigator.appVersion;
@@ -14,7 +125,7 @@ util.install = function (Vue) {
       mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
       ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
       android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
-      iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
+      iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
       iPad: u.indexOf('iPad') > -1, //是否iPad
       webApp: u.indexOf('Safari') === -1, //是否web应该程序，没有头部与底部
       weixin: u.indexOf('MicroMessenger') > -1, //是否微信 （2015-01-22新增）
@@ -173,18 +284,7 @@ util.install = function (Vue) {
     }
     return upsetArr;
   };
-
-
-  Vue.prototype.$setMenuData = options => {
-    let menuData = Object.assign({
-      showMenu: true
-    }, options);
-
-    if (typeof localStorage.getItem('menuData') === 'undefined') {
-      localStorage.setItem('menuData', menuData);
-    }
-  };
-
+  
 
   Vue.prototype.$autoHeight = (options) => {
     options = $.extend({

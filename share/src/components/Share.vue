@@ -1,11 +1,9 @@
 <template>
   <div>
-    <div class="share_redirect_container" v-if="redirectingFlag">
-      <CommonLoading :loading="initializing"/>
-    </div>
-    <div class="common_main_container" v-else>
-      <CommonLoading :loading="initializing"/>
-      <div class="content" id="app" v-if="!initializing">
+    <div class="common_main_container">
+      <!--<CommonLoading :loading="wechatRedirectingFlag"/>-->
+      <div v-if="wechatRedirectingFlag" class="common_initializing_item"></div>
+      <div v-show="!wechatRedirectingFlag" class="content" id="app">
         <!--<div class="common_header_wrapper">-->
         <!--<div class="left_wrapper">-->
         <!--<a class="previous iconfont icon-backward2"></a>-->
@@ -15,7 +13,7 @@
         <!--</div>-->
         <!--</div>-->
         <!--<div v-if="true">-->
-        <div v-if="isWechat()">
+        <div v-if="environment==='wechat'">
           <div class="share_main_wrapper">
             <div class="carousel swiper-container">
               <ul class="swiper-wrapper">
@@ -31,123 +29,127 @@
               </ul>
               <div class="swiper-pagination"></div>
             </div>
-            <div class="form" v-if="acceptPrizeFlag">
-              <div class="title">
-                <h1>好礼即将到账</h1>
-                <h2>验证手机号码领取</h2>
+            <div class="maincontent">
+              <div class="form" v-if="loginToGetPrizeFlag">
+                <div class="title">
+                  <h1>好礼即将到账</h1>
+                  <h2>验证手机号码领取</h2>
+                </div>
+                <div class="main">
+                  <ul>
+                    <li>
+                      <div class="common_form_item">
+                        <input class="common_input_item" type="text" placeholder="请输入手机号码" v-model="loginId"/>
+                        <button class="common_button_item" type="text" @click="sendSmsCode">
+                          {{smsCodeState?smsCodeCountDown:'获取验证码'}}
+                        </button>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="common_form_item">
+                        <input class="common_input_item" type="text" placeholder="请输入验证码"
+                               v-model="verificationCode"
+                               @input="checkVerifyCode"/>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="common_form_item">
+                        <button v-if="receiveRewardFlag" class="common_button_item active"
+                                :class="{'active':receiveRewardFlag===true}"
+                                @click="acceptPrize">
+                          领奖
+                        </button>
+                        <button v-else class="common_button_item">
+                          领奖
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div class="main">
-                <ul>
-                  <li>
-                    <div class="common_form_item">
-                      <input class="common_input_item" type="text" placeholder="请输入手机号码" v-model="loginId"/>
-                      <button class="common_button_item" type="text" @click="sendSmsCode">
-                        {{smsCodeState?smsCodeCountDown:'获取验证码'}}
-                      </button>
+              <div v-if="prizeData.code!==''" class="prize_wrapper">
+                <!--<div class="prize_wrapper">-->
+
+                <h1>{{prizeData.data.rewardPrompt}}</h1>
+                <div class="main">
+                  <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
+                    <div class="prizeimage">
+                      <img v-if="prizeData.data.rewardImage!==''||prizeData.data.rewardImage!==null" src="../image/share/coin.png"/>
+                      <img v-else :src="prizeData.data.rewardImage"/>
                     </div>
-                  </li>
-                  <li>
-                    <div class="common_form_item">
-                      <input class="common_input_item" type="text" placeholder="请输入验证码"
-                             v-model="receiveRewardParams.verificationCode"
-                             @input="checkVerifyCode"/>
+                    <div class="detail">
+                      <label>{{prizeData.data.rewardName}}!</label>
+                      <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
+                      <span v-else>想要大奖，自己发起活动吧</span>
+
+                      <!--<a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>-->
+                      <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" :href='downloadUrl'
+                         target="_blank">打开趣谷APP</a>
+
+                      <!--<a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>-->
+                      <a v-else class="button" :href='downloadUrl' target="_blank">我要发起</a>
                     </div>
-                  </li>
-                  <li>
-                    <div class="common_form_item">
-                      <button class="common_button_item" :class="{'active':receiveRewardFlag===true}"
-                              @click="acceptPrize">
-                        领奖
-                      </button>
+                  </div>
+                  <div v-else class="withoutpicture">
+                    <div class="detail">
+                      <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
+                      <span>告诉你个小秘密，可以自己发起活动哦~</span>
+                      <a class="button" :href='downloadUrl' target="_blank">我要发起</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ranklist">
+                <div class='common_blocktitle_item'>
+                  <span><i></i></span>
+                  <p>手气榜</p>
+                  <span><i></i></span>
+                </div>
+                <ul v-if="rewardTraceListData.length>0">
+                  <li v-for="(item, index) in rewardTraceListData">
+                    <div class="avatar">
+                      <div v-if="item.rewardUserImage!==null">
+                        <!--<img :src="item.rewardUserImage"/>-->
+                        <img :src="item.rewardUserImage"/>
+                      </div>
+                      <span class="query">?</span>
+                    </div>
+                    <div class="detail">
+                      <div class="name">
+                        <label>{{item.rewardUserNickName}}</label>
+                        <span>{{$moment(item.createDate).format('MM.DD')}}</span>
+                        <span>{{$moment(item.createDate).utcOffset(8).format('HH:mm')}}</span>
+                      </div>
+                      <div class="comment">
+                        {{item.rewardPrompt}}
+                      </div>
+                    </div>
+                    <div class="prizename">
+                      {{item.rewardDescription}}
+                      <!--{{item.rewardValue}}{{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].unit}}{{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].name}}-->
                     </div>
                   </li>
                 </ul>
+                <p v-else class="hint">
+                  只差一点点，大红包就是你的啦~
+                </p>
               </div>
-            </div>
-            <div v-if="prizeData.code!==''" class="prize_wrapper">
-              <!--<div class="prize_wrapper">-->
-
-              <h1>{{prizeData.data.rewardPrompt}}</h1>
-              <div class="main">
-                <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
-                  <div class="prizeimage">
-                    <img v-if="prizeData.data.rewardType==='coin'" src="../image/share/coin.png"/>
-                    <img v-if="prizeData.data.rewardType==='point'" src="../image/share/coin.png"/>
-                    <img v-if="prizeData.data.rewardType==='bes_tv'" src="../image/share/bestv.png"/>
-                  </div>
-                  <div class="detail">
-                    <label v-if="prizeData.data.rewardType==='coin'">{{prizeData.data.rewardValue}}趣豆！</label>
-                    <label v-if="prizeData.data.rewardType==='point'">{{prizeData.data.rewardValue}}积分！</label>
-                    <label v-if="prizeData.data.rewardType==='bes_tv'">百事通会员卡！</label>
-
-                    <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
-                    <span v-else>想要大奖，自己发起活动吧</span>
-
-                    <!--<a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>-->
-                    <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" :href='downloadUrl'
-                       target="_blank">打开趣谷APP</a>
-
-                    <!--<a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>-->
-                    <a v-else class="button" :href='downloadUrl' target="_blank">我要发起</a>
-                  </div>
+              <div class="rules">
+                <div class='common_blocktitle_item'>
+                  <span><i></i></span>
+                  <p>活动细则</p>
+                  <span><i></i></span>
                 </div>
-                <div v-else class="withoutpicture">
-                  <div class="detail">
-                    <label>{{activityStatusDictionary.filter(item=>item.code===prizeData.code)[0].text}}</label>
-                    <span>告诉你个小秘密，可以自己发起活动哦~</span>
-                    <a class="button" :href='downloadUrl' target="_blank">我要发起</a>
-                  </div>
-                </div>
+                <ol>
+                  <li>本次活动有效期为2018年7月16日至2018年10月31日</li>
+                  <li>本次活动所有奖品为随机抽取得到</li>
+                  <li>本次活动每次抽奖最高奖项为百视通半年会员</li>
+                  <li>本次活动最高解释权归彬指网络科技（上海）有限公司所有</li>
+                </ol>
               </div>
             </div>
 
-            <div class="ranklist">
-              <div class='common_blocktitle_item'>
-                <span><i></i></span>
-                <p>手气榜</p>
-                <span><i></i></span>
-              </div>
-              <ul>
-                <li v-for="(item, index) in rewardTraceListData">
-                  <div class="avatar">
-                    <div v-if="item.rewardUserImage!==null">
-                      <!--<img :src="item.rewardUserImage"/>-->
-                      <img :src="item.rewardUserImage"/>
-                    </div>
-                    <span class="query">?</span>
-                  </div>
-                  <div class="detail">
-                    <div class="name">
-                      <label>{{item.rewardUserNickName}}</label>
-                      <span>{{$moment(item.createDate).utcOffset(0).format('MM.DD')}}</span>
-                      <span>{{$moment(item.createDate).utcOffset(0).format(' hh:mm')}}</span>
-                    </div>
-                    <div class="comment">
-                      {{item.rewardPrompt}}
-                    </div>
-                  </div>
-                  <div class="prizename">
-                    {{item.rewardValue}}{{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].unit}}{{prizeTypeDictionary.filter(item2=>item.rewardType===item2.code)[0].name}}
-                  </div>
-                </li>
-              </ul>
-              <!--<p class="hint">-->
-              <!--只差一点点，大红包就是你的啦~-->
-              <!--</p>-->
-            </div>
-            <div class="rules">
-              <div class='common_blocktitle_item'>
-                <span><i></i></span>
-                <p>活动细则</p>
-                <span><i></i></span>
-              </div>
-              <ol>
-                <li>本次活动有效期为2018年7月16日至2018年10月31日</li>
-                <li>本次活动所有奖品为随机抽取得到</li>
-                <li>本次活动每次抽奖最高奖项为百视通半年会员</li>
-                <li>本次活动最高解释权归彬指网络科技（上海）有限公司所有</li>
-              </ol>
-            </div>
           </div>
         </div>
         <div v-else>
@@ -167,7 +169,7 @@
             </div>
           </div>
         </div>
-        <CommonLoading :loading="loading"/>
+        <!--<CommonLoading :loading="loading"/>-->
       </div>
     </div>
 
@@ -176,30 +178,32 @@
 </template>
 
 <script>
-  import CommonLoading from './common/CommonLoading.vue'
+  // import CommonLoading from './common/CommonLoading.vue'
   import wx from 'weixin-js-sdk'
 
   export default {
     name: "Promotion",
     components: {
-      CommonLoading
+      // CommonLoading
     },
     data: function () {
       return {
-        baseUrl: 'http://gateway.zan-qian.com/',
+        getUserInfoByTokenRequest: 'uaa/user',
+        oauthTokenRequest: 'uaa/oauth/token',
+
         domainUrl: process.env.NODE_ENV === 'production' ? 'https://activity.fnvalley.com' : 'http://testactivity.fnvalley.com',
         sendBindWxMsgRequest: 'message-service/1.0.0/sms/sendBindWxMsg',
         verificationCodeRequest: 'message-service/1.0.0/sms/verificationCode',
-        acceptShareUserActivityRewardRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityReward',
         findUserActivityRewardTraceRequest: 'promotion-service/1.0.0/share_activity/findUserActivityRewardTrace',
         getAdvertiseRequest: 'advertising-service/1.0.0',
 
-        acceptShareUserActivityRewardByWeChatCodeRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityRewardByWeChatCode',
-        acceptShareUserActivityRewardByPhoneRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityRewardByPhone',
 
         getSignatureRequest: 'account-service/1.0.0/weChat/getSignature',
 
         weChatAuthorityURL: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$baseUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '&connect_redirect=1#wechat_redirect',
+        acceptShareUserActivityRewardByAccessTokenRequest: 'promotion-service/1.0.0/share_activity/acceptShareUserActivityReward',
+        get_daily_numberRequest: 'promotion-service/1.0.0/activity_participate_number/get_daily_number',
+
 
         swiperInstance: {},
         smsCodeState: false,
@@ -211,27 +215,56 @@
         activityId: '',
         prizeStatus: '',
         redirectingFlag: true,
-        receiveRewardParams: {
-          openId: '',
-          verificationCode: '',
-        },
+        openId: '',
+        verificationCode: '',
         windowHeight: 0,
         receiveRewardFlag: false,
         rewardTraceListData: [],
-        acceptPrizeFlag: false,
-        initializing: true,
+        loginToGetPrizeFlag: false,
+        wechatRedirectingFlag: true,
         loading: false,
         prizeData: {
           code: '',
-          data: {
-            rewardPrompt: '',
-            description: '',
-            loginId: '',
-            rewardStr: '',
-            rewardType: '',
-            rewardValue: ''
-          },
-          message: ''
+          "data": {
+            rewardPrompt: ''
+          }
+        },
+        prizeDataMockData: {
+          "code": 10000,
+          "message": "success",
+          "data": [{
+            "loginId": "18321593357",
+            "userActivityId": 322,
+            "rewardId": 0,
+            "userActivityRewardId": 82,
+            "rewardType": "point",
+            "rewardValue": null,
+            "rewardStr": "point_100",
+            "rewardPrompt": null,
+            "rewardName": "积分",
+            "rewardImage": "https://resource.fnvalley.com/test/wheel/hfs.png",
+            "rewardDescription": "100积分",
+            "rewardUserNickName": "呵呵",
+            "rewardUserImage": "http://resource.zan-qian.com/test/memberHeadImage/1539329504749.jpg",
+            "createDate": "2018-10-16 10:52:08",
+            "eventId": "user_activity_reward_trace:318"
+          }, {
+            "loginId": "17521558498",
+            "userActivityId": 322,
+            "rewardId": 0,
+            "userActivityRewardId": 84,
+            "rewardType": "deductible",
+            "rewardValue": null,
+            "rewardStr": "deductible_5",
+            "rewardPrompt": null,
+            "rewardName": "代金券",
+            "rewardImage": "https://resource.fnvalley.com/test/wheel/sz.png",
+            "rewardDescription": "5元代金券",
+            "rewardUserNickName": "前方高能",
+            "rewardUserImage": "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTI9VJ2MITVA7GXoyTGJ2nlAmiaYkiaicIH7LreYXmaKkKBA49qibFVib5134FXHIq6WR36WGHycRLMia7Vg/132",
+            "createDate": "2018-10-16 15:01:31",
+            "eventId": "user_activity_reward_trace:319"
+          }]
         },
         access_token: '',
         prizeTypeDictionary: [{
@@ -246,7 +279,12 @@
           name: '百视通会员卡',
           code: 'bes_tv',
           unit: ''
+        }, {
+          name: '折扣券',
+          code: 'deductible',
+          unit: ''
         }],
+
         activityStatusDictionary: [{
           code: 10000,
           text: '恭喜你,抽中了！',
@@ -285,11 +323,14 @@
           type: 'withoutPicture'
         }],
         redirectInfo: '',
-        downloadUrl: ''
+        downloadUrl: '',
+        environment: '',
+        accessToken: '',
       }
     },
     computed: {
       userActivityId() {
+        console.log('userActivityId', this.$route.query.state)
         return this.$route.query.state;
       },
       identityCode() {
@@ -308,53 +349,324 @@
       weChatAuthorityURL(value) {
         console.log(value)
       },
-      initializing(value) {
+      wechatRedirectingFlag(value) {
         if (!value) {
         }
       },
       redirectInfo(value) {
-        // alert('dsds')
-        // alert(value)
         console.log(value)
-        if (value === 'shareredirect') {
-          location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
-        } else {
-          this.redirectingFlag = false;
-          this.getUserInfoAndReceivePrize();
-
-        }
+        // if (value === 'shareredirect') {
+        //   location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
+        // } else {
+        //   this.redirectingFlag = false;
+        //   this.getUserInfoAndReceivePrize();
+        //
+        // }
       }
     },
-    created() {
-      this.redirectInfo = this.$route.query.routeto;
-    },
+    // created() {
+    //   this.redirectInfo = this.$route.query.routeto;
+    // },
     beforeMount() {
 
 
     },
     mounted() {
-      this.initializing = false;
+      this.wechatRedirectingFlag = false;
 
-      this.$autoHeight({
-        target: '.share_realpage_container'
+      this.$nextTick(()=>{
+        this.$autoHeight({
+          target: '.common_main_container'
+        });
+        this.$remResizing({
+          fontSize: 20,
+        });
       });
-      this.$remResizing({
-        fontSize: 20,
-      });
-      this.getAdvertise();
 
-      this.getRewardTraceList();
 
-      this.getDownloadUrl();
+      this.environment = this.$checkEnvironment();
 
-      this.initJSSDK();
-      console.log(Swiper)
-      console.log(wx)
-      // this.changeUrl();
+      if (this.environment === 'wechat') {
+        if (this.$route.query.routeto === 'shareredirect') {
+          // alert('shareredirect')
+
+          this.$vux.loading.show({
+            text: 'Loading'
+          });
+          this.redirectInfo = this.$route.query.routeto;
+          this.stateCode = this.$route.query.state;
+          this.wechatRedirectingFlag = true;
+          this.reInitializePage()
+        } else {
+          this.wechatRedirectingFlag = false;
+          this.$vux.loading.hide();
+          if (this.accessToken === '') {
+            this.getAccessToken();
+          }
+          this.getAdvertise();
+          this.getRewardTraceList();
+          this.getDownloadUrl();
+          this.initJSSDK();
+          console.log(Swiper)
+          console.log(wx)
+        }
+      }
+
+
     },
     methods: {
+      getPrizeByAccessToken() {
+        this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByAccessTokenRequest + `/${this.userActivityId}`, {}, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${this.accessToken}`
+          }
+        }).then(response => {
+          console.log('getPrizeByAccessToken', response)
+          switch (response.code) {
+            case 10000:
+              this.prizeData = response;
+              this.loginToGetPrizeFlag = false;
+              break;
+            case 10003:
+              this.prizeData = response;
+              this.loginToGetPrizeFlag = false;
+              break;
+            case 10005:
+              this.loginToGetPrizeFlag = true;
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10010:
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            default:
+
+          }
+          this.$vux.loading.hide();
+          this.getRewardTraceList();
+        })
+      },
+
+      getLoginIdByAccessToken() {
+        let that = this;
+        // that.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: 'begin to get loginId',
+        //   onConfirm() {
+        //   }
+        // });
+        this.$http.get(this.$baseUrl + this.getUserInfoByTokenRequest, {
+          params: {
+            access_token: this.accessToken
+          },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + this.accessToken
+          }
+        }).then(response => {
+          console.log(response)
+          this.loginId = response.name;
+          // alert('loginId===' + this.loginId)
+          // Cookies.set('wheel-loginId', this.loginId);
+
+        }).catch(error => {
+          console.log(error)
+          if (error.status === 401) {
+            switch (this.environment) {
+              case 'android':
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效，请关闭再打开页面(android)',
+                  onConfirm() {
+                  }
+                });
+                break;
+              case 'ios':
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效，请关闭再打开页面(ios)',
+                  onConfirm() {
+                  }
+                });
+                break;
+            }
+          }
+        });
+      },
+      getDailyTimes() {
+        let that = this;
+        this.$http.get(this.$baseUrl + this.get_daily_numberRequest + `/${this.activityId}`, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + this.accessToken
+          }
+        }).then(response => {
+          console.log('getDailyTimes', response)
+          // alert('getWechatToken+', response.data)
+          this.dailyTimesFlag = true;
+          this.dailyTimes = response.data;
+          // sessionStorage.setItem('dailyTimes', this.dailyTimes)
+        }).catch(error => {
+          console.log(error)
+          // alert('initJSSKD error')
+          if (error.status === 401) {
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: '当前登录信息已失效1',
+            //   onConfirm() {
+            //     that.tokenReceiveFlag = false;
+            //   }
+            // });
+            switch (this.environment) {
+              case 'android':
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效(android)',
+                  onConfirm() {
+                    that.tokenReceiveFlag = false;
+                  }
+                });
+                break;
+              case 'ios':
+                this.$vux.confirm.show({
+                  showCancelButton: false,
+                  title: '当前登录信息已失效(ios)',
+                  onConfirm() {
+                    that.tokenReceiveFlag = false;
+                  }
+                });
+                break;
+            }
+          }
+        });
+      },
+      getAccessToken() {
+        if (this.environment === 'wechat') {
+          // alert('this.getWechatToken+' + this.wechatAuthCode)
+          if (!this.wechatRedirectingFlag) {
+            this.getWechatToken({
+              type: 'wechat_code',
+              params: {
+                code: this.wechatAuthCode
+              }
+            }).then(response => {
+              console.log('this.getWechatToken', response)
+              this.accessToken = response.access_token;
+              sessionStorage.setItem('wheel-accessToken', this.accessToken)
+              this.getPrizeByAccessToken();
+              // this.getDailyTimes();
+
+            }).catch(error=>{
+              console.log('getAccessToken error+++', error)
+            });
+            // this.$initJSSDK({
+            //   state: 'channel=' + this.channel + '$activityId=' + this.activityId
+            // });
+            this.initJSSDK()
+          }
+        } else {
+
+        }
+
+      },
+      getWechatToken(options) {
+        return new Promise((resolve, reject) => {
+          options = Object.assign({
+            type: '',
+            params: {}
+          }, options);
+          if (this.environment === 'wechat') {
+            this.$http.post(this.$baseUrl + this.oauthTokenRequest, Object.assign({
+              grant_type: options.type
+            }, options.params), {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization: 'Basic YW5kcm9pZDphZG1pbg=='
+              },
+              transformRequest: [function (data) {
+                let ret = '';
+                for (let it in data) {
+                  ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+              }]
+            }).then(response => {
+              console.log('oauthTokenRequest', response)
+              this.accessToken = response.access_token;
+              sessionStorage.setItem('wheel-accessToken', response.access_token)
+              // Cookies.set('wheel-accessToken', response.access_token);
+
+              resolve(response);
+            }).catch(error => {
+              error = error.response;
+              console.log('error', error)
+              switch (error.data.code) {
+                case 1:
+                  this.dialogFlag = true;
+                  this.loginToGetPrizeFlag = true;
+                  this.openId = error.data.openId;
+                  // this.$vux.confirm.show({
+                  //   showCancelButton: false,
+                  //   title: '没有找到此用户，请登录',
+                  //   onConfirm() {}
+                  // });
+                  reject(error);
+                  break;
+                case 2:
+
+                  // this.dialogFlag = true;
+                  // this.loginToGetPrizeFlag = true;
+                  reject(error);
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: error.data.error + '，请关闭页面重新打开2',
+                    onConfirm() {
+                      // this.reInitializePage();
+                    }
+                  });
+                  break;
+                case 3:
+                  reject(error);
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: error.data.error + '，请关闭页面重新打开3',
+                    onConfirm() {
+                    }
+                  });
+                  break;
+                default:
+                  this.cleanCache();
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: 'data.error_description' + error.data.error_description,
+                    onConfirm() {
+                    }
+                  });
+                  reject(error);
+              }
+            })
+          } else {
+            alert('当前不是微信环境也不是原生环境')
+          }
+        })
+      },
+      reInitializePage() {
+        let stateCode = this.stateCode;
+        // alert('reInitializePage.stateCode', stateCode)
+        location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + stateCode + '#wechat_redirect')
+      },
       initJSSDK() {
-        console.log('777', location.href.split('#')[0])
+        console.log('initJSSDK', location.href.split('#')[0])
         this.$http.post(this.$baseUrl + this.getSignatureRequest, {
           url: location.href.split('#')[0],
         }, {
@@ -428,10 +740,16 @@
       },
       sendSmsCode() {
         if (this.smsCodeState === false) {
-          this.loading = true;
+
+          this.$vux.loading.show({
+            text: 'Loading'
+          });
+          this.$vux.loading.show({
+            text: 'Loading'
+          });
           this.$http.get(this.$baseUrl + this.sendBindWxMsgRequest + '/' + this.loginId).then(response => {
               console.log(response)
-              this.loading = false;
+              this.$vux.loading.hide();
               if (response.alreadySent === true) {
                 this.$vux.confirm.show({
                   showCancelButton: false,
@@ -461,7 +779,7 @@
             }
           ).catch(error => {
             console.log(error)
-            this.loading = false;
+            this.$vux.loading.hide();
 
           })
         } else {
@@ -474,79 +792,21 @@
         }
       },
       checkVerifyCode() {
-        console.log(this.receiveRewardParams.verificationCode.toString().length)
-        if (this.receiveRewardParams.verificationCode.toString().length >= 5) {
+        console.log(this.verificationCode.toString().length)
+        if (this.verificationCode.toString().length >= 5) {
           this.receiveRewardFlag = true;
         }
         console.log(this.receiveRewardFlag)
       },
-      getUserInfoAndReceivePrize() {
-        console.log(this.wechatAuthCode)
-        this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByWeChatCodeRequest + `/${this.identityCode}`, {
-          weChatCode: this.wechatAuthCode
-        }, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          transformRequest: [function (data) {
-            let ret = '';
-            for (let it in data) {
-              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-            }
-            return ret
-          }],
-        }).then(response => {
-          console.log(response)
 
-          if (response.code === 10008 && this.isWechat()) {
-            // if (response.code === 10008) {
-
-            location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '&response_type=code&scope=snsapi_userinfo&state=' + this.stateCode + '#wechat_redirect')
-
-            // this.$vux.confirm.show({
-            //   showCancelButton: false,
-            //   title: response.message,
-            // })
-
-          } else if (response.code === 10009) {
-            this.acceptPrizeFlag = true;
-
-            this.receiveRewardParams = Object.assign(this.receiveRewardParams, {
-              openId: response.data.openId,
-              verificationCode: response.data.verificationCode,
-              accessToken: response.data.accessToken
-            })
-          } else {
-            if (response.code === 10010) {
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-              })
-            } else if (response.data === null) {
-              this.prizeData = Object.assign(this.prizeData, {
-                code: response.code,
-                message: response.message
-              });
-              this.acceptPrizeFlag = false;
-            } else {
-              this.prizeData = response;
-              this.acceptPrizeFlag = false;
-            }
-
-            this.loading = false;
-          }
-
-          this.getRewardTraceList();
-
-        })
-
-      },
       getRewardTraceList() {
-        this.loading = true;
 
+        this.$vux.loading.show({
+          text: 'Loading'
+        });
         this.$http.get(this.$baseUrl + this.findUserActivityRewardTraceRequest + `/${this.userActivityId}`).then(response => {
-          console.log(response)
-          this.loading = false;
+          console.log('findUserActivityRewardTraceRequest', response)
+          this.$vux.loading.hide();
 
           this.rewardTraceListData = response.data;
           this.rewardTraceListData.forEach((item, index) => {
@@ -554,13 +814,13 @@
               let result = Object.assign(this.rewardTraceListData[index], {
                 availible: true,
                 rewardUserImage: item.rewardUserImage.indexOf('resource') > 0 ? item.rewardUserImage + '-style_100x100' : item.rewardUserImage
-              })
+              });
               this.$set(this.rewardTraceListData, index, result)
             }
-          })
+          });
           console.log(555, this.rewardTraceListData)
         }).catch(error => {
-          this.loading = false;
+          this.$vux.loading.hide();
           console.log(error)
         })
       },
@@ -582,79 +842,55 @@
         if (deviceType !== 'ios' && deviceType !== 'android') {
           deviceType = 'ios';
         }
-        this.loading = true;
 
+        this.$vux.loading.show({
+          text: 'Loading'
+        });
         this.$http.get(this.$baseUrl + this.getAdvertiseRequest + `/${deviceType}/${location}`, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         }).then(response => {
           console.log(response)
-          this.loading = false;
+          this.$vux.loading.hide();
 
           this.advertiseList = response;
           this.$nextTick(() => {
             this.initSwiper();
           })
         }).catch(error => {
-          this.loading = false;
+          this.$vux.loading.hide();
 
           console.log(error)
         })
       },
       acceptPrize() {
-        console.log(this.receiveRewardParams)
+
+        this.$vux.loading.show({
+          text: 'Loading'
+        });
+        this.getWechatToken({
+          type: 'sms',
+          params: {
+            username: this.loginId,
+            code: this.verificationCode,
+            source: 'zhinengxiaoyuan',
+            promotionCode: '',
+            openId: this.openId,
+            channel: this.channel,
+            activityId: this.activityId
+          }
+        }).then(response => {
+          console.log(response)
+          this.accessToken = response.access_token;
+          this.getPrizeByAccessToken();
+
+        }).catch(error => {
+
+        });
         if (this.receiveRewardFlag) {
-          this.loading = true;
-          this.$http.post(this.$baseUrl + this.acceptShareUserActivityRewardByPhoneRequest + `/${this.userActivityId}/${this.loginId}`, {
-            openId: this.receiveRewardParams.openId,
-            verificationCode: this.receiveRewardParams.verificationCode,
-            accessToken: this.receiveRewardParams.accessToken,
-          }, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            transformRequest: [function (data) {
-              let ret = '';
-              for (let it in data) {
-                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-              }
-              return ret
-            }],
-          }).then(response => {
-            console.log(response)
-            if (response.code === 10010) {
-              this.$vux.confirm.show({
-                showCancelButton: false,
-                title: response.message,
-                onConfirm() {
-                }
-              })
-            } else if (response.data === null) {
-              this.prizeData = Object.assign(this.prizeData, {
-                code: response.code,
-                message: response.message
-              });
-              this.acceptPrizeFlag = false;
-            } else {
-              this.prizeData = response;
-              this.acceptPrizeFlag = false;
-            }
 
-            this.loading = false;
 
-            this.getRewardTraceList();
-
-          }).catch(error => {
-            this.loading = false;
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: '验证码不正确',
-              onConfirm() {
-              }
-            });
-            console.log(error.message)
-          })
         } else {
           this.$vux.confirm.show({
             showCancelButton: false,

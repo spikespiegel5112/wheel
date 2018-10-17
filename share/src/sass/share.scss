@@ -1,6 +1,6 @@
 .share_main_wrapper {
   margin: 0 auto;
-  width: 15rem;
+  width: 100%;
   .carousel {
     margin: 1rem auto 0!important;
     width: 100%;
@@ -35,227 +35,233 @@
     }
 
   }
-  .form {
-    margin: 0.5rem auto;
-    width: 100%;
-    height: 9rem;
-    border-radius: 0.25rem;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    .title {
-      margin: 0.3rem 0;
-      text-align: center;
-      color: #fff;
-      line-height: 1rem;
-      h1 {
-        font-size: 0.8rem;
-        letter-spacing: 0.1rem;
-      }
-      h2 {
-        font-size: 0.5rem;
-        letter-spacing: 0.05rem;
-
-      }
-    }
-    .main {
-      li {
-        margin: 0.5rem auto;
-        width: 11rem;
-        text-align: center;
-        .common_form_item {
-
-        }
-
-      }
-    }
-  }
-  .ranklist {
-    margin: 0.5rem 0 0 0;
-    li {
+  .maincontent{
+    margin: 0 auto;
+    width: 15rem;
+    .form {
+      margin: 0.5rem auto;
       padding: 0.5rem 0;
       width: 100%;
-      font-size: 0;
-      .avatar {
-        display: inline-block;
-        width: 2rem;
-        height: 2rem;
-        border: 1px dashed #fff;
-        border-radius: 50%;
-        position: relative;
-        vertical-align: middle;
+      height: 9rem;
+      border-radius: 0.25rem;
+      background-color: rgba(255,255,255,0.15);
+      overflow: hidden;
+      .title {
+        margin: 0.3rem 0;
         text-align: center;
-        img {
-          display: inline-block;
-          width: 98.5%;
-          z-index: 1;
-          position: relative;
-          top: 1%;
-          border-radius: 50%;
-        }
-        .query {
-          display: inline-block;
-          width: 100%;
-          color: #fff;
-          text-align: center;
-          line-height: 2rem;
-          position: absolute;
-          top: 0;
-          left: 0;
-          font-size: 1rem;
-        }
-      }
-      .detail {
-        display: inline-block;
-        padding: 0 0 0 0.5rem;
-        box-sizing: border-box;
-        width: 10.5rem;
         color: #fff;
-        vertical-align: middle;
-        font-size: 0.7rem;
-        .name {
-          width: 10rem;
-          font-size: 0.5rem;
-          label {
-            display: inline-block;
-            max-width: 6rem;
-            color: #ffde02;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            vertical-align: middle;
-          }
-          span {
-            display: inline-block;
-            margin: 0 0.3rem 0 0;
-            vertical-align: middle;
-          }
+        line-height: 1rem;
+        h1 {
+          font-size: 0.8rem;
+          letter-spacing: 0.1rem;
         }
-        .comment {
-          margin: 0.3rem 0 0 0;
+        h2 {
           font-size: 0.5rem;
-        }
-      }
-      .prizename {
-        display: inline-block;
-        width: 2.3rem;
-        color: #ffde02;
-        vertical-align: middle;
-        font-size: 0.6rem;
+          letter-spacing: 0.05rem;
 
+        }
+      }
+      .main {
+        li {
+          margin: 0.5rem auto;
+          width: 11rem;
+          text-align: center;
+          .common_form_item {
+
+          }
+
+        }
       }
     }
-    .hint {
-      margin: 1rem 0;
-      text-align: center;
-      font-size: 0.7rem;
-      color: #ffde02;
-    }
-  }
-  .prize_wrapper {
-    margin: 1rem 0;
-    //background: #fff;
-    overflow: hidden;
-    background: url("./image/share/notebg.png") no-repeat;
-    background-size: 100% 100%;
-    h1 {
-      margin: 0.6rem 0 0.3rem 0;
-      text-align: center;
-      color: #FE370E;
-      font-size: 0.8rem;
-    }
-    .main {
-      height: 5rem;
-      font-size: 0;
-      .withpicture {
-        text-align: center;
-        .prizeimage {
+    .ranklist {
+      margin: 0.5rem 0 0 0;
+      li {
+        padding: 0.5rem 0;
+        width: 100%;
+        font-size: 0;
+        .avatar {
           display: inline-block;
-          width: 40%;
-          height: 100%;
+          width: 2rem;
+          height: 2rem;
+          border: 1px dashed #fff;
+          border-radius: 50%;
+          position: relative;
           vertical-align: middle;
           text-align: center;
           img {
             display: inline-block;
-            width: 4rem;
+            width: 98.5%;
+            z-index: 1;
+            position: relative;
+            top: 1%;
+            border-radius: 50%;
+          }
+          .query {
+            display: inline-block;
+            width: 100%;
+            color: #fff;
+            text-align: center;
+            line-height: 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 1rem;
           }
         }
         .detail {
           display: inline-block;
-          width: 50%;
-          height: 100%;
-          font-size: 0.3rem;
-          text-align: center;
+          padding: 0 0 0 0.5rem;
+          box-sizing: border-box;
+          width: 10.5rem;
+          color: #fff;
           vertical-align: middle;
-          label {
-            display: block;
-            margin: 0.5rem 0;
-            font-size: 0.7rem;
-            font-weight: bold;
-          }
-          span {
-            display: block;
-            margin: 0.5rem 0;
+          font-size: 0.7rem;
+          .name {
+            width: 10rem;
             font-size: 0.5rem;
+            label {
+              display: inline-block;
+              max-width: 6rem;
+              color: #ffde02;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              vertical-align: middle;
+            }
+            span {
+              display: inline-block;
+              margin: 0 0.3rem 0 0;
+              vertical-align: middle;
+            }
           }
-          .button {
-            display: inline-block;
-            background: #f36619;
-            padding: 0.3rem 0.5rem;
-            border-radius: 2rem;
-            color: #fff;
+          .comment {
+            margin: 0.3rem 0 0 0.1rem;
             font-size: 0.5rem;
           }
         }
-      }
-      .withoutpicture {
-        .prizeimage {
+        .prizename {
           display: inline-block;
-          width: 50%;
-          height: 100%;
+          width: 2.3rem;
+          color: #ffde02;
           vertical-align: middle;
+          font-size: 0.6rem;
 
         }
-        .detail {
-          display: inline-block;
-          width: 100%;
-          height: 100%;
-          font-size: 0.3rem;
+      }
+      .hint {
+        margin: 1rem 0;
+        text-align: center;
+        font-size: 0.7rem;
+        color: #ffde02;
+      }
+    }
+    .prize_wrapper {
+      margin: 1rem 0;
+      //background: #fff;
+      overflow: hidden;
+      background: url("./image/share/notebg.png") no-repeat;
+      background-size: 100% 100%;
+      h1 {
+        margin: 0.6rem 0 0.3rem 0;
+        text-align: center;
+        color: #FE370E;
+        font-size: 0.8rem;
+      }
+      .main {
+        height: 5rem;
+        font-size: 0;
+        .withpicture {
           text-align: center;
-          vertical-align: middle;
-          label {
-            color: #f36619;
-            display: block;
-            margin: 0.5rem 0;
-            font-size: 0.7rem;
-            font-weight: bold;
-          }
-          span {
-            display: block;
-            margin: 0.5rem 0;
-            font-size: 0.7rem;
-          }
-          .button {
+          .prizeimage {
             display: inline-block;
-            background: #f36619;
-            padding: 0.3rem 0.5rem;
-            border-radius: 2rem;
-            color: #fff;
-            font-size: 0.5rem;
+            width: 40%;
+            height: 100%;
+            vertical-align: middle;
+            text-align: center;
+            img {
+              display: inline-block;
+              width: 4rem;
+            }
+          }
+          .detail {
+            display: inline-block;
+            width: 50%;
+            height: 100%;
+            font-size: 0.3rem;
+            text-align: center;
+            vertical-align: middle;
+            label {
+              display: block;
+              margin: 0.5rem 0;
+              font-size: 0.7rem;
+              font-weight: bold;
+            }
+            span {
+              display: block;
+              margin: 0.5rem 0;
+              font-size: 0.5rem;
+            }
+            .button {
+              display: inline-block;
+              background: #f36619;
+              padding: 0.3rem 0.5rem;
+              border-radius: 2rem;
+              color: #fff;
+              font-size: 0.5rem;
+            }
           }
         }
+        .withoutpicture {
+          .prizeimage {
+            display: inline-block;
+            width: 50%;
+            height: 100%;
+            vertical-align: middle;
+
+          }
+          .detail {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            font-size: 0.3rem;
+            text-align: center;
+            vertical-align: middle;
+            label {
+              color: #f36619;
+              display: block;
+              margin: 0.5rem 0;
+              font-size: 0.7rem;
+              font-weight: bold;
+            }
+            span {
+              display: block;
+              margin: 0.5rem 0;
+              font-size: 0.7rem;
+            }
+            .button {
+              display: inline-block;
+              background: #f36619;
+              padding: 0.3rem 0.5rem;
+              border-radius: 2rem;
+              color: #fff;
+              font-size: 0.5rem;
+            }
+          }
+        }
+
       }
 
     }
-
-  }
-  .rules {
-    li {
-      margin: 0.5rem 0 0.5rem 1rem;
-      width: 90%;
-      color: #eee;
-      font-size: 0.5rem;
+    .rules {
+      li {
+        margin: 0.5rem 0 0.5rem 1rem;
+        width: 90%;
+        color: #eee;
+        font-size: 0.5rem;
+      }
     }
   }
+
   .notfound404 {
     background: #fff;
     text-align: center;

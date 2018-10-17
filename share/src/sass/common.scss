@@ -72,7 +72,8 @@ input:-webkit-autofill {
 .common_main_container {
 	width: 100%;
 	height: 100%;
-	background-image: url('./image/share/bg.jpg');
+  background-color: #530e48;
+	//background-image: url('./image/share/bg.jpg');
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -171,7 +172,7 @@ input:-webkit-autofill {
 
 .common_input_item {
 	width: 100%;
-	height: 1.3rem;
+	height: 1.5rem;
 	font-size: 0.5rem;
 	padding: 0 0.3rem;
 	box-sizing: border-box;
@@ -181,23 +182,23 @@ input:-webkit-autofill {
 .common_button_item {
 	display: inline-block;
 	border: 0;
-	line-height: 1.2rem;
+	line-height: 1.4rem;
 	width: 100%;
-	height: 1.3rem;
-	font-size: 0.5rem;
+	height: 1.5rem;
+	font-size: 0.7rem;
 	padding: 0 0.3rem;
 	box-sizing: border-box;
 	color: #fff;
 	background: #c2c2c2;
-	border-radius: 0.6rem;
+	//border-radius: 0.6rem;
 	&[type='text'] {
 		width: auto;
 		font-size: 0.6rem;
 		background: none;
-		color: #1890ce;
+		color: #F36619;
 	}
   &.active{
-    background: #f36619;
+    background: #f30b00;
   }
 }
 
@@ -252,4 +253,10 @@ input:-webkit-autofill {
   top: 0;
   left: 0;
   z-index: 1;
+}
+.common_initializing_item{
+  width: 16rem;
+  height: 42rem;
+  background-color: rgba(0,0,0,0.5);
+  position: relative;
 }
