@@ -70,25 +70,30 @@
               <div v-if="prizeData.code!==''" class="prize_wrapper">
                 <!--<div class="prize_wrapper">-->
 
-                <h1>{{prizeData.data.rewardPrompt}}</h1>
                 <div class="main">
-                  <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
-                    <div class="prizeimage">
-                      <img v-if="prizeData.data.rewardImage!==''||prizeData.data.rewardImage!==null" src="../image/share/coin.png"/>
-                      <img v-else :src="prizeData.data.rewardImage"/>
-                    </div>
-                    <div class="detail">
-                      <label>{{prizeData.data.rewardName}}!</label>
-                      <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
-                      <span v-else>想要大奖，自己发起活动吧</span>
+                  <div v-if="prizeData.data!==null">
+                    <h1>{{prizeData.data.rewardPrompt}}</h1>
+                    <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
+                      <div class="prizeimage">
+                        {{prizeData.data}}
+                        <img v-if="prizeData.data.rewardImage!==''&&prizeData.data.rewardImage!==null" :src="prizeData.data.rewardImage"/>
+                        <img v-else src="../image/share/coin.png"/>
+                      </div>
+                      <div class="detail">
+                        <label>{{prizeData.data.rewardName}}!</label>
+                        <span v-if="prizeData.data.rewardType==='bes_tv'">奖品已放入您的账户</span>
+                        <span v-else>想要大奖，自己发起活动吧</span>
 
-                      <!--<a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>-->
-                      <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" :href='downloadUrl'
-                         target="_blank">打开趣谷APP</a>
+                        <!--<a v-if="prizeData.data.rewardType==='bes_tv'" class="button" href='http://download.fnvalley.com' target="_blank">打开趣谷APP</a>-->
+                        <a v-if="prizeData.data.rewardType==='bes_tv'" class="button" :href='downloadUrl'
+                           target="_blank">打开趣谷APP</a>
 
-                      <!--<a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>-->
-                      <a v-else class="button" :href='downloadUrl' target="_blank">我要发起</a>
+                        <!--<a v-else class="button" href='http://download.fnvalley.com' target="_blank">我要发起</a>-->
+                        <a v-else class="button" :href='downloadUrl' target="_blank">我要发起</a>
+                      </div>
                     </div>
+
+
                   </div>
                   <div v-else class="withoutpicture">
                     <div class="detail">
@@ -98,6 +103,8 @@
                     </div>
                   </div>
                 </div>
+
+
               </div>
 
               <div class="ranklist">
@@ -142,10 +149,10 @@
                   <span><i></i></span>
                 </div>
                 <ol>
-                  <li>本次活动有效期为2018年7月16日至2018年10月31日</li>
+                  <li>本次活动有效期为即日起至2019年6月1日</li>
                   <li>本次活动所有奖品为随机抽取得到</li>
-                  <li>本次活动每次抽奖最高奖项为百视通半年会员</li>
-                  <li>本次活动最高解释权归彬指网络科技（上海）有限公司所有</li>
+                  <li>本次活动每次抽奖最高奖项为体育赛事直播会员月卡</li>
+                  <li>本次活动最高解释权归骏盈网络科技（上海）有限公司所有</li>
                 </ol>
               </div>
             </div>
@@ -374,7 +381,7 @@
     mounted() {
       this.wechatRedirectingFlag = false;
 
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$autoHeight({
           target: '.common_main_container'
         });
@@ -395,6 +402,7 @@
           });
           this.redirectInfo = this.$route.query.routeto;
           this.stateCode = this.$route.query.state;
+          // alert(this.stateCode)
           this.wechatRedirectingFlag = true;
           this.reInitializePage()
         } else {
@@ -432,8 +440,20 @@
               this.prizeData = response;
               this.loginToGetPrizeFlag = false;
               break;
+            case 10004:
+              this.prizeData = response;
+              this.loginToGetPrizeFlag = false;
+              break;
             case 10005:
               this.loginToGetPrizeFlag = true;
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: response.message,
+                onConfirm() {
+                }
+              });
+              break;
+            case 10007:
               this.$vux.confirm.show({
                 showCancelButton: false,
                 title: response.message,
@@ -566,7 +586,7 @@
               this.getPrizeByAccessToken();
               // this.getDailyTimes();
 
-            }).catch(error=>{
+            }).catch(error => {
               console.log('getAccessToken error+++', error)
             });
             // this.$initJSSDK({
@@ -713,7 +733,7 @@
 
             wx.onMenuShareTimeline({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$domainUrl + '?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
 
               success: function () {
@@ -724,7 +744,7 @@
             wx.onMenuShareAppMessage({
               title: '免费畅享全年NBA直播的机会在这里', // 分享标题
               desc: '千万不要错过哦', // 分享描述
-              link: this.$domainUrl + '/?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$domainUrl + '?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -827,7 +847,7 @@
       getAdvertise() {
         let deviceData = this.$getDevice();
         let deviceType;
-        let location = 'qu_welfare_share_activity_web';
+        let location = 'bes_tv_activity_web';
         if (deviceData.ios) {
           deviceType = 'ios'
         } else if (deviceData.android) {
@@ -921,7 +941,7 @@
         //通过正则表达式匹配ua中是否含有MicroMessenger字符串
         console.log(this.$prodEnv)
         console.log(ua)
-        return this.$prodEnv ? ua.match(/MicroMessenger/i) == 'micromessenger' : true;
+        return this.$prodEnv ? ua.match(/MicroMessenger/i) === 'micromessenger' : true;
         // return this.$prodEnv;
       },
       changeUrl() {

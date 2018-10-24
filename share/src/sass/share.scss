@@ -7,7 +7,7 @@
     height: 8.9rem;
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
     background-color: #fff;
-    border-radius: 0.25rem;
+    //border-radius: 0.25rem;
     overflow: hidden;
     li {
       width: 100%;
@@ -93,7 +93,7 @@
             width: 98.5%;
             z-index: 1;
             position: relative;
-            top: 1%;
+            top: 0.025rem;
             border-radius: 50%;
           }
           .query {
@@ -168,9 +168,10 @@
         font-size: 0.8rem;
       }
       .main {
-        height: 5rem;
+        min-height: 5rem;
         font-size: 0;
         .withpicture {
+          margin: 0 0 0.5rem 0;
           text-align: center;
           .prizeimage {
             display: inline-block;
