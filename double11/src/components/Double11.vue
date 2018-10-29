@@ -74,7 +74,7 @@
 
 <script>
   import Cookies from 'js-cookie'
-  import FnvalleyJsSdk from '../js/fnvalleyJsSdk'
+  import FnvalleyJsSdk from '../js/fnvalleyJsSdk_v2'
   // import FnvalleyJsSdk from '../js/fnvalleyJsSdk.min.js'
 
 
@@ -118,7 +118,7 @@
     },
     mounted() {
       console.log(FnvalleyJsSdk)
-      this.fnvalleyJsSdkInstance = FnvalleyJsSdk;
+      this.fnvalleyJsSdkInstance = new FnvalleyJsSdk();
       console.log(this.fnvalleyJsSdkInstance)
       this.$remResizing({
         fontSize: 20,
@@ -129,9 +129,12 @@
     methods: {
       jump() {
         console.log(this.fnvalleyJsSdkInstance)
+        this.fnvalleyJsSdkInstance.check()
+
         this.fnvalleyJsSdkInstance.openView({
           name: 'BTV'
         })
+
       }
     }
   }

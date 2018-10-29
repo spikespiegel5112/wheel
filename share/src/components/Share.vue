@@ -75,7 +75,6 @@
                     <h1>{{prizeData.data.rewardPrompt}}</h1>
                     <div v-if="prizeData.code===10000||prizeData.code===10003" class="withpicture">
                       <div class="prizeimage">
-                        {{prizeData.data}}
                         <img v-if="prizeData.data.rewardImage!==''&&prizeData.data.rewardImage!==null" :src="prizeData.data.rewardImage"/>
                         <img v-else src="../image/share/coin.png"/>
                       </div>
@@ -732,9 +731,9 @@
             });
 
             wx.onMenuShareTimeline({
-              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
+              title: '免费畅看NBA、英超直播的机 会在这里。', // 分享标题
               link: this.$domainUrl + '?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
 
               success: function () {
 
@@ -742,10 +741,10 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '免费畅享全年NBA直播的机会在这里', // 分享标题
-              desc: '千万不要错过哦', // 分享描述
+              title: '免费畅看NBA、英超直播的机 会在这里。', // 分享标题
+              desc: '精彩体育赛事看不停，还有 现金大奖等你来领取。', // 分享描述
               link: this.$domainUrl + '?routeto=shareredirect&state=' + this.stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: 'http://resource.zan-qian.com/share/red_packet20180727191755.png-style_108x144', // 分享图标
+              imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
               dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
               success: function () {
