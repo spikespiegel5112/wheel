@@ -251,7 +251,7 @@
     },
     mounted() {
       // alert('mounted')
-      console.log(FnvalleySdk)
+      // console.log(FnvalleySdk)
       console.log(this.isActivity)
       if(!this.redirectingFlag){
         this.$remResizing({
@@ -267,19 +267,18 @@
     },
     methods: {
       getAccessToken() {
+        // alert('getAccessToken')
         let fnvalleySdkInstance = new FnvalleySdk();
         fnvalleySdkInstance.userAccessToken().then(data => {
           console.log(data)
           // alert('this.accessToken+++' + data)
           console.log('this.getAccessToken++++', data)
           this.accessToken = data;
-          // this.accessToken='f817cb42-5277-4fa7-b8e7-543cdcbb04eb';
           this.recordChannel();
-          this.$vux.loading.hide();
         }).catch(error => {
           // alert(error)
           console.log('this.getAccessToken error', error)
-          // this.unauthorizedFlag = true;
+          this.unauthorizedFlag = true;
           this.confirmState = 'unauthorized';
           this.$vux.loading.hide();
           this.$autoHeight({
