@@ -142,7 +142,7 @@
             content: "<p>确认领取奖励？</p>"
           },
           unauthorized: {
-            content: "<p>请在趣谷APP中打开本页面</p>"
+            content: "<p>请使用趣谷App扫码领奖</p>"
           },
           successful: {
             content: "<p>成功参加活动</p>"
