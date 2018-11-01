@@ -1,0 +1,118 @@
+.common_main_container {
+  padding: 0 0.8rem;
+  box-sizing: border-box;
+  .double11_main_container {
+    .title {
+      padding: 1rem 0;
+      width: 100%;
+      //height: 7rem;
+      //background: url('./image/double11/title.png');
+      background-size: 100%;
+      background-repeat: no-repeat;
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+    .main {
+      .block_wrapper {
+        display: flex;
+        margin: 0.6rem 0;
+        width: 14.5rem;
+        justify-content: space-between;
+        h1 {
+          color: #fff;
+          p {
+            display: inline-block;
+          }
+          .originprize {
+            text-decoration: line-through;
+          }
+        }
+        .describe {
+          margin: 1rem 0 0 0;
+          color: #fff;
+          font-size: 0.6rem;
+          letter-spacing: 0.1rem;
+          .emphasis {
+            font-size: 0.7rem;
+          }
+        }
+        .prize {
+          background: linear-gradient(to top, #FEDEAF, #fff);
+          -webkit-background-clip: text;
+          color: transparent;
+        }
+        .bigblock {
+          padding: 0.4rem 0.5rem;
+          width: 100%;
+          height: 4rem;
+          border-radius: 0.6rem;
+          h1 {
+            font-size: 0.5rem;
+          }
+          .prize {
+            margin: 0 0.4rem 0 0;
+            font-size: 1.5rem;
+          }
+        }
+        .mediumblock {
+          //display: inline-flex;
+          padding: 0.4rem 0.5rem;
+          width: 6rem;
+          height: 5rem;
+          border-radius: 0.6rem;
+          h1 {
+            font-size: 0.5rem;
+          }
+          .prize {
+            font-size: 1rem;
+            label {
+              font-size: 0.55rem;
+            }
+          }
+        }
+      }
+
+    }
+    .duration {
+      margin: 0.2rem 0 1.5rem 0;
+      font-size: 0.6rem;
+      text-align: center;
+    }
+    .operator {
+      margin: 1rem 0;
+      a {
+        display: block;
+        margin: 0 auto;
+        padding: 0.4rem 2.5rem;
+        width: 5rem;
+        font-size: 0.8rem;
+        background: linear-gradient(to bottom, #fdf5b3, #ffc978);
+        text-align: center;
+        border-radius: 1rem;
+        color: #D50303;
+        box-shadow: 0 6px 13px #999;
+        &:active {
+          box-shadow: 0 5px 10px inset #999;
+          background: linear-gradient(to top, #fdf5b3, #ffc978);
+        }
+      }
+    }
+    .rules {
+      li {
+        margin: 0.5rem 0 0.5rem 1rem;
+        width: 90%;
+        color: #666666;
+        font-size: 0.5rem;
+      }
+      .hint {
+        padding: 0.2rem 0 1rem 0;
+        color: #D50303;
+        text-align: center;
+        font-size: 0.7rem;
+      }
+    }
+  }
+}
+

@@ -5,19 +5,14 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [{
-  path: '/',
-  // redirect: '/share',
+  path: '/share/index.html',
+  alias: '/',
   name: 'index',
-  // component: Share,
-  component: () => import('../components/Share.vue')
-
-}, {
-  path: '/share',
-  name: 'share',
   component: () => import('../components/Share.vue')
 }, {
-  path: '/shareRedirect',
-  name: 'share',
+  path: '/testshare/index.html',
+  alias: '/',
+  name: 'index',
   component: () => import('../components/Share.vue')
 }, {
   path: '/*',
