@@ -144,6 +144,9 @@
           unauthorized: {
             content: "<p>请使用趣谷App扫码领奖</p>"
           },
+          notConsumed: {
+            content: "<p>你未达到活动要求，不能领取奖品，尽快去完成吧！</p>"
+          },
           successful: {
             content: "<p>成功参加活动</p>"
           },
@@ -346,6 +349,10 @@
             case 10007:
               this.rejectFlag = true;
               this.confirmState = 'notExist';
+              break;
+            case 10029:
+              this.rejectFlag = true;
+              this.confirmState = 'notConsumed';
               break;
           }
         });
