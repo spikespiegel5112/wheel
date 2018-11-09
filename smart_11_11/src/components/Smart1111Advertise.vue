@@ -70,7 +70,7 @@
       });
 
       // this.getAccessToken()
-      window.history.go(-2)
+      // window.history.go(-2)
     },
     methods: {
       // jump() {
