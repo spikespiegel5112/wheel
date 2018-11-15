@@ -17,6 +17,7 @@ window.FnvalleySdk = function () {
   this.agent = function () {
     console.log("fnvalleyAgent");
     if (appObject === "android") {
+      debugger
       window.android.fnvalleyAgent();
     } else {
       window.webkit.messageHandlers.agent.postMessage('');
@@ -125,7 +126,7 @@ window.FnvalleySdk = function () {
       if (appObject === "android") {
         window.android.uploadImage();
       } else {
-        window.webkit.messageHandlers.uploadImage.postMessage();
+        window.webkit.messageHandlers.uploadImage.postMessage('');
       }
       var flag = setInterval(function () {
         console.log("uploadFinish:" + FnvalleySdk.uploadFinish);

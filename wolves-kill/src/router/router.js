@@ -5,25 +5,50 @@ Vue.use(VueRouter)
 
 let testPrefix = process.env.NODE_ENV === 'production' ? '' : 'test'
 const routes = [{
-  path: `/${testPrefix}wolves_kill/index.html`,
-  alias: '/',
+//   path: `/${testPrefix}wolves_kill/index.html`,
+//   alias: '/',
+//   name: 'homepage',
+//   component: () => import('../components/HomePage.vue')
+// }, {
+  path: '/',
   name: 'homepage',
   component: () => import('../components/HomePage.vue')
-// }, {
-//   path: '/testsmart_11_11/index.html',
-//   alias: '/',
-//   name: 'wolveskill',
-//   component: () => import('../components/HomePage.vue')
 }, {
-  path: `/${testPrefix}wolves_kill/index.html/participate`,
-  alias: '/participate',
+//   path: `/${testPrefix}wolves_kill/index.html/participate`,
+//   alias: '/participate',
+//   name: 'participate',
+//   component: () => import('../components/Participate.vue')
+// }, {
+  path: '/participate',
   name: 'participate',
   component: () => import('../components/Participate.vue')
+}, {
+  //   path: `/${testPrefix}wolves_kill/index.html/ranklist`,
+//   alias: '/ranklist',
+//   name: 'ranklist',
+//   component: () => import('../components/RankList.vue')
 // }, {
-//   path: '/testsmart_11_11/index.html/advertise',
-//   alias: '/advertise',
-//   name: 'wolveskillAdvertise',
-//   component: () => import('../components/Smart1111Advertise.vue')
+  path: '/ranklist',
+  name: 'rankList',
+  component: () => import('../components/RankList.vue')
+}, {
+  //   path: `/${testPrefix}wolves_kill/index.html/canvass`,
+//   alias: '/canvass',
+//   name: 'c',
+//   component: () => import('../components/Canvass.vue')
+// }, {
+  path: '/canvass',
+  name: 'canvass',
+  component: () => import('../components/Canvass.vue')
+}, {
+  //   path: `/${testPrefix}wolves_kill/index.html/canvass`,
+//   alias: '/canvass',
+//   name: 'c',
+//   component: () => import('../components/Canvass.vue')
+// }, {
+  path: '/registrationResult',
+  name: 'registrationResult',
+  component: () => import('../components/RegistrationResult.vue')
 }, {
   path: '/*',
   name: '404',
@@ -33,7 +58,7 @@ const routes = [{
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  // mode: 'history'
 });
 
 

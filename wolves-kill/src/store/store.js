@@ -3,8 +3,14 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+
 const state = {
-  title:'aaa',
+  title: 'aaa',
+  // accessToken: '',
+  accessToken: '48cbff38-d5e4-47ae-9eee-dc115e9456da',
+  // loginId: '',
+  loginId: '18260045855',
+  activityId: 25,
   winningPrizeChanceFlag: true,
   deviceTypeDictionary: [{
     name: 'Android',
@@ -29,6 +35,12 @@ const state = {
 const mutations = {
   turnOffWinningPrizeChance(state, payload) {
     state.winningPrizeChanceFlag = false;
+  },
+  setAccessToken(state, payload) {
+    state.accessToken = payload;
+  },
+  setUserLoginId(state, payload) {
+    state.loginId = payload;
   }
 };
 const actions = {}
