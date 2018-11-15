@@ -22,7 +22,8 @@
               <span>{{userInfoData.ranking}}</span>
               <div class="content">
                 <div class="avatar">
-                  <img src="../image/wolveskill/exampleavatar.png"/>
+                  <img v-if="userInfoData.userImage!==''&&userInfoData.userImage!==null" :src="userInfoData.userImage"/>
+                  <img v-else src="../image/wolveskill/exampleavatar.png"/>
                 </div>
                 <label class="name">{{userInfoData.userRealName}}</label>
                 <label class="votes">{{userInfoData.votes}}</label>

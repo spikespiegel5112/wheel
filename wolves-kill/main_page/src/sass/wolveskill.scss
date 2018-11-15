@@ -36,6 +36,7 @@
     line-height: 1rem;
 
     display: flex;
+
     label {
       display: inline-block;
       font-size: 0.7rem;
@@ -43,10 +44,14 @@
       vertical-align: middle;
     }
     .link {
+      display: inline-block;
       width: 3rem;
       text-align: right;
       font-size: 0.6rem;
       color: #F9535D;
+      &:active{
+        background-color: #ccc;
+      }
       .triangle {
         display: inline-block;
         width: 0;

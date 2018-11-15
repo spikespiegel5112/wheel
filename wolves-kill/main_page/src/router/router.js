@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Ticket from '../components/Ticket.vue'
 
 Vue.use(VueRouter)
 
@@ -54,9 +55,14 @@ const routes = [{
   name: 'participateSuccessful',
   component: () => import('../components/ParticipateSuccessful.vue')
 }, {
+  path: `/${testPrefix}wolves_kill/index.html/ticket`,
+  alias: '/ticket',
+  name: 'ticket',
+  component: Ticket
+}, {
   path: '/ticket',
   name: 'ticket',
-  component: () => import('../components/Ticket.vue')
+  component: Ticket
 }, {
   path: '/*',
   name: '404',
@@ -66,7 +72,7 @@ const routes = [{
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  // mode: 'history'
 });
 
 

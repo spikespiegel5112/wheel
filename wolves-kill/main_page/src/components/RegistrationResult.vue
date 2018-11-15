@@ -17,12 +17,18 @@
       <div class="maincontainer">
         <div class="wolveskill_activityname_wrapper">报名成功：西安高校狼人杀友谊赛S1</div>
         <div class="wolveskill_block_wrapper">
+            <!--<router-link class="link" :to="{name:'ticket',query:{userSchoolName: userInfoData.userSchoolName}}">-->
+<!---->
+            <!--</router-link>-->
           <h2 class="resulttitle" @click="checkTicket">
             <label>活动门票凭证</label>
             <a class="link">
               <span class="triangle"></span>
             </a>
           </h2>
+            <!--<a @click="checkTicket">-->
+            <!--</a>-->
+
         </div>
         <div class="wolveskill_block_wrapper">
           <h2 class="resulttitle">
@@ -72,9 +78,8 @@
           </div>
         </div>
       </div>
-
-
     </div>
+    <toast v-model="voteSuccessfulFlag" type="text" :time="2000" is-show-mask text="投票成功"></toast>
   </div>
 </template>
 
@@ -110,7 +115,9 @@
         confirmFlag: false,
         rejectFlag: false,
         userInfoData: {},
-        userSchoolName:''
+        userSchoolName:'',
+        voteSuccessfulFlag: false,
+
       }
     },
     computed: {
@@ -260,12 +267,22 @@
 
       },
       checkTicket() {
-        this.$router.push({
+        alert('this.userInfoData.userSchoolName   '+this.userInfoData.userSchoolName)
+        let that=this;
+        that.$router.push({
           name: 'ticket',
           query: {
-            userSchoolName: this.userInfoData.userSchoolName
+            userSchoolName: that.userInfoData.userSchoolName
           }
         })
+        // this.$vux.confirm.show({
+        //   showCancelButton: false,
+        //   title: '请点击右上角按钮分享',
+        //   onConfirm() {
+        //
+        //   }
+        // });
+
       }
     }
   }

@@ -20,7 +20,19 @@
         <div class="wolveskill_block_wrapper">
           <div class="wolveskill_qrcode_wrapper">
             <label>参加活动门票凭证</label>
-            <img :src="'../src/image/wolveskill/qrcode/'+userSchoolName+'_group_00000.jpg'"/>
+            <!--<img src="../image/wolveskill/qrcode/ouya_group_00000.jpg"/>-->
+            <!--<img src="../image/wolveskill/qrcode/ouya_group_00000.jpg"/>-->
+            <!--<img :src='imageDictionary[0].url'/>-->
+
+
+            <img v-if="userSchoolName==='ouya'" src="../image/wolveskill/qrcode/ouya_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xiancaijin'" src="../image/wolveskill/qrcode/xiancaijin_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xianmeishu'" src="../image/wolveskill/qrcode/xianmeishu_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xianzhenfa'" src="../image/wolveskill/qrcode/xianzhenfa_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xianzyy'" src="../image/wolveskill/qrcode/xianzyy_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xianxiandai'" src="../image/wolveskill/qrcode/xianxiandai_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xianzhiye'" src="../image/wolveskill/qrcode/xianzhiye_ticket_00000.jpg"/>
+            <img v-if="userSchoolName==='xianpeihua_new'" src="../image/wolveskill/qrcode/xianpeihua_new_ticket_00000.jpg"/>
             <p class="hint">
               用此凭证完成线下签到即可获得报名奖励
             </p>
@@ -29,7 +41,14 @@
         <div class="wolveskill_block_wrapper">
           <div class="wolveskill_qrcode_wrapper">
             <label>活动群二维码</label>
-            <img :src="'../src/image/wolveskill/qrcode/'+userSchoolName+'_group_00000.jpg'"/>
+            <img v-if="userSchoolName==='ouya'" src="../image/wolveskill/qrcode/ouya_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xiancaijin'" src="../image/wolveskill/qrcode/xiancaijin_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xianmeishu'" src="../image/wolveskill/qrcode/xianmeishu_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xianzhenfa'" src="../image/wolveskill/qrcode/xianzhenfa_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xianzyy'" src="../image/wolveskill/qrcode/xianzyy_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xianxiandai'" src="../image/wolveskill/qrcode/xianxiandai_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xianzhiye'" src="../image/wolveskill/qrcode/xianzhiye_group_00000.jpg"/>
+            <img v-if="userSchoolName==='xianpeihua_new'" src="../image/wolveskill/qrcode/xianpeihua_new_group_00000.jpg"/>
             <p class="hint">
               长按保存下方二维码，加入活动微信群
             </p>
@@ -72,6 +91,10 @@
         confirmFlag: false,
         rejectFlag: false,
         userInfoData: {},
+        imageDictionary:[{
+          name:'ouya',
+          url:require('../image/wolveskill/qrcode/ouya_ticket_00000.jpg')
+        }]
       }
     },
     computed: {
