@@ -3,6 +3,9 @@ import wx from 'weixin-js-sdk'
 // import service from "./request";
 // import {ConfirmPlugin, WechatPlugin} from 'vux'
 // import Vue2 from 'vue'
+import FnvalleySdk from '../js/FnvalleySdk'
+import store from '../store/store';
+
 //
 // Vue2.use(ConfirmPlugin);
 // Vue2.use(WechatPlugin);
@@ -11,6 +14,49 @@ import wx from 'weixin-js-sdk'
 let util = {};
 util.install = function (Vue) {
   // Vue.prototype.$http = service;
+
+  Vue.prototype.$getAccessToken = () => {
+    return new Promise((resolve,reject)=>{
+      let accessToken;
+      // alert('getAccessToken')
+      let fnvalleySdkInstance = new FnvalleySdk();
+      fnvalleySdkInstance.userAccessToken().then(data => {
+        // alert('this.accessToken+++' + data)
+        console.log('this.getAccessToken++++', data);
+        accessToken = data;
+        store.commit('setAccessToken', data);
+        resolve(data)
+      }).catch(error => {
+        // alert(error)
+        reject(error)
+        console.log('this.getAccessToken error', error)
+      });
+    })
+
+
+  };
+  Vue.prototype.$getUserLoginId = () => {
+    return new Promise((resolve, reject)=>{
+      let loginId;
+      // alert('getAccessToken')
+      let fnvalleySdkInstance = new FnvalleySdk();
+      fnvalleySdkInstance.userLoginId().then(data => {
+        // alert('this.userLoginId+++' + data)
+        console.log('this.userLoginId++++', data);
+        loginId = data;
+        store.commit('setUserLoginId', data);
+        resolve();
+      }).catch(error => {
+        // alert(error)
+        console.log('this.getUserLoginId error', error)
+        reject();
+      });
+      console.log(Vue.prototype)
+      // store.commit('setUserLoginId', '123456');
+    })
+
+
+  };
 
   Vue.prototype.$checkEnvironment = () => {
     let environmentDictionary = [{
@@ -368,7 +414,7 @@ util.install = function (Vue) {
       scale: 1,
       minHeight: 0,
       returnValue: false,
-      force:false
+      force: false
     }, options);
     let windowHeight = $(window).height();
     let targetHeight = 0;
@@ -378,7 +424,6 @@ util.install = function (Vue) {
     let offset = Number(options.offset);
     if (referenceHeight < options.minHeight || windowHeight < options.minHeight) {
       targetHeight = options.minHeight * options.scale;
-
     } else if (referenceHeight > windowHeight) {
       targetHeight = referenceHeight * options.scale + offset;
     } else if (contentHeight > windowHeight) {
@@ -394,6 +439,7 @@ util.install = function (Vue) {
 
     console.log(document.body.scrollHeight)
     console.log(targetHeight)
+    console.log(document.body.scrollHeight > targetHeight)
 
     // window.onresize = () => {
     //     targetHeight = document.body.scrollHeight * options.scale + offset;
@@ -404,18 +450,27 @@ util.install = function (Vue) {
     //         return targetHeight;
     //     }
     // };
+
+    // if (options.returnValue) {
+    //   // console.log(targetHeight)
+    //   return targetHeight;
+    // } else {
+    //   $(options.target).height(targetHeight);
+    // }
+
     if (options.returnValue) {
       return targetHeight;
     } else {
-      if(document.body.scrollHeight>=targetHeight){
-        if(options.force){
+      if (document.body.scrollHeight > targetHeight) {
+        if (options.force) {
           $(options.target).height(targetHeight);
         }
-      }else{
+      } else {
         $(options.target).height(targetHeight);
 
       }
     }
+    console.log(options.target)
   };
 
   Vue.prototype.$quickSort = (arr) => {

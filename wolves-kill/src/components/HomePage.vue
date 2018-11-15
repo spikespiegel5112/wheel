@@ -1,8 +1,7 @@
 <template>
   <div>
     <div class="common_main_container">
-      <div v-if="redirectingFlag" class="common_initializing_item"></div>
-      <div v-else class="wolveskill_main_container">
+      <div class="wolveskill_main_container">
 
         <div class="wolveskill_tab_container">
           <tab :line-width="2" :custom-bar-width="tabBarWidth" default-color="#000" active-color="#F9535D">
@@ -18,7 +17,7 @@
             <div class="wolveskill_block_wrapper">
               <img src="../image/wolveskill/activitybanner_00000.jpg"/>
             </div>
-            <div class="wolveskill_block_wrapper">
+            <div class="wolveskill_block_wrapper" id="block1">
               <div class="main">
                 <ul>
                   <li>
@@ -40,7 +39,7 @@
                 </ul>
               </div>
             </div>
-            <div class="wolveskill_block_wrapper">
+            <div class="wolveskill_block_wrapper" id="block2">
               <h1 class="title"><span></span><label>活动详情</label></h1>
               <div class="activitydetail">
                 <div class="banner">
@@ -51,20 +50,28 @@
                 </p>
               </div>
             </div>
-            <div class="wolveskill_block_wrapper">
+            <div class="wolveskill_block_wrapper" id="block3">
               <h1 class="title">
                 <span></span><label>投票排名</label>
                 <a @click="getMore">更多</a>
               </h1>
               <div class="ranklist">
                 <ul>
-                  <li v-for="(item, index) in rankListData">
-                    <span v-if="index===0" :style="{backgroundImage:'url(../../src/image/wolveskill/medal_gold.png)'}"></span>
-                    <span v-else-if="index===1" :style="{backgroundImage:'url(../../src/image/wolveskill/medal_silver.png)'}"></span>
-                    <span v-else-if="index===2" :style="{backgroundImage:'url(../../src/image/wolveskill/medal_bronze.png)'}"></span>
+                  <li v-for="(item, index) in rankListData" class="wolveskill_rank_item"
+                      :style="{borderBottom:'1px solid #ccc'}" @click="checkPerson(item, index)">
+                    <span v-if="index===0" class="gold"></span>
+                    <span v-else-if="index===1" class="silver"></span>
+                    <span v-else-if="index===2" class="bronze"></span>
                     <span v-else>{{index+1}}</span>
-                    <img src="../image/wolveskill/exampleavatar.png"/>
-                    <label>{{item.title}}</label>
+                    <div class="content">
+                      <div class="avatar">
+                        <img v-if="item.userImage!==''&&item.userImage!==null" :src="item.userImage"/>
+                        <img v-else src="../image/wolveskill/exampleavatar.png"/>
+                      </div>
+
+                      <label>{{item.loginId}}</label>
+                    </div>
+
                   </li>
                 </ul>
               </div>
@@ -79,22 +86,22 @@
         </div>
       </div>
       <div class="wolveskill_participatebutton_wrapper">
-        <div v-if="!participateSuccessful" class="unsuccessful">
+        <div v-if="!alreadyParticipatedFlag" class="unsuccessful">
           <a class="participatebutton" @click="participate">我要参加</a>
         </div>
         <div v-else class="successful">
           <label>您已报名成功</label>
-          <a class="participatebutton">报名结果</a>
+          <a class="participatebutton" @click="checkResult">报名结果</a>
         </div>
       </div>
     </div>
-    <Confirm
-      v-show="successfulFlag"
-      title="提示"
-      :content="confirmContentDictionary[confirmState].content"
-      :button="buttonList.filter(item=>item.name==='successful')"
-      @confirm="successfulFlag=false"
-    />
+    <!--<Confirm-->
+    <!--v-show="successfulFlag"-->
+    <!--title="提示"-->
+    <!--:content="confirmContentDictionary[confirmState].content"-->
+    <!--:button="buttonList.filter(item=>item.name==='successful')"-->
+    <!--@confirm="successfulFlag=false"-->
+    <!--/>-->
 
   </div>
 </template>
@@ -119,134 +126,43 @@
         addUserSchoolRequest: 'profile-service/1.0.0/user_school/addUserSchool',
         check_join_activityRequest: 'promotion-service/1.0.0/offline_activity/check_join_activity',
         participate_activityRequest: 'promotion-service/1.0.0/offline_activity/participate_activity',
+        getUserActivityInfoRequest: 'promotion-service/1.0.0/offline_activity/getUserActivityInfo',
+
+        find_votes_rankingRequest: 'promotion-service/1.0.0/offline_activity/find_votes_ranking',
         fnvalleySdkInstance: {},
         tabList: [{
           title: '活动',
-          name:'activity'
+          name: 'activity'
         }, {
           title: '详情',
-          name:'detail'
+          name: 'detail'
         }, {
           title: '投票排名',
-          name:'rank'
+          name: 'rank'
         }, {
           title: '精彩现场',
-          name:'scene'
+          name: 'scene'
         }],
-        rankListData:[{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
-        },{
-          title:'我本人更可爱'
+        rankListData: [{
+          title: '我本人更可爱'
         }],
         activeTabIndex: 0,
 
-        participateSuccessful:false,
+        alreadyParticipatedFlag: false,
         activityBeganFlag: false,
         confirmState: 'default',
-        confirmContentDictionary: {
-          default: {
-            content: "<p></p>"
-          },
-          notYet: {
-            content: "<p>活动不在有效期内</br>请阅读活动时间和活动说明</p>"
-          },
-          notExist: {
-            content: "<p>活动不存在</p>"
-          },
-          alreadyParticipated: {
-            content: "<p>已参加活动</br>请阅读活动时间和活动说明</p>"
-          },
-          confirm: {
-            content: "<p>确认领取奖励？</p>"
-          },
-          unauthorized: {
-            content: "<p>请使用趣谷App扫码领奖</p>"
-          },
-          notConsumed: {
-            content: "<p>你未达到活动要求，不能领取奖品，尽快去完成吧！</p>"
-          },
-          successful: {
-            content: "<p>成功参加活动</p>"
-          },
-        },
 
-        buttonList: [{
-          type: 'confirm',
-          name: 'default',
-          text: '确定',
-          callback: function () {
-            this.confirmFlag = false;
-          }
-        }, {
-          type: 'confirm',
-          name: 'unauthorized',
-          text: '确定',
-          callback: function () {
-            this.confirmFlag = false;
-          }
-        }, {
-          type: 'confirm',
-          name: 'notYet',
-          text: '确定',
-          callback: function () {
-            this.confirmFlag = false;
-          }
-        }, {
-          type: 'confirm',
-          name: 'receivePrize',
-          text: '确定',
-          callback: function (callback) {
-            console.log(this)
-            return callback();
-          }
-        }, {
-          type: 'cancel',
-          name: 'cancel',
-          text: '取消',
-          callback: function () {
-            this.confirmFlag = false;
-          }
-        }, {
-          type: 'confirm',
-          name: 'downloadApp',
-          text: '下载',
-          callback: function (callback) {
-            return callback();
-          }
-        }, {
-          type: 'confirm',
-          name: 'successful',
-          text: '确定',
-          callback: function (callback) {
-            console.log(this)
-            return callback();
-          }
-        }],
         confirmFlag: false,
         rejectFlag: false,
         redirectingFlag: true,
         unauthorizedFlag: false,
         successfulFlag: false,
         downloadUrl: '',
-        accessToken: ''
+        remUnit: 0
+
       }
     },
     computed: {
-      // accessToken() {
-      //   return this.$route.query.accessToken || '4b70ab01-f40e-41e9-b4b5-fa9020332c01';
-      // },
       channel() {
         return this.$route.query.channel || '';
       },
@@ -256,11 +172,8 @@
       isActivity() {
         return new Date('July 21, 2018 00:00:00') >= new Date('July 21, 2018 00:00:00');
       },
-      activityId() {
-        return 5;
-      },
       tabBarWidth() {
-        return this.tabList[this.activeTabIndex].title.length * 16 + 'px'
+        return this.tabList[this.activeTabIndex].title.length * 16 + 'px';
       },
     },
     watch: {
@@ -289,7 +202,7 @@
     mounted() {
       // alert('mounted')
       // console.log(FnvalleySdk)
-      console.log(this.isActivity)
+      console.log(this.redirectingFlag)
       if (!this.redirectingFlag) {
         this.$remResizing({
           fontSize: 20,
@@ -298,151 +211,124 @@
           target: '.wolveskill_main_container'
         });
         console.log(window)
-        this.getAccessToken();
-        this.getDownloadUrl();
+        this.$getAccessToken();
+        this.getRankList();
+        this.getUserActivityInfo();
+        this.anchorEvent();
+        this.$nextTick(() => {
+          this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
+        });
       }
     },
     methods: {
-      getAccessToken() {
-        // alert('getAccessToken')
-        let fnvalleySdkInstance = new FnvalleySdk();
-        fnvalleySdkInstance.userAccessToken().then(data => {
-          console.log(data)
-          // alert('this.accessToken+++' + data)
-          console.log('this.getAccessToken++++', data)
-          this.accessToken = data;
-          this.recordChannel();
-        }).catch(error => {
-          // alert(error)
-          console.log('this.getAccessToken error', error)
-          this.unauthorizedFlag = true;
-          this.confirmState = 'unauthorized';
-          this.$vux.loading.hide();
-          this.$autoHeight({
-            target: '.wolveskill_confirm_wrapper',
-            force: true
-          });
-          this.$vux.loading.hide();
-        });
+      anchorEvent() {
+        let blockHeight = document.getElementById('block2').scrollTop;
 
-      },
-      recordChannel() {
-        this.$http.post(this.$baseUrl + this.addUserSchoolRequest, {
-          schoolCode: this.channel,
-          access_token: this.accessToken
+
+        let blockDictionary = [{
+          name: 'block1',
+          height: (() => {
+            return document.getElementById('block1').scrollTop
+          })()
         }, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic YW5kcm9pZDphZG1pbg=='
-          },
-          transformRequest: [function (data) {
-            let ret = '';
-            for (let it in data) {
-              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+          name: 'block2',
+          height: (() => {
+            return document.getElementById('block2').scrollTop
+          })()
+        }, {
+          name: 'block3',
+          height: (() => {
+            return document.getElementById('block3').scrollTop
+          })()
+        }];
+        console.log('blockDictionary', blockDictionary[2].height)
+
+        window.onscroll = e => {
+          let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+
+          let resultIndex=0;
+          let block1ScrollTop = document.getElementById('block1').scrollTop;
+          let block2ScrollTop = document.getElementById('block2').scrollTop;
+          let block3ScrollTop = document.getElementById('block3').scrollTop;
+          blockDictionary.forEach((item, index) => {
+            if(scrollTop>item.height){
+              resultIndex=index;
             }
-            return ret
-          }],
-        }).then(response => {
-          console.log(response)
-          this.$vux.loading.hide();
-
-        }).catch(error => {
-          // alert(error)
-        })
-      },
-      handleReceivePrize() {
-        let that = this;
-        this.$vux.loading.show({
-          text: 'Loading'
-        });
-        this.$autoHeight({
-          target: '.wolveskill_confirm_wrapper',
-          force: true
-        });
-        this.$http.get(this.$baseUrl + this.check_join_activityRequest + `/${this.activityId}`, {
-          headers: {
-            'Authorization': 'Bearer ' + this.accessToken
-          }
-        }).then(response => {
-          console.log(response)
-          // alert(response.code)
-          this.$vux.loading.hide();
-          switch (response.code) {
-            case 10000:
-              this.confirmFlag = true;
-              this.confirmState = 'confirm';
-              break;
-            case 10001:
-              this.rejectFlag = true;
-              this.confirmState = 'alreadyParticipated';
-              break;
-            case 10006:
-              this.rejectFlag = true;
-              this.confirmState = 'notYet';
-              break;
-            case 10007:
-              this.rejectFlag = true;
-              this.confirmState = 'notExist';
-              break;
-            case 10029:
-              this.rejectFlag = true;
-              this.confirmState = 'notConsumed';
-              break;
-          }
-        });
-      },
-      receivePrize() {
-        this.$vux.loading.show({
-          text: 'Loading'
-        });
-        let that = this;
-        // this.fnvalleySdkInstance.check()
-        this.$http.post(this.$baseUrl + this.participate_activityRequest + `/${this.activityId}`, {}, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + this.accessToken
-          }
-        }).then(response => {
-          console.log(response)
-          switch (response.code) {
-            case 10000:
-              this.successfulFlag = true;
-              this.confirmState = 'successful';
-              break;
-
-          }
-          this.$vux.loading.hide();
-        }).catch(error => {
-          // alert(error)
-          this.$vux.loading.hide();
-
-        })
-      },
-      getDownloadUrl() {
-        let result;
-        let deviceData = this.$getDevice();
-        if (deviceData.ios) {
-          result = 'https://itunes.apple.com/cn/app/%E8%B6%A3%E8%B0%B7-%E4%B8%80%E4%B8%AA%E6%87%82%E4%BD%A0%E7%9A%84app/id1397292579?mt=8'
-        } else if (deviceData.android) {
-          result = 'http://a.app.qq.com/o/simple.jsp?pkgname=io.cityzone.android'
-        } else {
-          result = 'http://download.fnvalley.com'
+          });
+          this.anchorIndex=resultIndex;
+          console.log(this.anchorIndex)
+          console.log(blockHeight)
         }
-        this.downloadUrl = result;
       },
-      downloadApp() {
-        location.assign(this.downloadUrl)
+      getUserActivityInfo() {
+        this.$http.get(this.$baseUrl + this.getUserActivityInfoRequest + `/${this.$store.state.activityId}/${this.$store.state.loginId}`, {
+          headers: {
+            'Authorization': 'Bearer ' + this.$store.state.accessToken
+          }
+        }).then(response => {
+          console.log('getUserActivityInfo', response)
+          response = response.data;
+          if (response.userActivityId !== 0) {
+            this.alreadyParticipatedFlag = true;
+          } else {
+
+          }
+          this.userInfoData = response;
+
+          this.$vux.loading.hide();
+        }).catch(error => {
+          console.log(error)
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: 'getUserActivityInfo_error' + error,
+            onConfirm() {
+            }
+          });
+        })
       },
+      getRankList() {
+        this.$http.get(this.$baseUrl + this.find_votes_rankingRequest + `/${this.$store.state.activityId}`, {
+          pageSize: 8
+        }).then(response => {
+          console.log(response)
+          response = response.data;
+          this.rankListData = response;
+          this.$vux.loading.hide();
+        }).catch(error => {
+          console.log(errpr)
+        })
+      },
+
+
       handleTabClick(index) {
         console.log(index)
         this.activeTabIndex = index;
       },
-      getMore(){
-
-      },
-      participate(){
+      getMore() {
         this.$router.push({
-          name:'participate'
+          name: 'rankList'
+        })
+      },
+      participate() {
+        this.$router.push({
+          name: 'participate'
+        })
+      },
+      checkPerson(data, index) {
+        this.$router.push({
+          name: 'canvass',
+          query: {
+            loginId: data.loginId,
+            userActivityId: data.userActivityId
+          }
+        })
+      },
+      checkResult() {
+        this.$router.push({
+          name: 'registrationResult',
+          query: {
+            userActivityId: this.userInfoData.userActivityId
+          }
         })
       }
     }

@@ -2,10 +2,14 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import FastClick from 'fastclick'
+import VueRouter from 'vue-router'
+import Vuex from 'vuex'
+
 // import axios from 'axios'
 // import moment from 'moment';
-import {ConfirmPlugin, LoadingPlugin, Popup, Tab, TabItem,XInput,Group, Cell,CellBox  , XAddress, Selector  } from 'vux'
+import {ConfirmPlugin, LoadingPlugin, Popup, Tab, TabItem, XInput, Group, Cell, CellBox, XAddress, Selector,Picker, PopupPicker, Toast } from 'vux'
 // import Swiper from 'swiper';
+import Cookies from 'js-cookie'
 
 import App from './App'
 import router from './router/router'
@@ -19,6 +23,9 @@ Vue.component('tab-item', TabItem)
 Vue.component('x-input', XInput)
 Vue.component('group', Group)
 Vue.component('x-address', XAddress)
+Vue.component('popup-picker', PopupPicker)
+Vue.component('picker', Picker)
+Vue.component('toast', Toast)
 Vue.component('selector', Selector)
 Vue.component('cell', Cell)
 Vue.component('cell-box', Cell)
@@ -26,6 +33,9 @@ Vue.use(ConfirmPlugin);
 // Vue.use(WechatPlugin);
 Vue.use(LoadingPlugin)
 Vue.use(Popup)
+
+Vue.use(Cookies)
+Vue.use(VueRouter)
 Vue.use(util);
 
 
@@ -49,7 +59,7 @@ Vue.prototype.$prodEnv = process.env.NODE_ENV === 'production';
 new Vue({
   el: '#app',
   router,
-  // store,
+  store,
   template: '<App/>',
   components: {App}
 });
