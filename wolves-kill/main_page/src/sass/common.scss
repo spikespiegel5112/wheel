@@ -77,7 +77,9 @@ input:-webkit-autofill {
   background-position: 0 0;
   //background-repeat: no-repeat;
   background-size: cover;
+  background-color: #F0F3F5;
   overflow: auto;
+
   .list {
     li {
       width: 100%;
@@ -97,6 +99,8 @@ input:-webkit-autofill {
     display: inline-block;
     min-width: 12rem;
     height: 100%;
+    line-height: 1rem;
+    text-align: left;
     vertical-align: middle;
     position: absolute;
     left: 0;

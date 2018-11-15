@@ -15,6 +15,7 @@
       </div>
 
       <div class="maincontainer">
+        <div class="wolveskill_activityname_wrapper">报名成功：西安高校狼人杀友谊赛S1</div>
         <div class="wolveskill_block_wrapper">
           <h2 class="resulttitle" @click="checkTicket">
             <label>活动门票凭证</label>
@@ -39,7 +40,7 @@
               <div class="desc">
                 <div class="name">
                   <label>{{userInfoData.userRealName}}</label>
-                  <span>{{userInfoData.userSchoolName}}&nbsp&nbsp&nbsp{{userInfoData.userMajor}}</span>
+                  <span>{{userSchoolName}}&nbsp&nbsp&nbsp{{userInfoData.userMajor}}</span>
                 </div>
                 <div class="statistic">
                   <ul>
@@ -109,6 +110,7 @@
         confirmFlag: false,
         rejectFlag: false,
         userInfoData: {},
+        userSchoolName:''
       }
     },
     computed: {
@@ -129,9 +131,11 @@
       }
     },
     watch: {
-      // activityId(value) {
-      //   sessionStorage.setItem('activityId', value)
-      // }
+      userInfoData(value) {
+        if(this.$store.state.schoolList[0].filter(item => item.value === this.userInfoData.userSchoolName).length > 0){
+          this.userSchoolName=this.$store.state.schoolList[0].filter(item => item.value === this.userInfoData.userSchoolName)[0].name;
+        }
+      }
     },
     beforeCreate() {
 

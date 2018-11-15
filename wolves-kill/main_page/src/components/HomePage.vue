@@ -86,7 +86,7 @@
         </div>
       </div>
       <div class="wolveskill_participatebutton_wrapper">
-        <div v-if="alreadyParticipatedFlag" class="unsuccessful">
+        <div v-if="!alreadyParticipatedFlag" class="unsuccessful">
           <a class="participatebutton" @click="participate">我要参加</a>
         </div>
         <div v-else class="successful">
@@ -295,8 +295,6 @@
           response = response.data;
           if (response.userActivityId !== 0) {
             this.alreadyParticipatedFlag = true;
-          } else {
-
           }
           this.userInfoData = response;
 

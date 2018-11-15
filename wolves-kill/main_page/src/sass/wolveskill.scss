@@ -604,11 +604,49 @@
 }
 .wolveskill_participatesuccessful_wrapper{
   text-align: center;
+  background-color: #F0F3F5;
+  overflow: hidden;
   .title{
     margin: 3rem 0 1rem;
     font-size: 1rem;
   }
   .hint{
     font-size: 0.6rem;
+  }
+  .qrcode{
+    margin: 2rem auto;
+    width: 9rem;
+    img{
+      display: block;
+      width: 100%;
+    }
+  }
+}
+.wolveskill_activityname_wrapper{
+  padding: 0 0.2rem;
+  font-size: 0.6rem;
+}
+.wolveskill_qrcode_wrapper{
+  label{
+     display: block;
+     margin: 0.8rem 0;
+     text-align: center;
+     font-size: 0.6rem;
+   }
+  .hint{
+    display: block;
+    margin: 0 0 0.8rem 0;
+    text-align: center;
+    font-size: 0.6rem;
+  }
+  img{
+    display: block;
+    margin: 0 auto;
+    width: 10rem;
+  }
+}
+.wolveskill_ticket_wrapper{
+  .maincontainer{
+    padding: 0.5rem;
   }
 }

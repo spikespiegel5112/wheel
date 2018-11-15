@@ -301,19 +301,19 @@
 
           let params = {
             userRealName: this.formData.userRealName,
-            userImage: this.formData.userImage,
-            userSchoolName: this.formData.userImage,
+            userImage: 'http://resource.zan-qian.com/test/langren_img/1542279082976.jpg',
+            userSchoolName: this.formData.userSchoolName,
             userMajor: this.formData.userMajor,
             userEntranceYear: this.formData.userEntranceYear
           };
 
-          params = {
-            userRealName: 'aaa',
-            userImage: 'iiiiii',
-            userSchoolName: 'bbb',
-            userMajor: 'ccc',
-            userEntranceYear: 'ddd'
-          };
+          // params = {
+          //   userRealName: 'aaa',
+          //   userImage: 'iiiiii',
+          //   userSchoolName: 'bbb',
+          //   userMajor: 'ccc',
+          //   userEntranceYear: 'ddd'
+          // };
 
           this.$http.post(this.$baseUrl + this.participate_activityRequest + `/${this.$store.state.activityId}`, {}, {
             params: params,
@@ -330,14 +330,24 @@
               case 10000:
                 this.successfulFlag = true;
                 this.$router.push({
-                  name: 'success'
+                  name: 'participateSuccessful',
+                  query: {
+                    userSchoolName: this.formData.userSchoolName
+                  }
                 });
                 break;
               case 10001:
+                let that = this;
                 this.$vux.confirm.show({
                   showCancelButton: false,
                   title: response.message,
                   onConfirm() {
+                    that.$router.push({
+                      name: 'participateSuccessful',
+                      query: {
+                        userSchoolName: that.formData.userSchoolName
+                      }
+                    });
                   }
                 });
                 break;

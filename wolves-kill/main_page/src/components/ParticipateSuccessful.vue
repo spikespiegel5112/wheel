@@ -1,18 +1,19 @@
 <template>
   <div class="common_main_container">
-    <div v-if="$checkEnvironment()==='wechat'" class="common_header_wrapper">
-      <div class="left_wrapper">
-        <div class="previous">
-          <a @click="goBack">
-            <x-icon type="ios-arrow-left" size="30"></x-icon>
-          </a>
+
+    <div class="wolveskill_participatesuccessful_wrapper">
+      <div v-if="$checkEnvironment()==='wechat'" class="common_header_wrapper">
+        <div class="left_wrapper">
+          <div class="previous">
+            <a @click="goBack">
+              <x-icon type="ios-arrow-left" size="30"></x-icon>
+            </a>
+          </div>
+        </div>
+        <div class="middle_wrapper">
+          报名成功
         </div>
       </div>
-      <div class="middle_wrapper">
-        报名成功
-      </div>
-    </div>
-    <div class="wolveskill_participatesuccessful_wrapper">
       <div class="title">
         报名成功！
       </div>
@@ -20,7 +21,7 @@
         长按下方二维码，马上加入活动群
       </div>
       <div class="qrcode">
-        <img :src="qrCodeDictionary[0].link"/>
+        <img :src="'../src/image/wolveskill/qrcode/'+userSchoolName+'_group_00000.jpg'"/>
       </div>
     </div>
   </div>
@@ -74,6 +75,9 @@
       tabBarWidth() {
         return this.tabList[this.activeTabIndex].title.length * 16 + 'px'
       },
+      userSchoolName(){
+        return this.$route.query.userSchoolName;
+      }
     },
     watch: {
       // activityId(value) {
@@ -108,7 +112,7 @@
           fontSize: 20,
         });
         this.$autoHeight({
-          target: '.wolveskill_canvassdetail_wrapper'
+          target: '.wolveskill_participatesuccessful_wrapper'
         });
         console.log(window)
         this.getUserActivityInfo();

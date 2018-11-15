@@ -46,13 +46,17 @@ const routes = [{
 //   name: 'c',
 //   component: () => import('../components/Canvass.vue')
 // }, {
-  path: '/registrationResult',
+  path: '/registrationresult',
   name: 'registrationResult',
   component: () => import('../components/RegistrationResult.vue')
 }, {
   path: '/participatesuccessful',
   name: 'participateSuccessful',
   component: () => import('../components/ParticipateSuccessful.vue')
+}, {
+  path: '/ticket',
+  name: 'ticket',
+  component: () => import('../components/Ticket.vue')
 }, {
   path: '/*',
   name: '404',

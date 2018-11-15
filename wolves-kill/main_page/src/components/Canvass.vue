@@ -23,7 +23,7 @@
             <p>{{userInfoData.userRealName}}</p>
             <span>最具人气选手投票</span>
           </h2>
-          <label>{{userInfoData.userSchoolName}}，{{userInfoData.userMajor}}</label>
+          <label>{{userSchoolName}}，{{userInfoData.userMajor}}</label>
         </div>
       </div>
       <div class="maincontent">
@@ -100,8 +100,9 @@
         voteSuccessfulFlag: false,
         loginId: '',
         userActivityId: '',
-        environment:'',
+        environment: '',
         // stateCode:''
+        userSchoolName: ''
       }
     },
     computed: {
@@ -112,14 +113,17 @@
         console.log(this.$route)
         return this.$route.query.code;
       },
-      stateCode(){
+      stateCode() {
         return this.$route.query.state;
-      }
+      },
+
     },
     watch: {
-      // activityId(value) {
-      //   sessionStorage.setItem('activityId', value)
-      // }
+      userInfoData(value) {
+        if (this.$store.state.schoolList[0].filter(item => item.value === value.userSchoolName).length > 0) {
+          this.userSchoolName = this.$store.state.schoolList[0].filter(item => item.value === value.userSchoolName)[0].name;
+        }
+      }
     },
     beforeCreate() {
 
@@ -161,7 +165,7 @@
         //   target: '.wolveskill_canvassdetail_wrapper'
         // });
         console.log(window)
-        this.environment=this.$checkEnvironment();
+        this.environment = this.$checkEnvironment();
         alert(this.environment)
 
         if (this.environment !== 'wechat') {
@@ -220,7 +224,7 @@
       },
       parseStateCode() {
         let result = [];
-        this.stateCode=this.$route.query.state;
+        // this.stateCode = this.$route.query.state;
         alert('stateCode+ ' + this.stateCode)
         // alert('stateCode+ ' + this.$route.query.state)
         if (this.stateCode !== undefined) {

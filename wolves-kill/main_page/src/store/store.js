@@ -14,11 +14,36 @@ let testState = ()=>{
 const state = {
   title: 'aaa',
   // accessToken: '',
-  accessToken: '57693bcf-33c0-481c-a62a-8669a4b0052c',
+  accessToken: '8f502958-065d-42fc-9638-7cb6087b8509',
   // loginId: '',
   loginId: '18260045855',
   activityId: 25,
   winningPrizeChanceFlag: true,
+  schoolList: [[{
+    name: '西安欧亚学院',
+    value: 'ouya'
+  }, {
+    name: '陕西财经学校',
+    value: 'xiancaijin'
+  }, {
+    name: '西安美术学院',
+    value: 'xianmeishu'
+  }, {
+    name: '西北政法大学',
+    value: 'xianzhenfa'
+  }, {
+    name: '陕西中医药大学',
+    value: 'xianzyy'
+  }, {
+    name: '西北大学现代学院',
+    value: 'xianxiandai'
+  }, {
+    name: '陕西职业技术学院',
+    value: 'xianzhiye'
+  }, {
+    name: '西安培华学院新校区',
+    value: 'xianpeihua_new'
+  }]],
   deviceTypeDictionary: [{
     name: 'Android',
     code: 'android'
