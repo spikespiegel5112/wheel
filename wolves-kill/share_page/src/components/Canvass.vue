@@ -47,7 +47,8 @@
         </div>
         <ul class="wolveskill_button_wrapper">
           <li>
-            <a @click="vote">投票</a>
+            <a v-if="isVoted" @click="vote">已投票</a>
+            <a v-else @click="vote">投票</a>
           </li>
           <li>
             <a @click="share">分享</a>
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-  // import Cookies from 'js-cookie'
+  import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
 
@@ -102,7 +103,8 @@
         userActivityId: '',
         environment: '',
         // stateCode:''
-        userSchoolName: ''
+        userSchoolName: '',
+        isVoted: false
       }
     },
     computed: {
@@ -116,6 +118,7 @@
       stateCode() {
         return this.$route.query.state;
       },
+
     },
     watch: {
       userInfoData(value) {
@@ -242,6 +245,7 @@
         console.log('loginId', this.loginId)
         // alert('channel+ ', this.channel)
 
+        this.checkIsVoted();
       },
       getUserActivityInfo() {
         this.$http.get(this.$baseUrl + this.getUserActivityInfoRequest + `/${this.$store.state.activityId}/${this.loginId}`, {
@@ -273,7 +277,20 @@
           name: 'homepage'
         })
       },
+      checkIsVoted() {
+        if (Cookies.get('wolvesKill-loginId') !== undefined && Cookies.get('wolvesKill-loginId') !== null && Cookies.get('wolvesKill-loginId') !== '' && Cookies.get('wolvesKill-loginId') === this.loginId.toString()) {
+          this.isVoted = true;
+        }
+      },
       vote() {
+        if(this.isVoted){
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '已投票请勿复投',
+            onConfirm() {
+            }
+          });
+        }
         this.$http.post(this.$baseUrl + this.voteRequest + `/${this.userActivityId}`, {}, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -285,9 +302,12 @@
             case 10000:
               this.voteSuccessfulFlag = true;
               this.getUserActivityInfo();
+              this.saveCache();
+              this.isVoted = true;
 
           }
         })
+
       },
       share() {
         console.log(this.$checkEnvironment())
@@ -295,8 +315,8 @@
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
-            "title": "tttt",
-            "describe": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
+            "title": "狼人杀分享拉票",
+            "describe": '狼人杀分享拉票描述',
             "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
           })
         } else {
@@ -481,6 +501,14 @@
           }
         })
       },
+      getCache() {
+
+      },
+      saveCache() {
+
+        Cookies.set('wolvesKill-loginId', this.loginId);
+
+      }
     }
   }
 
