@@ -188,7 +188,7 @@
             'Authorization': 'Bearer ' + this.$store.state.accessToken
           }
         }).then(response => {
-          console.log(response)
+          console.log('getUserActivityInfo', response)
           response = response.data;
           this.userInfoData = response;
           this.$vux.loading.hide();
@@ -248,21 +248,25 @@
         })
       },
       share() {
+        alert(this.$checkEnvironment())
         console.log(this.$checkEnvironment())
         if (this.$checkEnvironment() !== 'wechat') {
+          let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
+
           this.fnvalleySdkInstance.openAPPShare({
-            "title": "tttt",
-            "describe": "dddd",
-            "weburl": "http://www.baidu.com"
+            "title": "狼人杀分享拉票",
+            "describe": "狼人杀分享拉票描述",
+            "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
           })
         } else {
-          this.initJSSDK();
           this.$vux.confirm.show({
             showCancelButton: false,
             title: '请点击右上角按钮分享',
             onConfirm() {
             }
           });
+          this.initJSSDK();
+
         }
 
       },

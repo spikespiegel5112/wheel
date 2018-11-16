@@ -296,8 +296,8 @@
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
-            "title": "tttt",
-            "describe": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
+            "title": "狼人杀分享拉票",
+            "describe": '狼人杀分享拉票描述',
             "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
           })
         } else {

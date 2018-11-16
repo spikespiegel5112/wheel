@@ -301,7 +301,7 @@
 
           let params = {
             userRealName: this.formData.userRealName,
-            userImage: 'http://resource.zan-qian.com/test/langren_img/1542279082976.jpg',
+            userImage:this.formData.userImage,
             userSchoolName: this.formData.userSchoolName,
             userMajor: this.formData.userMajor,
             userEntranceYear: this.formData.userEntranceYear
@@ -309,7 +309,7 @@
 
           // params = {
           //   userRealName: 'aaa',
-          //   userImage: 'iiiiii',
+          //   userImage: 'http://resource.zan-qian.com/test/langren_img/1542279082976.jpg',
           //   userSchoolName: 'bbb',
           //   userMajor: 'ccc',
           //   userEntranceYear: 'ddd'
@@ -381,7 +381,7 @@
             console.log(error)
             this.$vux.confirm.show({
               showCancelButton: false,
-              title: error.error,
+              title: error.data.error,
               onConfirm() {
               }
             });

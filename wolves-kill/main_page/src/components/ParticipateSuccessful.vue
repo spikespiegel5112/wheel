@@ -21,7 +21,14 @@
         长按下方二维码，马上加入活动群
       </div>
       <div class="qrcode">
-        <img :src="'../src/image/wolveskill/qrcode/'+userSchoolName+'_group_00000.jpg'"/>
+        <img v-if="userSchoolName==='ouya'" src="../image/wolveskill/qrcode/ouya_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xiancaijin'" src="../image/wolveskill/qrcode/xiancaijin_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xianmeishu'" src="../image/wolveskill/qrcode/xianmeishu_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xianzhenfa'" src="../image/wolveskill/qrcode/xianzhenfa_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xianzyy'" src="../image/wolveskill/qrcode/xianzyy_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xianxiandai'" src="../image/wolveskill/qrcode/xianxiandai_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xianzhiye'" src="../image/wolveskill/qrcode/xianzhiye_group_00000.jpg"/>
+        <img v-if="userSchoolName==='xianpeihua_new'" src="../image/wolveskill/qrcode/xianpeihua_new_group_00000.jpg"/>
       </div>
     </div>
   </div>
