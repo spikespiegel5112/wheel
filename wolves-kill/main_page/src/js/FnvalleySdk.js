@@ -17,7 +17,6 @@ window.FnvalleySdk = function () {
   this.agent = function () {
     console.log("fnvalleyAgent");
     if (appObject === "android") {
-      debugger
       window.android.fnvalleyAgent();
     } else {
       window.webkit.messageHandlers.agent.postMessage('');
@@ -64,7 +63,7 @@ window.FnvalleySdk = function () {
     if (appObject === "android") {
       window.android.fnvalleyLoginId();
     } else {
-      window.webkit.messageHandlers.loginId.postMessage('');
+      window.webkit.messageHandlers.getLoginId.postMessage('');
     }
     var pro = new Promise(function (resolve, reject) {
       setTimeout(function () {
@@ -160,8 +159,14 @@ window.FnvalleySdk = function () {
     // alert('FnvalleySdk.accessToken' + json.data)
     window.FnvalleySdk.accessToken = json.data;
   }
+  //IOS
+  window.FnvalleySdk.LoginId = function (json) {
+    console.log("getLoginId" + json.data);
+    FnvalleySdk.loginId = json.data;
+  }
+  //Android
   window.FnvalleySdk.getLoginId = function (json) {
-    console.log("getAgent" + json.data);
+    console.log("getLoginId" + json.data);
     FnvalleySdk.loginId = json.data;
   }
   window.FnvalleySdk.getAgent = function (json) {

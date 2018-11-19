@@ -17,23 +17,23 @@
       <div class="maincontainer">
         <div class="wolveskill_activityname_wrapper">报名成功：西安高校狼人杀友谊赛S1</div>
         <div class="wolveskill_block_wrapper">
-            <!--<router-link class="link" :to="{name:'ticket',query:{userSchoolName: userInfoData.userSchoolName}}">-->
-<!---->
-            <!--</router-link>-->
+          <!--<router-link class="link" :to="{name:'ticket',query:{userSchoolName: userInfoData.userSchoolName}}">-->
+          <!---->
+          <!--</router-link>-->
           <h2 class="resulttitle" @click="checkTicket">
             <label>活动门票凭证</label>
             <a class="link">
               <span class="triangle"></span>
             </a>
           </h2>
-            <!--<a @click="checkTicket">-->
-            <!--</a>-->
+          <!--<a @click="checkTicket">-->
+          <!--</a>-->
 
         </div>
         <div class="wolveskill_block_wrapper">
           <h2 class="resulttitle">
             <label>人气选手排名投票</label>
-            <a class="link">
+            <a class="link" @click="editProfile">
               修改信息
             </a>
           </h2>
@@ -65,7 +65,8 @@
           </div>
           <ul class="wolveskill_button_wrapper">
             <li>
-              <a @click="vote">投票</a>
+              <a v-if="isVoted" @click="vote">已投票</a>
+              <a v-else @click="vote">投票</a>
             </li>
             <li>
               <a @click="share">分享拉票</a>
@@ -84,9 +85,9 @@
 </template>
 
 <script>
-  // import Cookies from 'js-cookie'
+  import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
-  import Confirm from './Confirm.vue'
+  // import Confirm from './Confirm.vue'
 
 
   // import wx from 'weixin-js-sdk'
@@ -94,7 +95,7 @@
   export default {
     name: "wolveskill",
     components: {
-      Confirm
+      // Confirm
     },
     data() {
       return {
@@ -115,8 +116,9 @@
         confirmFlag: false,
         rejectFlag: false,
         userInfoData: {},
-        userSchoolName:'',
+        userSchoolName: '',
         voteSuccessfulFlag: false,
+        isVoted: false
 
       }
     },
@@ -139,8 +141,8 @@
     },
     watch: {
       userInfoData(value) {
-        if(this.$store.state.schoolList[0].filter(item => item.value === this.userInfoData.userSchoolName).length > 0){
-          this.userSchoolName=this.$store.state.schoolList[0].filter(item => item.value === this.userInfoData.userSchoolName)[0].name;
+        if (this.$store.state.schoolList[0].filter(item => item.value === this.userInfoData.userSchoolName).length > 0) {
+          this.userSchoolName = this.$store.state.schoolList[0].filter(item => item.value === this.userInfoData.userSchoolName)[0].name;
         }
       }
     },
@@ -181,7 +183,6 @@
       }
     },
     methods: {
-
       getUserActivityInfo() {
         this.$http.get(this.$baseUrl + this.getUserActivityInfoRequest + `/${this.$store.state.activityId}/${this.$store.state.loginId}`, {
           headers: {
@@ -192,6 +193,7 @@
           response = response.data;
           this.userInfoData = response;
           this.$vux.loading.hide();
+          this.checkIsVoted();
         }).catch(error => {
           console.log(error)
           this.$vux.confirm.show({
@@ -231,24 +233,43 @@
           name: 'homepage'
         })
       },
+      checkIsVoted() {
+        let result = [];
+        if (Cookies.get('wolvesKill-loginId')) {
+          result = JSON.parse(Cookies.get('wolvesKill-loginId'));
+          this.isVoted = result.filter(item => item === Number(this.loginId)).length > 0;
+        } else {
+          this.isVoted = false;
+        }
+      },
       vote() {
-        this.$http.post(this.$baseUrl + this.voteRequest + `/${this.userActivityId}`, {}, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + this.$store.state.accessToken
-          }
-        }).then(response => {
-          console.log(response)
-          switch (response.code) {
-            case 10000:
-              this.voteSuccessfulFlag = true;
-              this.getUserActivityInfo();
-
-          }
-        })
+        if (this.isVoted) {
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: '已投票请勿复投',
+            onConfirm() {
+            }
+          });
+        } else {
+          this.$http.post(this.$baseUrl + this.voteRequest + `/${this.userActivityId}`, {}, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Authorization': 'Bearer ' + this.$store.state.accessToken
+            }
+          }).then(response => {
+            console.log(response)
+            switch (response.code) {
+              case 10000:
+                this.voteSuccessfulFlag = true;
+                this.getUserActivityInfo();
+                this.saveCache();
+                this.isVoted = true;
+            }
+          })
+        }
       },
       share() {
-        alert(this.$checkEnvironment())
+        // alert(this.$checkEnvironment())
         console.log(this.$checkEnvironment())
         if (this.$checkEnvironment() !== 'wechat') {
           let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
@@ -256,7 +277,8 @@
           this.fnvalleySdkInstance.openAPPShare({
             "title": "狼人杀分享拉票",
             "describe": "狼人杀分享拉票描述",
-            "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
+            // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
+            "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
         } else {
           this.$vux.confirm.show({
@@ -271,8 +293,8 @@
 
       },
       checkTicket() {
-        alert('this.userInfoData.userSchoolName   '+this.userInfoData.userSchoolName)
-        let that=this;
+        // alert('this.userInfoData.userSchoolName   ' + this.userInfoData.userSchoolName)
+        let that = this;
         that.$router.push({
           name: 'ticket',
           query: {
@@ -287,6 +309,27 @@
         //   }
         // });
 
+      },
+      saveCache() {
+        let result = [];
+        if (Cookies.get('wolvesKill-loginId')) {
+          result = JSON.parse(Cookies.get('wolvesKill-loginId'));
+          if (result.filter(item => item === this.loginId).length === 0) {
+            result.push(Number(this.loginId))
+          }
+        } else {
+          result.push(Number(this.loginId))
+
+        }
+        Cookies.set('wolvesKill-loginId', JSON.stringify(result))
+      },
+      editProfile(){
+        this.$router.push({
+          name:'participate',
+          query:{
+            state:'edit'
+          }
+        })
       }
     }
   }

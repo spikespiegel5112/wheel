@@ -168,51 +168,37 @@
         // });
         console.log(window)
         this.environment = this.$checkEnvironment();
-        alert(this.environment)
+        // alert(this.environment)
 
         if (this.environment !== 'wechat') {
           this.parseStateCode();
           this.$getAccessToken().then(response1 => {
-            alert(this.$store.state.accessToken)
-
-            alert(this.loginId + ', ' + this.userActivityId)
+            // alert(this.$store.state.accessToken)
+            // alert(this.loginId + ', ' + this.userActivityId)
 
             this.getUserActivityInfo();
           })
         } else {
-
-          this.getWechatToken({
-            type: 'wechat_code',
-            params: {
-              code: this.wechatAuthCode
-            }
-          }).then(response => {
-            console.log('this.getWechatToken', response)
-            this.$store.commit('setAccessToken', response.access_token)
-            sessionStorage.setItem('wheel-accessToken', this.accessToken)
-            this.parseStateCode();
-            this.getUserActivityInfo();
-            this.initJSSDK();
-
-          }).catch(error => {
-            this.parseStateCode();
-            this.getUserActivityInfo();
-          })
-
-
-          // if (this.$route.query.routeto === 'shareredirect') {
-          //   // alert('shareredirect')
-          //   this.$vux.loading.show({
-          //     text: 'Loading'
-          //   });
-          //   this.redirectInfo = this.$route.query.routeto;
-          //   this.stateCode = this.$route.query.state;
-          //   // alert(this.stateCode)
-          //   this.wechatRedirectingFlag = true;
-          // } else {
+          this.parseStateCode();
+          this.getUserActivityInfo();
+          this.initJSSDK();
+          // this.getWechatToken({
+          //   type: 'wechat_code',
+          //   params: {
+          //     code: this.wechatAuthCode
+          //   }
+          // }).then(response => {
+          //   console.log('this.getWechatToken', response)
+          //   this.$store.commit('setAccessToken', response.access_token)
+          //   sessionStorage.setItem('wheel-accessToken', this.accessToken)
+          //   this.parseStateCode();
+          //   this.getUserActivityInfo();
+          //   this.initJSSDK();
           //
-          // }
-
+          // }).catch(error => {
+          //   this.parseStateCode();
+          //   this.getUserActivityInfo();
+          // })
 
         }
 
@@ -227,7 +213,7 @@
       parseStateCode() {
         let result = [];
         // this.stateCode = this.$route.query.state;
-        alert('stateCode+ ' + this.stateCode)
+        // alert('stateCode+ ' + this.stateCode)
         // alert('stateCode+ ' + this.$route.query.state)
         if (this.stateCode !== undefined) {
           let code = decodeURIComponent(this.stateCode)
@@ -250,7 +236,7 @@
       getUserActivityInfo() {
         this.$http.get(this.$baseUrl + this.getUserActivityInfoRequest + `/${this.$store.state.activityId}/${this.loginId}`, {
           headers: {
-            'Authorization': 'Bearer ' + this.$store.state.accessToken
+            // 'Authorization': 'Bearer ' + this.$store.state.accessToken
           }
         }).then(response => {
           console.log(response)
@@ -277,36 +263,33 @@
           name: 'homepage'
         })
       },
-      checkIsVoted() {
-        if (Cookies.get('wolvesKill-loginId') !== undefined && Cookies.get('wolvesKill-loginId') !== null && Cookies.get('wolvesKill-loginId') !== '' && Cookies.get('wolvesKill-loginId') === this.loginId.toString()) {
-          this.isVoted = true;
-        }
-      },
+
       vote() {
-        if(this.isVoted){
+        if (this.isVoted) {
           this.$vux.confirm.show({
             showCancelButton: false,
             title: '已投票请勿复投',
             onConfirm() {
             }
           });
-        }
-        this.$http.post(this.$baseUrl + this.voteRequest + `/${this.userActivityId}`, {}, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + this.$store.state.accessToken
-          }
-        }).then(response => {
-          console.log(response)
-          switch (response.code) {
-            case 10000:
-              this.voteSuccessfulFlag = true;
-              this.getUserActivityInfo();
-              this.saveCache();
-              this.isVoted = true;
+        } else {
+          this.$http.post(this.$baseUrl + this.voteRequest + `/${this.userActivityId}`, {}, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              // 'Authorization': 'Bearer ' + this.$store.state.accessToken
+            }
+          }).then(response => {
+            console.log(response)
+            switch (response.code) {
+              case 10000:
+                this.voteSuccessfulFlag = true;
+                this.getUserActivityInfo();
+                this.saveCache();
+                this.isVoted = true;
 
-          }
-        })
+            }
+          })
+        }
 
       },
       share() {
@@ -317,7 +300,8 @@
           this.fnvalleySdkInstance.openAPPShare({
             "title": "狼人杀分享拉票",
             "describe": '狼人杀分享拉票描述',
-            "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
+            // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
+            "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
         } else {
           this.$vux.confirm.show({
@@ -381,7 +365,7 @@
 
             wx.onMenuShareTimeline({
               title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
-              link: this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
@@ -395,7 +379,7 @@
               title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
               desc: '不做LYB，好友携手拿好礼。更有海淘精品等你免费来领取！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              link: this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               imgUrl: 'http://funyvalley.oss-cn-shanghai.aliyuncs.com/share/logo_wechatshare_square_00000.jpg', // 分享图标
               type: '', // 分享类型,music、video或link，不填默认为link
@@ -504,9 +488,35 @@
       getCache() {
 
       },
-      saveCache() {
+      checkIsVoted() {
+        let result = [];
+        if (Cookies.get('wolvesKill-loginId')) {
 
-        Cookies.set('wolvesKill-loginId', this.loginId);
+          // alert("Cookies.get('wolvesKill-loginId')++++" + Cookies.get('wolvesKill-loginId'))
+          // alert("JSON.parse(Cookies.get('wolvesKill-loginId')) instanceof Array" + JSON.parse(Cookies.get('wolvesKill-loginId')) instanceof Array)
+          if (!JSON.parse(Cookies.get('wolvesKill-loginId')) instanceof Array) {
+            // alert('not array')
+            Cookies.remove('wolvesKill-loginId');
+            this.isVoted = false;
+          }
+          result = JSON.parse(Cookies.get('wolvesKill-loginId'));
+          this.isVoted = result.filter(item => item === Number(this.loginId)).length > 0;
+        } else {
+          this.isVoted = false;
+        }
+      },
+      saveCache() {
+        let result = [];
+        if (Cookies.get('wolvesKill-loginId')) {
+          result = JSON.parse(Cookies.get('wolvesKill-loginId'));
+          if (result.filter(item => item === this.loginId).length === 0) {
+            result.push(Number(this.loginId))
+          }
+        } else {
+          result.push(Number(this.loginId))
+
+        }
+        Cookies.set('wolvesKill-loginId', JSON.stringify(result))
 
       }
     }

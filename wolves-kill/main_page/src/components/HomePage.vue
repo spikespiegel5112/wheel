@@ -53,7 +53,7 @@
             <div class="wolveskill_block_wrapper" id="block3">
               <h1 class="title">
                 <span></span><label>投票排名</label>
-                <a @click="getMore">更多</a>
+                <a class="more" @click="getMore">更多</a>
               </h1>
               <div class="ranklist">
                 <ul>
@@ -68,10 +68,9 @@
                         <img v-if="item.userImage!==''&&item.userImage!==null" :src="item.userImage"/>
                         <img v-else src="../image/wolveskill/exampleavatar.png"/>
                       </div>
-
-                      <label>{{item.loginId}}</label>
+                      <label class="name">{{item.userRealName}}</label>
+                      <label class="votes">{{item.votes}}</label>
                     </div>
-
                   </li>
                 </ul>
               </div>
@@ -189,18 +188,8 @@
       this.$vux.loading.show({
         text: 'Loading'
       });
-      if (this.$route.query.routeto === 'canvass') {
-        this.$vux.loading.hide();
-        this.reInitializePage();
-        // this.$router.push({
-        //   name: 'canvass',
-        //   query: {
-        //     state: this.$route.query.state
-        //   }
-        // });
-      } else {
-        this.redirectingFlag = false;
-      }
+      this.redirectingFlag = false;
+
 
     },
     mounted() {
@@ -216,14 +205,40 @@
         });
         console.log(window)
         if (this.$store.state.accessToken === '') {
-          this.$getAccessToken().then(response => {
+          this.$getAccessToken().then(response1 => {
+            // this.$vux.confirm.show({
+            //   showCancelButton: false,
+            //   title: '$getAccessToken' + response1,
+            //   onConfirm() {
+            //   }
+            // });
             this.$getUserLoginId().then(response2 => {
+              // this.$vux.confirm.show({
+              //   showCancelButton: false,
+              //   title: '$getUserLoginId' + response2,
+              //   onConfirm() {
+              //   }
+              // });
               this.getRankList();
               this.getUserActivityInfo();
               this.anchorEvent();
               this.$nextTick(() => {
                 this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
               })
+            }).catch(error2=>{
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: '$getUserLoginId' + '+++++error',
+                onConfirm() {
+                }
+              });
+            })
+          }).catch(error1=>{
+            this.$vux.confirm.show({
+              showCancelButton: false,
+              title: '$getAccessToken' + '+++++error',
+              onConfirm() {
+              }
             });
           })
         } else {
@@ -285,7 +300,7 @@
         }
       },
       getUserActivityInfo() {
-        alert(this.$store.state.accessToken)
+        // alert(this.$store.state.accessToken)
         this.$http.get(this.$baseUrl + this.getUserActivityInfoRequest + `/${this.$store.state.activityId}/${this.$store.state.loginId}`, {
           headers: {
             'Authorization': 'Bearer ' + this.$store.state.accessToken

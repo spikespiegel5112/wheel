@@ -18,7 +18,7 @@
       <div class="wolveskill_ranklist_container">
         <div class="myself" v-if="userInfoData.loginId!==null">
           <ul>
-            <li class="wolveskill_rank_item">
+            <li class="wolveskill_rank_item" @click="checkPerson(userInfoData)">
               <span>{{userInfoData.ranking}}</span>
               <div class="content">
                 <div class="avatar">
@@ -206,6 +206,7 @@
 
 
       checkPerson(data, index) {
+        debugger
         this.$router.push({
           name: 'canvass',
           query: {

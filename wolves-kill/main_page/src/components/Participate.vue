@@ -77,7 +77,8 @@
         </div>
       </div>
       <div class="participatebutton_wrapper">
-        <a class="wolveskill_participatebutton_item" @click="participate">确定报名</a>
+        <a v-if="state!=='edit'" class="wolveskill_participatebutton_item" @click="submitForm">确定报名</a>
+        <a v-else class="wolveskill_participatebutton_item" @click="submitForm">确认修改</a>
       </div>
 
     </div>
@@ -104,6 +105,8 @@
         addUserSchoolRequest: 'profile-service/1.0.0/user_school/addUserSchool',
         check_join_activityRequest: 'promotion-service/1.0.0/offline_activity/check_join_activity',
         participate_activityRequest: 'promotion-service/1.0.0/offline_activity/participate_activity',
+        getUserActivityInfoRequest: 'promotion-service/1.0.0/offline_activity/getUserActivityInfo',
+        updateUserActivityInfoRequest: 'promotion-service/1.0.0/offline_activity/updateUserActivityInfo',
         fnvalleySdkInstance: {},
         showYearList: false,
         activeTabIndex: 0,
@@ -216,6 +219,9 @@
         }
         return [result]
       },
+      state() {
+        return this.$route.query.state;
+      }
     },
     watch: {
       // chosenUserSchoolName(value) {
@@ -262,9 +268,37 @@
         });
         console.log(window)
       }
+      if (this.$route.query.state === 'edit') {
+        this.getFormData();
+      }
     },
     methods: {
-      participate() {
+      getFormData() {
+        this.$vux.loading.show({
+          text: 'Loading'
+        });
+        this.$http.get(this.$baseUrl + this.getUserActivityInfoRequest + `/${this.$store.state.activityId}/${this.$store.state.loginId}`, {
+          headers: {
+            'Authorization': 'Bearer ' + this.$store.state.accessToken
+          }
+        }).then(response => {
+          console.log('getUserActivityInfo', response)
+          response = response.data;
+          this.formData = response;
+          this.chosenUserSchoolName = [this.formData.userSchoolName];
+          this.chosenUserEntranceYear = [this.formData.userEntranceYear];
+          this.$vux.loading.hide();
+        }).catch(error => {
+          console.log(error)
+          this.$vux.confirm.show({
+            showCancelButton: false,
+            title: 'getUserActivityInfo_error' + error,
+            onConfirm() {
+            }
+          });
+        })
+      },
+      submitForm() {
         let validFlag = true;
 
 
@@ -279,19 +313,19 @@
         }, {
           refName: 'userImageRef'
         }];
-        // refDictionary.forEach(item => {
-        //   if (this.$refs[item.refName].valid !== undefined) {
-        //     if (this.$refs[item.refName].valid !== true) {
-        //       this.$vux.confirm.show({
-        //         showCancelButton: false,
-        //         title: this.$refs[item.refName].title + '为空',
-        //         onConfirm() {
-        //         }
-        //       });
-        //       validFlag = false;
-        //     }
-        //   }
-        // });
+        refDictionary.forEach(item => {
+          if (this.$refs[item.refName].valid !== undefined) {
+            if (this.$refs[item.refName].valid !== true) {
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: this.$refs[item.refName].title + '为空',
+                onConfirm() {
+                }
+              });
+              validFlag = false;
+            }
+          }
+        });
 
 
         if (validFlag) {
@@ -301,7 +335,7 @@
 
           let params = {
             userRealName: this.formData.userRealName,
-            userImage:this.formData.userImage,
+            userImage: this.formData.userImage,
             userSchoolName: this.formData.userSchoolName,
             userMajor: this.formData.userMajor,
             userEntranceYear: this.formData.userEntranceYear
@@ -315,80 +349,154 @@
           //   userEntranceYear: 'ddd'
           // };
 
-          this.$http.post(this.$baseUrl + this.participate_activityRequest + `/${this.$store.state.activityId}`, {}, {
-            params: params,
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': 'Bearer ' + this.$store.state.accessToken
-            }
-          }).then(response => {
-            console.log(response)
-
-            // alert(response.code)
-            this.$vux.loading.hide();
-            switch (response.code) {
-              case 10000:
-                this.successfulFlag = true;
-                this.$router.push({
-                  name: 'participateSuccessful',
-                  query: {
-                    userSchoolName: this.formData.userSchoolName
-                  }
-                });
-                break;
-              case 10001:
-                let that = this;
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                    that.$router.push({
-                      name: 'participateSuccessful',
-                      query: {
-                        userSchoolName: that.formData.userSchoolName
-                      }
-                    });
-                  }
-                });
-                break;
-              case 10006:
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-              case 10007:
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-              case 10029:
-                this.$vux.confirm.show({
-                  showCancelButton: false,
-                  title: response.message,
-                  onConfirm() {
-                  }
-                });
-                break;
-            }
-
-          }).catch(error => {
-            console.log(error)
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              title: error.data.error,
-              onConfirm() {
+          if (this.$route.query.state !== 'edit') {
+            debugger
+            this.$http.post(this.$baseUrl + this.participate_activityRequest + `/${this.$store.state.activityId}`, {}, {
+              params: params,
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + this.$store.state.accessToken
               }
-            });
-          })
+            }).then(response => {
+              console.log(response)
+
+              // alert(response.code)
+              this.$vux.loading.hide();
+              switch (response.code) {
+                case 10000:
+                  this.successfulFlag = true;
+                  this.$router.push({
+                    name: 'participateSuccessful',
+                    query: {
+                      userSchoolName: this.formData.userSchoolName
+                    }
+                  });
+                  break;
+                case 10001:
+                  let that = this;
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                      that.$router.push({
+                        name: 'participateSuccessful',
+                        query: {
+                          userSchoolName: that.formData.userSchoolName
+                        }
+                      });
+                    }
+                  });
+                  break;
+                case 10006:
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                    }
+                  });
+                  break;
+                case 10007:
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                    }
+                  });
+                  break;
+                case 10029:
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                    }
+                  });
+                  break;
+              }
+
+            }).catch(error => {
+              console.log(error)
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: error.data.error,
+                onConfirm() {
+                }
+              });
+            })
+          } else {
+            debugger
+            this.$http.post(this.$baseUrl + this.updateUserActivityInfoRequest + `/${this.$store.state.activityId}`, {}, {
+              params: params,
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + this.$store.state.accessToken
+              }
+            }).then(response => {
+              console.log(response)
+
+              // alert(response.code)
+              this.$vux.loading.hide();
+              switch (response.code) {
+                case 10000:
+                  this.successfulFlag = true;
+                  this.$router.push({
+                    name: 'participateSuccessful',
+                    query: {
+                      userSchoolName: this.formData.userSchoolName
+                    }
+                  });
+                  break;
+                case 10001:
+                  let that = this;
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                      that.$router.push({
+                        name: 'participateSuccessful',
+                        query: {
+                          userSchoolName: that.formData.userSchoolName
+                        }
+                      });
+                    }
+                  });
+                  break;
+                case 10006:
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                    }
+                  });
+                  break;
+                case 10007:
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                    }
+                  });
+                  break;
+                case 10029:
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: response.message,
+                    onConfirm() {
+                    }
+                  });
+                  break;
+              }
+
+            }).catch(error => {
+              console.log(error)
+              this.$vux.confirm.show({
+                showCancelButton: false,
+                title: error.data.error,
+                onConfirm() {
+                }
+              });
+            })
+          }
         }
-
-
       },
       handleTabClick(index) {
         console.log(index)

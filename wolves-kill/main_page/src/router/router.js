@@ -64,6 +64,10 @@ const routes = [{
   name: 'ticket',
   component: Ticket
 }, {
+  path: '/rules',
+  name: 'rules',
+  component: () => import('../components/Rules.vue')
+}, {
   path: '/*',
   name: '404',
   component: () => import('../components/404.vue')

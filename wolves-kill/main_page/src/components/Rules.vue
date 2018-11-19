@@ -2,22 +2,71 @@
   <div class="common_main_container">
     <div class="wolveskill_rules_wrapper">
       <div class="main">
-        <h2>活动名称：西安高校狼人杀友谊赛S1</h2>
-        <h3 class="wolveskill_rulestitle_item">活动时间</h3>
-        <p>
-          2018.12.01-2018.12.23
-        </p>
-        <h3 class="wolveskill_rulestitle_item">本校晋级赛</h3>
-        <p>
-          每所学校海选报名人数限96人，12人为一组进行比 赛。通过两轮比赛最终角逐出两名优胜者进入决赛。 其中，只要进入本校晋级赛第二轮24人决赛组的选 手，两组选手每组的前三名都将获得一份由xxx提供 的xxx奖励.
-        </p>
-        <h3 class="wolveskill_rulestitle_item">联校总决赛</h3>
-        <p>
-          总决赛时间2018年12月23日,地点xxxxx 联校总决赛选手包括由8所西安高校通过高校赛晋 级的16名选手和趣谷人气榜单的前8名选手，共计 24人进行两组比赛最终决出前三名。比赛的前三名 将会获得由xxx提供的xxx优胜奖其余选手也都将获 得由xxx提供的xxx参与奖.
-        </p>
-        <p class="hint">
-          比赛由趣谷主办，决赛合作斗鱼，进行全程直播
-        </p>
+        <div class="wolveskill_block_wrapper">
+          <h2>西安高校狼人杀友谊赛S1</h2>
+          <h3 class="wolveskill_rulestitle_item">活动时间</h3>
+          <p>
+            2018.12.01-2018.12.23
+          </p>
+          <h3 class="wolveskill_rulestitle_item">本校晋级赛</h3>
+          <p>
+            每所学校海选报名人数限96人，12人为一组进行比 赛。通过两轮比赛最终角逐出两名优胜者进入决赛。 其中，只要进入本校晋级赛第二轮24人决赛组的选 手，两组选手每组的前三名都将获得一份由xxx提供 的xxx奖励.
+          </p>
+          <h3 class="wolveskill_rulestitle_item">联校总决赛</h3>
+          <p>
+            总决赛时间2018年12月23日,地点xxxxx 联校总决赛选手包括由8所西安高校通过高校赛晋 级的16名选手和趣谷人气榜单的前8名选手，共计 24人进行两组比赛最终决出前三名。比赛的前三名 将会获得由xxx提供的xxx优胜奖其余选手也都将获 得由xxx提供的xxx参与奖.
+          </p>
+          <p class="hint">
+            比赛由趣谷主办，决赛合作斗鱼，进行全程直播
+          </p>
+
+        </div>
+        <div class="wolveskill_block_wrapper">
+          <h3 class="wolveskill_rulestitle_item">狼人杀游戏规则与技巧</h3>
+          <ul class="links">
+            <li>
+              <label>狼人杀游戏术语图文详解</label>
+              <span>
+                <x-icon type="ios-arrow-right" size="30"></x-icon>
+              </span>
+            </li>
+            <li>
+              <label>狼人杀攻略帮你在桌游聚会中重拾自信</label>
+              <span>
+                <x-icon type="ios-arrow-right" size="30"></x-icon>
+              </span>
+            </li>
+            <li>
+              <label>新手在狼人杀游戏中如何发言？</label>
+              <span>
+                <x-icon type="ios-arrow-right" size="30"></x-icon>
+              </span>
+            </li>
+            <li>
+              <label>玩狼人杀如何抿身份？</label>
+              <span>
+                <x-icon type="ios-arrow-right" size="30"></x-icon>
+              </span>
+            </li>
+            <li>
+              <label>狼人杀如何找狼？</label>
+              <span>
+                <x-icon type="ios-arrow-right" size="30"></x-icon>
+              </span>
+            </li>
+            <li>
+              <label>狼人杀心得</label>
+              <span>
+                <x-icon type="ios-arrow-right" size="30"></x-icon>
+              </span>
+            </li>
+
+
+
+
+          </ul>
+
+        </div>
       </div>
     </div>
   </div>
