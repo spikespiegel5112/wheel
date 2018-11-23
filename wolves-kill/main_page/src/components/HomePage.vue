@@ -225,7 +225,7 @@
               this.$nextTick(() => {
                 this.remUnit = Number(document.getElementsByTagName('html')[0].style.fontSize.replace('px', ''))
               })
-            }).catch(error2=>{
+            }).catch(error2 => {
               this.$vux.confirm.show({
                 showCancelButton: false,
                 title: '$getUserLoginId' + '+++++error',
@@ -233,7 +233,7 @@
                 }
               });
             })
-          }).catch(error1=>{
+          }).catch(error1 => {
             this.$vux.confirm.show({
               showCancelButton: false,
               title: '$getAccessToken' + '+++++error',
@@ -258,7 +258,7 @@
       reInitializePage() {
         let stateCode = `channel=${this.channel}$activityId=${this.activityId}`;
         // alert('reInitializePage.stateCode', stateCode)
-        location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl+'/canvass' + '&response_type=code&scope=snsapi_userinfo&state=' + stateCode + '#wechat_redirect')
+        location.assign('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx67c26ff8068af257&redirect_uri=' + this.$domainUrl + '/canvass' + '&response_type=code&scope=snsapi_userinfo&state=' + stateCode + '#wechat_redirect')
       },
       anchorEvent() {
         let blockHeight = document.getElementById('block2').scrollTop;
@@ -267,36 +267,39 @@
         let blockDictionary = [{
           name: 'block1',
           height: (() => {
-            return document.getElementById('block1').scrollTop
+            return document.getElementById('block1').offsetHeight
           })()
         }, {
           name: 'block2',
           height: (() => {
-            return document.getElementById('block2').scrollTop
+            return document.getElementById('block2').offsetHeight
           })()
         }, {
           name: 'block3',
           height: (() => {
-            return document.getElementById('block3').scrollTop
+            return document.getElementById('block3').offsetTop - 46
           })()
         }];
         console.log('blockDictionary', blockDictionary[2].height)
 
         window.onscroll = e => {
           let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-
+          console.log("scrollTop:" + scrollTop)
           let resultIndex = 0;
-          let block1ScrollTop = document.getElementById('block1').scrollTop;
-          let block2ScrollTop = document.getElementById('block2').scrollTop;
-          let block3ScrollTop = document.getElementById('block3').scrollTop;
-          blockDictionary.forEach((item, index) => {
-            if (scrollTop > item.height) {
-              resultIndex = index;
-            }
-          });
+          console.log("height0:" + blockDictionary[0].height);
+          console.log("height1:" + blockDictionary[1].height);
+          console.log("height2:" + blockDictionary[2].height);
+          if (scrollTop >= blockDictionary[1].height && scrollTop < blockDictionary[2].height) {
+            resultIndex = 1;
+          } else if (scrollTop >= blockDictionary[2].height) {
+            resultIndex = 2;
+          } else {
+            resultIndex = 0;
+          }
           this.anchorIndex = resultIndex;
+          this.activeTabIndex = resultIndex;
           console.log(this.anchorIndex)
-          console.log(blockHeight)
+
         }
       },
       getUserActivityInfo() {
@@ -341,6 +344,28 @@
       handleTabClick(index) {
         console.log(index)
         this.activeTabIndex = index;
+        let blockDictionary = [{
+          name: 'block1',
+          height: (() => {
+            return 0
+          })()
+        }, {
+          name: 'block2',
+          height: (() => {
+            return document.getElementById('block2').offsetHeight + 3
+          })()
+        }, {
+          name: 'block3',
+          height: (() => {
+            return document.getElementById('block3').offsetTop - 46
+          })()
+        }];
+        if (index < 3) {
+          document.documentElement.scrollTop = blockDictionary[index].height;
+          document.body.scrollTop = blockDictionary[index].height;
+        }
+        let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        console.log("handleTabClickscrollTop:"+scrollTop)
       },
       getMore() {
         this.$router.push({
