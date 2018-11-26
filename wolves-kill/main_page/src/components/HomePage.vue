@@ -55,8 +55,7 @@
                   本届西安高校狼人杀友谊赛S1由趣谷主办，旨在鼓励大学生不在沉溺网络虚拟世界，回归现实人际交往。<br/>
                   &nbsp&nbsp&nbsp&nbsp本次大赛各阶段都设有丰厚奖励，具体如下：
                 </p>
-                <h1 id="h1"> 1、海选奖励 </h1>
-                <p id="p1">（参加海选就有奖）:</p>
+                <h1 id="h1"> 1、海选奖励 <span style="font-size: 12px ;"> (完成线下签到才能获得报名奖励哦~）</span></h1>
                 <p>
                   活动报名不设门槛，只要你对狼人杀有兴趣，都可以来尝试（每所学校海选限额96人），参与线上报名并于规定时间到线下指定地点与工作人员进行确认到场，即可获得由趣谷官方提供的“智能校园”洗衣免单券一份。
                 </p>
@@ -97,8 +96,8 @@
                 <p>
                   2018.12.1开启报名，截止14日报名结束，在趣谷app上报名获取电子门票并加活动群（活动地点和日程由微信狼人杀活动群通知）
                 </p>
-                <h1 id="h2">2.线下签到 </h1>
-                <p id="p2">(完成线下签到才能获得报名奖励哦~）</p>
+                <h1 id="h2">2.线下签到 <span style="font-size: 12px ;"> (完成线下签到才能获得报名奖励哦~）</span></h1>
+
                 <p>
                   海选线上报名的选手，请在比赛开始前持电子门票至各校园报名处进行确认到场签到（见校园海报）
                 </p>
@@ -210,6 +209,7 @@
 </template>
 
 <script>
+  let isClickTab=false;
   // import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
@@ -376,7 +376,7 @@
         }, {
           name: 'block2',
           height: (() => {
-            return document.getElementById('block2').offsetTop
+            return document.getElementById('block2').offsetTop-50
           })()
         }, {
           name: 'block3',
@@ -390,9 +390,6 @@
           let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
           console.log("scrollTop:" + scrollTop)
           let resultIndex = 0;
-          console.log("height0:" + blockDictionary[0].height);
-          console.log("height1:" + blockDictionary[1].height);
-          console.log("height2:" + blockDictionary[2].height);
           if (scrollTop >= blockDictionary[1].height && scrollTop < blockDictionary[2].height) {
             resultIndex = 1;
           } else if (scrollTop >= blockDictionary[2].height) {
@@ -401,9 +398,10 @@
             resultIndex = 0;
           }
          // this.anchorIndex = resultIndex;
-          this.activeTabIndex = resultIndex;
-          console.log(this.activeTabIndex)
-
+          if(!isClickTab){
+            this.activeTabIndex = resultIndex;
+            console.log(this.activeTabIndex)
+          }
         }
       },
       getUserActivityInfo() {
@@ -419,7 +417,7 @@
             this.alreadyParticipatedFlag = true;
           }
           this.userInfoData = response;
-
+          console.log('getUserActivityInfo-----',   this.userInfoData.userRealName);
           this.$vux.loading.hide();
         }).catch(error => {
           console.log(error)
@@ -447,6 +445,12 @@
 
       handleTabClick(index) {
         console.log(index)
+        isClickTab=true;
+        var t;
+        clearTimeout(t);
+        t = setTimeout(function (){
+          isClickTab=false;
+        }, 200);
         this.activeTabIndex = index;
         let blockDictionary = [{
           name: 'block1',
@@ -456,7 +460,7 @@
         }, {
           name: 'block2',
           height: (() => {
-            return document.getElementById('block2').offsetTop - 3
+            return document.getElementById('block2').offsetTop - 50
           })()
         }, {
           name: 'block3',

@@ -21,7 +21,7 @@
           <!---->
           <!--</router-link>-->
           <h2 class="resulttitle" @click="checkTicket">
-            <label>活动门票凭证</label>
+            <label>活动群二维码</label>
             <a class="link">
               <span class="triangle"></span>
             </a>
@@ -192,6 +192,7 @@
           console.log('getUserActivityInfo', response)
           response = response.data;
           this.userInfoData = response;
+
           this.$vux.loading.hide();
           this.checkIsVoted();
         }).catch(error => {

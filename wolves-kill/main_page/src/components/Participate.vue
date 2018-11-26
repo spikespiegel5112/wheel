@@ -282,8 +282,8 @@
             'Authorization': 'Bearer ' + this.$store.state.accessToken
           }
         }).then(response => {
-          console.log('getUserActivityInfo', response)
           response = response.data;
+          console.log('getUserActivityInfo', response)
           this.formData = response;
           this.chosenUserSchoolName = [this.formData.userSchoolName];
           this.chosenUserEntranceYear = [this.formData.userEntranceYear];
@@ -438,12 +438,18 @@
               switch (response.code) {
                 case 10000:
                   this.successfulFlag = true;
-                  this.$router.push({
-                    name: 'participateSuccessful',
-                    query: {
-                      userSchoolName: this.formData.userSchoolName
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: '信息修改成功！',
+                    onConfirm() {
                     }
                   });
+                  // this.$router.push({
+                  //   name: 'participateSuccessful',
+                  //   query: {
+                  //     userSchoolName: this.formData.userSchoolName
+                  //   }
+                  // });
                   break;
                 case 10001:
                   let that = this;
@@ -451,12 +457,12 @@
                     showCancelButton: false,
                     title: response.message,
                     onConfirm() {
-                      that.$router.push({
-                        name: 'participateSuccessful',
-                        query: {
-                          userSchoolName: that.formData.userSchoolName
-                        }
-                      });
+                      // that.$router.push({
+                      //   name: 'participateSuccessful',
+                      //   query: {
+                      //     userSchoolName: that.formData.userSchoolName
+                      //   }
+                      // });
                     }
                   });
                   break;
@@ -504,7 +510,7 @@
       },
       goBack() {
         this.$router.push({
-          name: 'homepage'
+          name: 'homepage',
         })
       },
       uploadAvatar() {

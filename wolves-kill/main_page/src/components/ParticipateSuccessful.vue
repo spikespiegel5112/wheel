@@ -18,7 +18,7 @@
         报名成功！
       </div>
       <div class="hint">
-        长按下方二维码，马上加入活动群
+        截屏下方二维码，马上加入活动群
       </div>
       <div class="qrcode">
         <img v-if="userSchoolName==='ouya'" src="../image/wolveskill/qrcode/ouya_group_00000.jpg"/>

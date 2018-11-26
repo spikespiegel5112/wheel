@@ -5,38 +5,25 @@
         <div class="title">
           <img src="../image/double11/title.png"/>
         </div>
-        <div class="duration">活动时间：2018年11月1日-11月11日</div>
+        <div class="duration">活动时间：2018年12月1日-12月31日</div>
         <div class="main">
           <div class="block_wrapper">
-            <div class="bigblock bg_da1416">
-              <h1>
-                <p>限时特惠</p>
-                <span class="prize">¥68</span>
-                <p>原价<span class="originprize">¥158</span></p>
-              </h1>
-              <p class="describe">每天看视频5分钟，一年内68元<label class="emphasis">全部返回</label></p>
+            <div class="bigblock">
+              <div class="title">
+                <img src="../image/double11/year.png"/>
+              </div>
             </div>
           </div>
           <div class="block_wrapper">
-            <div class="mediumblock bg_ff3c3c">
-              <h1>
-                <span class="prize">
-                  <label>限时</label>
-                  ¥18
-                </span>
-                <br/>原价<span class="originprize">¥45</span>
-              </h1>
-              <p class="describe">每天看5分钟视频 季度累计返现13.5元</p>
+            <div class="mediumblock">
+              <div class="title">
+                <img src="../image/double11/ji.png"/>
+              </div>
             </div>
-            <div class="mediumblock bg_ff783c">
-              <h1>
-                <span class="prize">
-                  <label>限时</label>
-                  ¥6
-                </span>
-                <br/>原价<span class="originprize">¥6</span>
-              </h1>
-              <p class="describe">每天看5分钟视频 当月累计返现3元</p>
+            <div class="mediumblock">
+              <div class="title">
+                <img src="../image/double11/day.png"/>
+              </div>
             </div>
           </div>
           <div class="operator">
@@ -58,10 +45,10 @@
             </div>
           </div>
           <ol>
-            <li>购买视频会员年卡68元，每天观看视频5分钟， 每天返20积分，全年返现6800积分</li>
-            <li>购买视频会员季卡18元，每天观看视频5分钟， 每天返15积分，季度返现1350积分</li>
-            <li>购买视频会员月卡6元，每天观看视频5分钟， 每天返10积分，月返现300积分</li>
-            <li>活动时间：2018年11月1日-2018年11月11日</li>
+            <li>购买视频会员年卡60元，每天观看视频5分钟， 每天返200积分，30天返还6000积分</li>
+            <li>购买视频会员季卡30元，每天观看视频5分钟， 每天返100积分，30天返还3000积分</li>
+            <li>购买视频会员月卡12元，每天观看视频5分钟， 每天返40积分，30天返还1200积分</li>
+            <li>活动时间：2018年12月1日-2018年12月31日</li>
             <li>视频会员权益NBA赛事直播，英超赛事直播， 卫视直播，影视大片，娱乐综艺统统免费看</li>
           </ol>
           <div class="hint">积分可用于智能校园服务充值</div>
