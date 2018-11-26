@@ -162,16 +162,38 @@
     }
   }
   .activitydetail {
+
+    #h1, #p1, #h2, #p2 {
+      display: inline-block;
+    }
     p {
       padding: 0.3rem 0.5rem;
       font-size: 0.5rem;
       line-height: 1rem;
     }
+    h1 {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.7rem;
+      line-height: 1rem;
+    }
   }
-
+  .contentcenter {
+    text-align: center;
+    p {
+      color: #999;
+    }
+  }
+  .imgisis {
+    img {
+      display: inline-block;
+      vertical-align: middle;
+      width: 50%;
+    }
+  }
   .ranklistrules {
     padding: 0.5rem;
     color: #999;
+
     h2 {
       padding: 0 0 0.5rem 0;
       font-size: 0.6rem;
