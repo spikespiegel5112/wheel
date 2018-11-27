@@ -10,7 +10,7 @@
           </div>
         </div>
         <div class="middle_wrapper">
-          活动门票凭证
+          活动群二维码
         </div>
       </div>
 
@@ -50,7 +50,7 @@
             <img v-if="userSchoolName==='xianzhiye'" src="../image/wolveskill/qrcode/xianzhiye_group_00000.jpg"/>
             <img v-if="userSchoolName==='xianpeihua_new'" src="../image/wolveskill/qrcode/xianpeihua_new_group_00000.jpg"/>
             <p class="hint">
-              截屏保存下方二维码，加入活动微信群
+              截屏当前页面用微信扫码，加入活动微信群
             </p>
           </div>
         </div>

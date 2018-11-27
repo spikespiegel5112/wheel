@@ -82,7 +82,7 @@
       </div>
 
     </div>
-    <toast v-model="successfulFlag" type="text" :time="2000" is-show-mask text="数据提交成功" position="top"></toast>
+    <!--<toast v-model="successfulFlag" type="text" :time="2000" is-show-mask text="数据提交成功" position="top"></toast>-->
   </div>
 </template>
 

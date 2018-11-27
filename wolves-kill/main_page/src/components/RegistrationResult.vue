@@ -74,7 +74,7 @@
           </ul>
           <div class="hint">
             <p>
-              榜单说明：趣谷先高校线下狼人杀友谊赛人气选 手榜单，榜单前8名将拥有参加高校联赛的比赛 资格，并获得由XXX提供的人气选手奖励一份
+              榜单说明：人气榜单前8名直接获得晋级资格+晋级联赛奖励（2000积分+飞利浦蓝牙音响）
             </p>
           </div>
         </div>
@@ -276,8 +276,8 @@
           let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
-            "title": "狼人杀分享拉票",
-            "describe": "狼人杀分享拉票描述",
+            "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
+            "describe": "榜单前八直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！",
             // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
             "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
