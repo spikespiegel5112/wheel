@@ -55,7 +55,7 @@
           </li>
         </ul>
         <div class="advertise">
-
+          <img src="../image/wolveskill/banner_popoking.png"/>
         </div>
       </div>
     </div>

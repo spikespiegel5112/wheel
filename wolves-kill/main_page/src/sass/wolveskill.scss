@@ -532,6 +532,11 @@
       width: 14rem;
       height: 3rem;
       background-color: #fff;
+      img {
+        display: inline-block;
+        width: 100%;
+        vertical-align: middle;
+      }
     }
   }
 }

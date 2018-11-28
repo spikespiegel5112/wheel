@@ -484,7 +484,7 @@
       margin: 0.6rem auto;
       width: 10rem;
       height: 10rem;
-      &:before{
+      &:before {
         content: '';
         display: inline-block;
         height: 10rem;
@@ -502,6 +502,11 @@
       width: 14rem;
       height: 3rem;
       background-color: #fff;
+      img {
+        width: 100%;
+        display: inline-block;
+        vertical-align: middle;
+      }
     }
   }
 }
