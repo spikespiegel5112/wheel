@@ -8,12 +8,14 @@ const routes = [{
 //   name: 'wheel',
 //   component: () => import('../components/Double11.vue')
 // }, {
-  path: '/double11/index.html',
+//   path: '/double11/index.html',
+  path: '/double12/index.html',
   alias: '/',
   name: 'double11',
   component: () => import('../components/Double11.vue')
 }, {
-  path: '/testdouble11/index.html',
+  // path: '/testdouble11/index.html',
+  path: '/testdouble12/index.html',
   alias: '/',
   name: 'double11',
   component: () => import('../components/Double11.vue')
