@@ -185,6 +185,21 @@
               </div>
             </div>
           </div>
+          <div class="wolveskill_block_wrapper" id="block6">
+            <h1 class="title">
+              <span></span><label>精彩活动</label>
+            </h1>
+            <div class="activitydetail">
+              <img src="../image/wolveskill/activitydetaily002.png"/>
+              <img src="../image/wolveskill/activitydetaily003.png"/>
+              <img src="../image/wolveskill/activitydetaily004.png"/>
+              <img src="../image/wolveskill/activitydetaily005.png"/>
+              <img src="../image/wolveskill/activitydetaily006.png"/>
+              <img src="../image/wolveskill/activitydetaily002.png"/>
+              <img src="../image/wolveskill/activitydetaily003.png"/>
+              <img src="../image/wolveskill/activitydetaily004.png"/>
+            </div>
+          </div>
         </div>
       </div>
       <div class="wolveskill_participatebutton_wrapper">
@@ -209,7 +224,7 @@
 </template>
 
 <script>
-  let isClickTab=false;
+  let isClickTab = false;
   // import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
@@ -332,7 +347,8 @@
             }).catch(error2 => {
               this.$vux.confirm.show({
                 showCancelButton: false,
-                title: '$getUserLoginId' + '+++++error',
+                title: '请在趣谷App中打开',
+                // title: '$getUserLoginId' + '+++++error',
                 onConfirm() {
                 }
               });
@@ -340,7 +356,8 @@
           }).catch(error1 => {
             this.$vux.confirm.show({
               showCancelButton: false,
-              title: '$getAccessToken' + '+++++error',
+              // title: '$getAccessToken' + '+++++error',
+              title: '请在趣谷APP中打开',
               onConfirm() {
               }
             });
@@ -376,15 +393,21 @@
         }, {
           name: 'block2',
           height: (() => {
-            return document.getElementById('block2').offsetTop-50
+            return document.getElementById('block2').offsetTop - 50
           })()
         }, {
           name: 'block3',
           height: (() => {
             return document.getElementById('block3').offsetTop - 46
           })()
+        }, {
+          name: 'block6',
+          height: (() => {
+            return document.getElementById('block6').offsetTop - 46
+          })()
         }];
-        console.log('blockDictionary', blockDictionary[2].height)
+        console.log('blockDictionary2', blockDictionary[2].height)
+        console.log('blockDictionary3', blockDictionary[3].height)
 
         window.onscroll = e => {
           let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
@@ -392,13 +415,15 @@
           let resultIndex = 0;
           if (scrollTop >= blockDictionary[1].height && scrollTop < blockDictionary[2].height) {
             resultIndex = 1;
-          } else if (scrollTop >= blockDictionary[2].height) {
+          } else if (scrollTop >= blockDictionary[2].height && scrollTop < blockDictionary[3].height) {
             resultIndex = 2;
+          } else if (scrollTop >= blockDictionary[3].height) {
+            resultIndex = 3;
           } else {
             resultIndex = 0;
           }
-         // this.anchorIndex = resultIndex;
-          if(!isClickTab){
+          // this.anchorIndex = resultIndex;
+          if (!isClickTab) {
             this.activeTabIndex = resultIndex;
             console.log(this.activeTabIndex)
           }
@@ -417,7 +442,7 @@
             this.alreadyParticipatedFlag = true;
           }
           this.userInfoData = response;
-          console.log('getUserActivityInfo-----',   this.userInfoData.userRealName);
+          console.log('getUserActivityInfo-----', this.userInfoData.userRealName);
           this.$vux.loading.hide();
         }).catch(error => {
           console.log(error)
@@ -445,11 +470,11 @@
 
       handleTabClick(index) {
         console.log(index)
-        isClickTab=true;
+        isClickTab = true;
         var t;
         clearTimeout(t);
-        t = setTimeout(function (){
-          isClickTab=false;
+        t = setTimeout(function () {
+          isClickTab = false;
         }, 200);
         this.activeTabIndex = index;
         let blockDictionary = [{
@@ -467,11 +492,14 @@
           height: (() => {
             return document.getElementById('block3').offsetTop - 46
           })()
+        }, {
+          name: 'block6',
+          height: (() => {
+            return document.getElementById('block6').offsetTop - 46
+          })()
         }];
-        if (index < 3) {
-          document.documentElement.scrollTop = blockDictionary[index].height;
-          document.body.scrollTop = blockDictionary[index].height;
-        }
+        document.documentElement.scrollTop = blockDictionary[index].height;
+        document.body.scrollTop = blockDictionary[index].height;
         let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
         console.log("handleTabClickscrollTop:" + scrollTop)
       },

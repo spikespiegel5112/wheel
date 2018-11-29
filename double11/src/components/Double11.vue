@@ -116,8 +116,7 @@
     methods: {
       jump() {
         console.log(this.fnvalleyJsSdkInstance)
-        this.fnvalleyJsSdkInstance.check()
-
+        // this.fnvalleyJsSdkInstance.check()
         this.fnvalleyJsSdkInstance.openView({
           name: 'BTV'
         })
