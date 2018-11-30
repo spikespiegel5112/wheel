@@ -121,22 +121,22 @@
         },
         schoolList: [[{
           name: '西安欧亚学院',
-          value: 'ouya'
+          value: '西安欧亚学院'
         }, {
           name: '西安培华学院',
-          value: 'peihua'
+          value: '西安培华学院'
         }, {
           name: '西北大学现代学院',
-          value: 'xibeida'
+          value: '西北大学现代学院'
         }, {
           name: '西北政法大学',
-          value: 'xianzhenfa'
+          value: '西北政法大学'
         }, {
           name: '西安西京学院',
-          value: 'xijing'
+          value: '西安西京学院'
         }, {
           name: '西安外事学院',
-          value: 'waishi'
+          value: '西安外事学院'
         }]],
         formData: {
           userRealName: '',
