@@ -13,30 +13,30 @@ let testState = ()=>{
 
 const state = {
   title: 'aaa',
-  accessToken: '',
-  // accessToken: '5e1673fc-8a61-46a0-b7cd-998e6259b6dd',
-  loginId: '',
-  // loginId: '18260045855',
+   accessToken: '',
+ // accessToken: '32151112-50f3-49e0-a3f9-a6cae73d065c',
+ loginId: '',
+ // loginId: '15316706561',
   activityId: 25,
   winningPrizeChanceFlag: true,
   schoolList: [[{
     name: '西安欧亚学院',
-    value: 'ouya'
+    value: '西安欧亚学院'
   }, {
     name: '西安培华学院',
-    value: 'peihua'
+    value: '西安培华学院'
   }, {
     name: '西北大学现代学院',
-    value: 'xibeida'
+    value: '西北大学现代学院'
   }, {
     name: '西北政法大学',
-    value: 'xianzhenfa'
+    value: '西北政法大学'
   }, {
     name: '西安西京学院',
-    value: 'xijing'
+    value: '西安西京学院'
   }, {
     name: '西安外事学院',
-    value: 'waishi'
+    value: '西安外事学院'
   }]],
   deviceTypeDictionary: [{
     name: 'Android',

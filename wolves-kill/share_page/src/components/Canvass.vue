@@ -55,7 +55,13 @@
           </li>
         </ul>
         <div class="advertise">
-          <img src="../image/wolveskill/banner_popoking.png"/>
+          <transition-group tag="ul" name="image">
+            <li v-for="(item, index) in imgArray" v-show="index===mark" :key="index">
+              <a :href='item.advurl'>
+                <img :src='item.url'>
+              </a>
+            </li>
+          </transition-group>
         </div>
       </div>
     </div>
@@ -104,7 +110,17 @@
         environment: '',
         // stateCode:''
         userSchoolName: '',
-        isVoted: false
+        isVoted: false,
+        timer: null, //定时器
+        mark: 0, //比对图片索引的变量
+        imgArray: [
+          { url: '../static/banner_popoking.png',
+            advurl:'https://mall.jd.com/index-159978.html'
+          } ,
+          { url: '../static/banner_tongceng.png',
+            advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
+          }
+        ]
       }
     },
     computed: {
@@ -156,6 +172,7 @@
     },
     mounted() {
       // alert('mounted')
+
       console.log(new FnvalleySdk())
       this.fnvalleySdkInstance = new FnvalleySdk();
       console.log(this.redirectingFlag)
@@ -176,7 +193,7 @@
             // alert(this.$store.state.accessToken)
             // alert(this.loginId + ', ' + this.userActivityId)
 
-            this.getUserActivityInfo();
+             this.getUserActivityInfo();
           })
         } else {
           this.parseStateCode();
@@ -201,10 +218,19 @@
           // })
 
         }
-
       }
+      this.play ();
     },
     methods: {
+      autoPlay () {
+        this.mark++;
+        if (this.mark === 2) {
+          this.mark = 0
+        }
+      },
+      play () {
+        this.timer = setInterval(this.autoPlay, 2000)
+      },
       reInitializePage() {
         let stateCode = this.stateCode;
         // alert('reInitializePage.stateCode', stateCode)

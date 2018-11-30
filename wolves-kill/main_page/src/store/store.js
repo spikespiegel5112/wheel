@@ -13,10 +13,10 @@ let testState = () => {
 
 const state = {
   title: 'aaa',
- // accessToken: '',
- accessToken: '32151112-50f3-49e0-a3f9-a6cae73d065c',
-//loginId: '',
-loginId: '15316706561',
+ accessToken: '',
+ // accessToken: 'e3c23141-8922-4f08-8eb2-b0d6911cc22b',
+ loginId: '',
+//loginId: '15201954705',
   activityId: 25,
   winningPrizeChanceFlag: true,
   schoolList: [[{

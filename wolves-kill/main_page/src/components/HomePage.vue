@@ -69,6 +69,21 @@
                   本次活动我们开设了线上投票，给更多没能晋级的同学一个额外的展现机会。所有参与海选报名的选手即可参与竞选，邀请好友为你投票。人气排名前六的选手，更可直接获得晋级联赛的资格，同时还可获得联赛奖励。
                 </p>
                 <img src="../image/wolveskill/activitydetaily002.png"/>
+                <div class="contentcenter">
+                  <p style="color:#000000;">朵薇璐HI室友小鲜肉补水控油套装<br/>
+                    <span style="color:#64B0F7;"> (男生奖励)</span>
+                </p>
+
+                  <div class="imgisis">
+                    <img src="../image/wolveskill/detail_man.png"/>
+                  </div>
+                  <p style="color:#000000;">朵薇璐HI室友小仙女补水保湿神器<br/>
+                    <span style="color:#FF50A6;">(女生奖励)</span>
+                  </p>
+                  <div class="imgisis">
+                    <img src="../image/wolveskill/detail_woman.png"/>
+                  </div>
+                </div>
                 <h1>3、晋级联赛奖励：</h1>
                 <p>
                   晋级赛前三名即直接晋级6所学校的联校决赛，所有参与晋级联赛的选手可获得联赛奖励。
