@@ -10,6 +10,8 @@ const routes = [{
   alias: '/',
   name: 'homepage',
   component: () => import('../components/HomePage.vue')
+  // name: 'rules',
+  // component: () => import('../components/Rules.vue')
 }, {
   path: '/',
   name: 'homepage',

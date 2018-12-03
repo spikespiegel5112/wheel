@@ -54,8 +54,24 @@
             <a @click="share">分享</a>
           </li>
         </ul>
-        <div class="advertise">
-
+        <!--<div class="advertise">-->
+          <!--<transition-group tag="ul" name="image">-->
+            <!--<li v-for="(item, index) in imgArray" v-show="index===mark" :key="index">-->
+              <!--<a :href='item.advurl'>-->
+                <!--<img :src='item.url'>-->
+              <!--</a>-->
+            <!--</li>-->
+          <!--</transition-group>-->
+        <!--</div>-->
+        <div class="advertise swiper-container">
+          <ul class="swiper-wrapper">
+            <li class="swiper-slide" v-if="imgArray.length>0" v-for="item in imgArray">
+              <a :href='item.advurl'>
+                <img :src='item.url'>
+              </a>
+            </li>
+          </ul>
+          <div class="swiper-pagination"></div>
         </div>
       </div>
     </div>
@@ -68,6 +84,7 @@
   import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
+  import Swiper from 'swiper'
 
 
   // import wx from 'weixin-js-sdk'
@@ -104,7 +121,18 @@
         environment: '',
         // stateCode:''
         userSchoolName: '',
-        isVoted: false
+        isVoted: false,
+        timer: null, //定时器
+        mark: 0, //比对图片索引的变量
+        imgArray: [
+          { url: '../static/banner_popoking.png',
+            advurl:'https://mall.jd.com/index-159978.html'
+          } ,
+          { url: '../static/banner_tongceng.png',
+            advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
+          }
+        ],
+        swiperInstance:{}
       }
     },
     computed: {
@@ -156,6 +184,7 @@
     },
     mounted() {
       // alert('mounted')
+
       console.log(new FnvalleySdk())
       this.fnvalleySdkInstance = new FnvalleySdk();
       console.log(this.redirectingFlag)
@@ -176,7 +205,7 @@
             // alert(this.$store.state.accessToken)
             // alert(this.loginId + ', ' + this.userActivityId)
 
-            this.getUserActivityInfo();
+             this.getUserActivityInfo();
           })
         } else {
           this.parseStateCode();
@@ -201,10 +230,26 @@
           // })
 
         }
-
       }
+      // this.play ();
+      this.initSwiper()
     },
     methods: {
+      initSwiper(){
+        this.swiperInstance = new Swiper('.swiper-container', {
+          autoplay: 2000,
+          loop: true
+        })
+      },
+      autoPlay () {
+        this.mark++;
+        if (this.mark === 2) {
+          this.mark = 0
+        }
+      },
+      play () {
+        this.timer = setInterval(this.autoPlay, 2000)
+      },
       reInitializePage() {
         let stateCode = this.stateCode;
         // alert('reInitializePage.stateCode', stateCode)
@@ -293,13 +338,14 @@
 
       },
       share() {
-        console.log(this.$checkEnvironment())
+        console.log(this.$checkEnvironment());
+
         if (this.$checkEnvironment() !== 'wechat') {
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
-            "title": "狼人杀分享拉票",
-            "describe": '狼人杀分享拉票描述',
+            "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
+            "describe": '榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！',
             // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
             "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
@@ -364,7 +410,7 @@
             let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
             wx.onMenuShareTimeline({
-              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
+              title: '投票开始！趣谷狼人杀决赛票选红人进行时！', // 分享标题
               link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -376,8 +422,8 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
-              desc: '不做LYB，好友携手拿好礼。更有海淘精品等你免费来领取！', // 分享描述
+              title: '投票开始！趣谷狼人杀决赛票选红人进行时！', // 分享标题
+              desc: '榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
@@ -525,4 +571,6 @@
 
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="css">
+  @import '../assets/js/swiper/css/swiper.min.css';
+</style>

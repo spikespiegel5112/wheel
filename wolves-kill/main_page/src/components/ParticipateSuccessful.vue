@@ -18,17 +18,15 @@
         报名成功！
       </div>
       <div class="hint">
-        长按下方二维码，马上加入活动群
+        截屏下方二维码，马上加入活动群
       </div>
       <div class="qrcode">
-        <img v-if="userSchoolName==='ouya'" src="../image/wolveskill/qrcode/ouya_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xiancaijin'" src="../image/wolveskill/qrcode/xiancaijin_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xianmeishu'" src="../image/wolveskill/qrcode/xianmeishu_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xianzhenfa'" src="../image/wolveskill/qrcode/xianzhenfa_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xianzyy'" src="../image/wolveskill/qrcode/xianzyy_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xianxiandai'" src="../image/wolveskill/qrcode/xianxiandai_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xianzhiye'" src="../image/wolveskill/qrcode/xianzhiye_group_00000.jpg"/>
-        <img v-if="userSchoolName==='xianpeihua_new'" src="../image/wolveskill/qrcode/xianpeihua_new_group_00000.jpg"/>
+        <img v-if="userSchoolName==='西安欧亚学院'" src="../image/wolveskill/qrcode/ouya_group.jpeg"/>
+        <img v-if="userSchoolName==='西安培华学院'" src="../image/wolveskill/qrcode/pehua_group.jpeg"/>
+        <img v-if="userSchoolName==='西北大学现代学院'" src="../image/wolveskill/qrcode/xibeida_group.jpeg"/>
+        <img v-if="userSchoolName==='西北政法大学'" src="../image/wolveskill/qrcode/zhengfa_group.jpeg"/>
+        <img v-if="userSchoolName==='西安西京学院'" src="../image/wolveskill/qrcode/xijing_group.jpeg"/>
+        <img v-if="userSchoolName==='西安外事学院'" src="../image/wolveskill/qrcode/waishi_group.jpeg"/>
       </div>
     </div>
   </div>

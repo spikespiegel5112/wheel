@@ -21,7 +21,7 @@
           <!---->
           <!--</router-link>-->
           <h2 class="resulttitle" @click="checkTicket">
-            <label>活动门票凭证</label>
+            <label>活动群二维码</label>
             <a class="link">
               <span class="triangle"></span>
             </a>
@@ -74,7 +74,7 @@
           </ul>
           <div class="hint">
             <p>
-              榜单说明：趣谷先高校线下狼人杀友谊赛人气选 手榜单，榜单前8名将拥有参加高校联赛的比赛 资格，并获得由XXX提供的人气选手奖励一份
+              榜单说明：人气榜单前8名直接获得晋级资格+晋级联赛奖励（2000积分+飞利浦蓝牙音响）
             </p>
           </div>
         </div>
@@ -192,6 +192,7 @@
           console.log('getUserActivityInfo', response)
           response = response.data;
           this.userInfoData = response;
+
           this.$vux.loading.hide();
           this.checkIsVoted();
         }).catch(error => {
@@ -269,28 +270,14 @@
         }
       },
       share() {
-        // alert(this.$checkEnvironment())
-        console.log(this.$checkEnvironment())
-        if (this.$checkEnvironment() !== 'wechat') {
-          let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
-
-          this.fnvalleySdkInstance.openAPPShare({
-            "title": "狼人杀分享拉票",
-            "describe": "狼人杀分享拉票描述",
-            // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
-            "weburl": this.$shareDomainUrl + '?state=' + stateCode
-          })
-        } else {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '请点击右上角按钮分享',
-            onConfirm() {
-            }
-          });
-          this.initJSSDK();
-
-        }
-
+        console.log(this.$checkEnvironment());
+        let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
+        this.fnvalleySdkInstance.openAPPShare({
+          "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
+          "describe": "榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！",
+          // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
+          "weburl": this.$shareDomainUrl + '?state=' + stateCode
+        })
       },
       checkTicket() {
         // alert('this.userInfoData.userSchoolName   ' + this.userInfoData.userSchoolName)
@@ -323,11 +310,11 @@
         }
         Cookies.set('wolvesKill-loginId', JSON.stringify(result))
       },
-      editProfile(){
+      editProfile() {
         this.$router.push({
-          name:'participate',
-          query:{
-            state:'edit'
+          name: 'participate',
+          query: {
+            state: 'edit'
           }
         })
       }

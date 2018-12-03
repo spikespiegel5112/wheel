@@ -82,7 +82,7 @@
       </div>
 
     </div>
-    <toast v-model="successfulFlag" type="text" :time="2000" is-show-mask text="数据提交成功" position="top"></toast>
+    <!--<toast v-model="successfulFlag" type="text" :time="2000" is-show-mask text="数据提交成功" position="top"></toast>-->
   </div>
 </template>
 
@@ -121,28 +121,22 @@
         },
         schoolList: [[{
           name: '西安欧亚学院',
-          value: 'ouya'
+          value: '西安欧亚学院'
         }, {
-          name: '陕西财经学校',
-          value: 'xiancaijin'
-        }, {
-          name: '西安美术学院',
-          value: 'xianmeishu'
-        }, {
-          name: '西北政法大学',
-          value: 'xianzhenfa'
-        }, {
-          name: '陕西中医药大学',
-          value: 'xianzyy'
+          name: '西安培华学院',
+          value: '西安培华学院'
         }, {
           name: '西北大学现代学院',
-          value: 'xianxiandai'
+          value: '西北大学现代学院'
         }, {
-          name: '陕西职业技术学院',
-          value: 'xianzhiye'
+          name: '西北政法大学',
+          value: '西北政法大学'
         }, {
-          name: '西安培华学院新校区',
-          value: 'xianpeihua_new'
+          name: '西安西京学院',
+          value: '西安西京学院'
+        }, {
+          name: '西安外事学院',
+          value: '西安外事学院'
         }]],
         formData: {
           userRealName: '',
@@ -282,8 +276,8 @@
             'Authorization': 'Bearer ' + this.$store.state.accessToken
           }
         }).then(response => {
-          console.log('getUserActivityInfo', response)
           response = response.data;
+          console.log('getUserActivityInfo', response)
           this.formData = response;
           this.chosenUserSchoolName = [this.formData.userSchoolName];
           this.chosenUserEntranceYear = [this.formData.userEntranceYear];
@@ -438,12 +432,18 @@
               switch (response.code) {
                 case 10000:
                   this.successfulFlag = true;
-                  this.$router.push({
-                    name: 'participateSuccessful',
-                    query: {
-                      userSchoolName: this.formData.userSchoolName
+                  this.$vux.confirm.show({
+                    showCancelButton: false,
+                    title: '信息修改成功！',
+                    onConfirm() {
                     }
                   });
+                  // this.$router.push({
+                  //   name: 'participateSuccessful',
+                  //   query: {
+                  //     userSchoolName: this.formData.userSchoolName
+                  //   }
+                  // });
                   break;
                 case 10001:
                   let that = this;
@@ -451,12 +451,12 @@
                     showCancelButton: false,
                     title: response.message,
                     onConfirm() {
-                      that.$router.push({
-                        name: 'participateSuccessful',
-                        query: {
-                          userSchoolName: that.formData.userSchoolName
-                        }
-                      });
+                      // that.$router.push({
+                      //   name: 'participateSuccessful',
+                      //   query: {
+                      //     userSchoolName: that.formData.userSchoolName
+                      //   }
+                      // });
                     }
                   });
                   break;
@@ -504,7 +504,7 @@
       },
       goBack() {
         this.$router.push({
-          name: 'homepage'
+          name: 'homepage',
         })
       },
       uploadAvatar() {

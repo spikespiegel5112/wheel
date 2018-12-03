@@ -6,15 +6,36 @@
           <h2>西安高校狼人杀友谊赛S1</h2>
           <h3 class="wolveskill_rulestitle_item">活动时间</h3>
           <p>
-            2018.12.01-2018.12.23
+            2018年12月1日至2018年12月23日 <br/>
+            1.报名时间：12月1日—12月14日<br/>
+            2.人气选手投票时间：12月7日—12月20日<br/>
+            3.海选时间：12月16日<br/>
+            4.联赛时间：12月22日—12月23日<br/>
           </p>
-          <h3 class="wolveskill_rulestitle_item">本校晋级赛</h3>
+          <h3 class="wolveskill_rulestitle_item">海选规则与奖品说明</h3>
           <p>
-            每所学校海选报名人数限96人，12人为一组进行比 赛。通过两轮比赛最终角逐出两名优胜者进入决赛。 其中，只要进入本校晋级赛第二轮24人决赛组的选 手，两组选手每组的前三名都将获得一份由xxx提供 的xxx奖励.
+            1.规则说明：每所学校报名人数96人，12人为一组共8组进行比赛。通过积分赛最终选出每所学校的前3名晋级高校联合赛。<br/>
+            2.奖品：所有参加海选赛事的同学都可获得价值4元洗衣免单券一张<br/>
+            3.时间：12月16日（比赛地址见微信群内通知）<br/>
           </p>
-          <h3 class="wolveskill_rulestitle_item">联校总决赛</h3>
+          <h3 class="wolveskill_rulestitle_item">人气选手规则与奖品说明</h3>
           <p>
-            总决赛时间2018年12月23日,地点xxxxx 联校总决赛选手包括由8所西安高校通过高校赛晋 级的16名选手和趣谷人气榜单的前8名选手，共计 24人进行两组比赛最终决出前三名。比赛的前三名 将会获得由xxx提供的xxx优胜奖其余选手也都将获 得由xxx提供的xxx参与奖.
+            1.规则：通过活动页面分享到微信群或朋友圈，邀请好友助力投票，人气榜单排名前6选手直接晋级高校联赛资格<br/>
+            2.奖品：高校联赛奖品（每人2000积分+飞利浦蓝牙音响，见下方高校联赛说明）， 同时额外还可获得《Hi室友》同款朵薇璐“朵朵蓝”、“朵朵粉”精美男女护肤套装！<br/>
+            3.时间：12月7日—12月20日<br/>
+          </p>
+          <h3 class="wolveskill_rulestitle_item">高校联赛规则与奖品说明</h3>
+          <p>
+            1.规则：晋级高校联赛人数共24人（18人通过海选晋级，6人是狼人杀人气榜单前6名选手），12人一组共2组进行比赛；<br/>
+            通过积分赛最终于选出每组前6名晋级总决赛。<br/>
+            2.奖品：所有参加高校联赛的同学都可获得每人2000积分+飞利浦蓝牙音响。<br/>
+            3.时间：12月22日（比赛地址见微信群内通知）<br/>
+          </p>
+          <h3 class="wolveskill_rulestitle_item">总决赛规则与奖品说明</h3>
+          <p>
+            1.规则：晋级总决赛人数共12人，通过积分赛最终于选出每组前3名分别为冠军、亚军、季军。<br/>
+            2.奖品：冠军奖品：popoking（京东售价￥2800）+30000积分；亚军奖品：popoking（京东售价￥1080）+20000积分；季军奖品：popoking（京东售价￥980） + 10000积分；其它人奖品：5000积分+飞利浦无线耳机。<br/>
+            3.时间：12月23日（比赛地址见微信群内通知）<br/>
           </p>
           <p class="hint">
             比赛由趣谷主办，决赛合作斗鱼，进行全程直播
@@ -25,44 +46,53 @@
           <h3 class="wolveskill_rulestitle_item">狼人杀游戏规则与技巧</h3>
           <ul class="links">
             <li>
+              <a href="https://zhuanlan.zhihu.com/p/27306953">
               <label>狼人杀游戏术语图文详解</label>
               <span>
-                <x-icon type="ios-arrow-right" size="30"></x-icon>
+                <x-icon type="ios-arrow-right" size="10"></x-icon>
               </span>
+              </a>
             </li>
             <li>
+              <a href="https://zhuanlan.zhihu.com/p/25377067">
               <label>狼人杀攻略帮你在桌游聚会中重拾自信</label>
               <span>
-                <x-icon type="ios-arrow-right" size="30"></x-icon>
+                <x-icon type="ios-arrow-right" size="10"></x-icon>
               </span>
+              </a>
             </li>
             <li>
+              <a href="https://www.zhihu.com/question/51957919/answer/128437723">
               <label>新手在狼人杀游戏中如何发言？</label>
               <span>
-                <x-icon type="ios-arrow-right" size="30"></x-icon>
+                <x-icon type="ios-arrow-right" size="10"></x-icon>
               </span>
+              </a>
             </li>
             <li>
+              <a href="https://www.zhihu.com/question/51939366/answer/128294747">
               <label>玩狼人杀如何抿身份？</label>
               <span>
-                <x-icon type="ios-arrow-right" size="30"></x-icon>
+                <x-icon type="ios-arrow-right" size="10" ></x-icon>
               </span>
+              </a>
             </li>
             <li>
+              <a href="https://www.zhihu.com/question/39124335/answer/178293009">
               <label>狼人杀如何找狼？</label>
               <span>
-                <x-icon type="ios-arrow-right" size="30"></x-icon>
+                <x-icon type="ios-arrow-right" size="10"></x-icon>
               </span>
+              </a>
             </li>
             <li>
+              <a href="https://www.jianshu.com/p/5cb97eebee0d">
               <label>狼人杀心得</label>
               <span>
-                <x-icon type="ios-arrow-right" size="30"></x-icon>
+                <x-icon type="ios-arrow-right" size="10"></x-icon>
               </span>
+              </a>
             </li>
-
-
-
 
           </ul>
 

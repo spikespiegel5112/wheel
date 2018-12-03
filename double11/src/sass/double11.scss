@@ -1,24 +1,17 @@
 .common_main_container {
-  padding: 0 0.8rem;
+  padding: 0 0rem;
   box-sizing: border-box;
   .double11_main_container {
     .title {
-      padding: 1rem 0;
       width: 100%;
-      //height: 7rem;
-      //background: url('./image/double11/title.png');
-      background-size: 100%;
-      background-repeat: no-repeat;
       img {
-        display: block;
         width: 100%;
       }
     }
     .main {
       .block_wrapper {
         display: flex;
-        margin: 0.6rem 0;
-        width: 14.5rem;
+        margin-top: 0.5rem;
         justify-content: space-between;
         h1 {
           color: #fff;
@@ -44,9 +37,9 @@
           color: transparent;
         }
         .bigblock {
-          padding: 0.4rem 0.5rem;
           width: 100%;
-          height: 4rem;
+          padding: 0.4rem 0.5rem;
+          height: 4.2rem;
           border-radius: 0.6rem;
           h1 {
             font-size: 0.5rem;
@@ -57,10 +50,8 @@
           }
         }
         .mediumblock {
-          //display: inline-flex;
+          width: 100%;
           padding: 0.4rem 0.5rem;
-          width: 6rem;
-          height: 5rem;
           border-radius: 0.6rem;
           h1 {
             font-size: 0.5rem;
@@ -76,9 +67,9 @@
 
     }
     .duration {
-      margin: 0.2rem 0 1.5rem 0;
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       text-align: center;
+      margin-top: 0.6rem;
     }
     .operator {
       margin: 1rem 0;

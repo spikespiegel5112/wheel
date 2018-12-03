@@ -55,7 +55,7 @@
           </li>
         </ul>
         <div class="advertise">
-
+          <img src="../image/wolveskill/banner_popoking.png"/>
         </div>
       </div>
     </div>
@@ -293,13 +293,13 @@
 
       },
       share() {
-        console.log(this.$checkEnvironment())
+        console.log(this.$checkEnvironment());
         if (this.$checkEnvironment() !== 'wechat') {
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
-            "title": "狼人杀分享拉票",
-            "describe": '狼人杀分享拉票描述',
+            "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
+            "describe": '榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！',
             // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
             "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
@@ -364,7 +364,7 @@
             let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
             wx.onMenuShareTimeline({
-              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
+              title: '投票开始！趣谷狼人杀决赛票选红人进行时！', // 分享标题
               link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
               // link: wechatRedirectLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -376,8 +376,8 @@
             });
 
             wx.onMenuShareAppMessage({
-              title: '吃不到鸡没关系，最swag的福利送给你', // 分享标题
-              desc: '不做LYB，好友携手拿好礼。更有海淘精品等你免费来领取！', // 分享描述
+              title: '投票开始！趣谷狼人杀决赛票选红人进行时！', // 分享标题
+              desc: '榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 
