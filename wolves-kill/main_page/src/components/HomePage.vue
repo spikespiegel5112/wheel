@@ -36,11 +36,11 @@
                   </li>
                   <li>
                     <label>活动日期</label>
-                    <span>2018 年 12 月 30 日 -2018 年 12 月 23 日</span>
+                    <span>2018 年 12 月 1 日 -2018 年 12 月 23 日</span>
                   </li>
                   <li>
                     <label>报名日期</label>
-                    <span>2018 年 12 月 30 日 -2018 年 12 月 11 日</span>
+                    <span>2018 年 12 月 1 日 -2018 年 12 月 14 日</span>
                   </li>
                 </ul>
               </div>
@@ -72,7 +72,7 @@
                 <div class="contentcenter">
                   <p style="color:#000000;">朵薇璐HI室友小鲜肉补水控油套装<br/>
                     <span style="color:#64B0F7;"> (男生奖励)</span>
-                </p>
+                  </p>
 
                   <div class="imgisis">
                     <img src="../image/wolveskill/detail_man.png"/>
@@ -205,14 +205,17 @@
               <span></span><label>精彩活动</label>
             </h1>
             <div class="activitydetail">
-              <img src="../image/wolveskill/activitydetaily002.png"/>
-              <img src="../image/wolveskill/activitydetaily003.png"/>
-              <img src="../image/wolveskill/activitydetaily004.png"/>
-              <img src="../image/wolveskill/activitydetaily005.png"/>
-              <img src="../image/wolveskill/activitydetaily006.png"/>
-              <img src="../image/wolveskill/activitydetaily002.png"/>
-              <img src="../image/wolveskill/activitydetaily003.png"/>
-              <img src="../image/wolveskill/activitydetaily004.png"/>
+              <div class="contentcenter">
+                <h1> 敬请期待... </h1>
+              </div>
+              <!--<img src="../image/wolveskill/activitydetaily002.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily003.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily004.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily005.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily006.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily002.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily003.png"/>-->
+              <!--<img src="../image/wolveskill/activitydetaily004.png"/>-->
             </div>
           </div>
         </div>

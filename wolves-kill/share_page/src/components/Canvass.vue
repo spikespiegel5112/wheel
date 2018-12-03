@@ -319,13 +319,14 @@
 
       },
       share() {
-        console.log(this.$checkEnvironment())
+        console.log(this.$checkEnvironment());
+
         if (this.$checkEnvironment() !== 'wechat') {
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
             "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
-            "describe": '榜单前八直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！',
+            "describe": '榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！',
             // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
             "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
@@ -403,7 +404,7 @@
 
             wx.onMenuShareAppMessage({
               title: '投票开始！趣谷狼人杀决赛票选红人进行时！', // 分享标题
-              desc: '榜单前八直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！', // 分享描述
+              desc: '榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！', // 分享描述
               // link: this.$domainUrl + '?routeto=shareredirect&state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               link: this.$shareDomainUrl + '?state=' + stateCode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 

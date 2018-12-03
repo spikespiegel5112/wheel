@@ -270,28 +270,14 @@
         }
       },
       share() {
-        // alert(this.$checkEnvironment())
-        console.log(this.$checkEnvironment())
-        if (this.$checkEnvironment() !== 'wechat') {
-          let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
-
-          this.fnvalleySdkInstance.openAPPShare({
-            "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
-            "describe": "榜单前八直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！",
-            // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
-            "weburl": this.$shareDomainUrl + '?state=' + stateCode
-          })
-        } else {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '请点击右上角按钮分享',
-            onConfirm() {
-            }
-          });
-          this.initJSSDK();
-
-        }
-
+        console.log(this.$checkEnvironment());
+        let stateCode = `loginId=${this.userInfoData.loginId}$userActivityId=${this.userActivityId}`;
+        this.fnvalleySdkInstance.openAPPShare({
+          "title": "投票开始！趣谷狼人杀决赛票选红人进行时！",
+          "describe": "榜单前六直接空降决赛，赢取双重丰厚双旦大礼，更有机会成为校园网红，做这条街上最靓的仔！",
+          // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode,
+          "weburl": this.$shareDomainUrl + '?state=' + stateCode
+        })
       },
       checkTicket() {
         // alert('this.userInfoData.userSchoolName   ' + this.userInfoData.userSchoolName)
@@ -324,11 +310,11 @@
         }
         Cookies.set('wolvesKill-loginId', JSON.stringify(result))
       },
-      editProfile(){
+      editProfile() {
         this.$router.push({
-          name:'participate',
-          query:{
-            state:'edit'
+          name: 'participate',
+          query: {
+            state: 'edit'
           }
         })
       }
