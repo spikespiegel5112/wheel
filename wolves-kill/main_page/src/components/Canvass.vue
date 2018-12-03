@@ -68,7 +68,6 @@
           <div class="swiper-pagination"></div>
         </div>
       </div>
-      </div>
     </div>
     <toast v-model="voteSuccessfulFlag" type="text" :time="2000" is-show-mask text="投票成功"></toast>
 
@@ -116,7 +115,15 @@
         // stateCode:''
         userSchoolName: '',
         isVoted: false,
-        swiperInstance:{}
+        swiperInstance:{},
+        imgArray: [
+          { url: '../static/banner_popoking.png',
+            advurl:'https://mall.jd.com/index-159978.html'
+          } ,
+          { url: '../static/banner_tongceng.png',
+            advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
+          }
+        ],
       }
     },
     computed: {
