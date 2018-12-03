@@ -54,9 +54,20 @@
             <a @click="share">分享</a>
           </li>
         </ul>
-        <div class="advertise">
-          <img src="../image/wolveskill/banner_popoking.png"/>
+        <!--<div class="advertise">-->
+          <!--<img src="../image/wolveskill/banner_popoking.png"/>-->
+        <!--</div>-->
+        <div class="advertise swiper-container">
+          <ul class="swiper-wrapper">
+            <li class="swiper-slide" v-if="imgArray.length>0" v-for="item in imgArray">
+              <a :href='item.advurl'>
+                <img :src='item.url'>
+              </a>
+            </li>
+          </ul>
+          <div class="swiper-pagination"></div>
         </div>
+      </div>
       </div>
     </div>
     <toast v-model="voteSuccessfulFlag" type="text" :time="2000" is-show-mask text="投票成功"></toast>
@@ -104,7 +115,8 @@
         environment: '',
         // stateCode:''
         userSchoolName: '',
-        isVoted: false
+        isVoted: false,
+        swiperInstance:{}
       }
     },
     computed: {
@@ -203,8 +215,15 @@
         }
 
       }
+      this.initSwiper();
     },
     methods: {
+      initSwiper(){
+        this.swiperInstance = new Swiper('.swiper-container', {
+          autoplay: 2000,
+          loop: true
+        })
+      },
       reInitializePage() {
         let stateCode = this.stateCode;
         // alert('reInitializePage.stateCode', stateCode)
@@ -525,4 +544,6 @@
 
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="css">
+  @import '../assets/js/swiper/css/swiper.min.css';
+</style>
