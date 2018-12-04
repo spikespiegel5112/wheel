@@ -294,7 +294,7 @@
       },
       share() {
         console.log(this.$checkEnvironment());
-        if (this.$checkEnvironment() !== 'wechat') {
+        // if (this.$checkEnvironment() !== 'wechat') {
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
@@ -303,14 +303,14 @@
             // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
             "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
-        } else {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '请点击右上角按钮分享',
-            onConfirm() {
-            }
-          });
-        }
+        // } else {
+        //   this.$vux.confirm.show({
+        //     showCancelButton: false,
+        //     title: '请点击右上角按钮分享',
+        //     onConfirm() {
+        //     }
+        //   });
+        // }
 
       },
       initJSSDK() {
