@@ -54,8 +54,15 @@
             <a @click="share">分享</a>
           </li>
         </ul>
-        <div class="advertise">
-          <img src="../image/wolveskill/banner_popoking.png"/>
+        <div class="advertise swiper-container">
+          <ul class="swiper-wrapper">
+            <li class="swiper-slide" v-if="imgArray.length>0" v-for="item in imgArray">
+              <a :href='item.advurl'>
+                <img :src='item.url'>
+              </a>
+            </li>
+          </ul>
+          <div class="swiper-pagination"></div>
         </div>
       </div>
     </div>
@@ -68,7 +75,7 @@
   import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
-
+  import Swiper from 'swiper'
 
   // import wx from 'weixin-js-sdk'
 
@@ -104,7 +111,18 @@
         environment: '',
         // stateCode:''
         userSchoolName: '',
-        isVoted: false
+        isVoted: false,
+        timer: null, //定时器
+        mark: 0, //比对图片索引的变量
+        imgArray: [
+          { url: './static/banner_popoking.png',
+            advurl:'https://mall.jd.com/index-159978.html'
+          } ,
+          { url: './static/banner_tongceng.png',
+            advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
+          }
+        ],
+        swiperInstance: {}
       }
     },
     computed: {
@@ -203,8 +221,24 @@
         }
 
       }
+      this.initSwiper();
     },
     methods: {
+      initSwiper() {
+        this.swiperInstance = new Swiper('.swiper-container', {
+          autoplay: 2000,
+          loop: true
+        })
+      },
+      autoPlay () {
+        this.mark++;
+        if (this.mark === 2) {
+          this.mark = 0
+        }
+      },
+      play () {
+        this.timer = setInterval(this.autoPlay, 2000)
+      },
       reInitializePage() {
         let stateCode = this.stateCode;
         // alert('reInitializePage.stateCode', stateCode)
@@ -525,4 +559,6 @@
 
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="css">
+  @import '../assets/js/swiper/css/swiper.min.css';
+</style>

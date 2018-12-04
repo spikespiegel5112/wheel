@@ -13,9 +13,9 @@ let testState = () => {
 
 const state = {
   title: 'aaa',
- accessToken: '',
- // accessToken: 'e3c23141-8922-4f08-8eb2-b0d6911cc22b',
- loginId: '',
+  accessToken: '',
+  // accessToken: '11362d1f-7c53-4752-909b-220eb60381de',
+  loginId: '',
 //loginId: '15201954705',
   activityId: 25,
   winningPrizeChanceFlag: true,
