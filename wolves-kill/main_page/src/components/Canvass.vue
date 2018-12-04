@@ -54,9 +54,6 @@
             <a @click="share">分享</a>
           </li>
         </ul>
-        <!--<div class="advertise">-->
-          <!--<img src="../image/wolveskill/banner_popoking.png"/>-->
-        <!--</div>-->
         <div class="advertise swiper-container">
           <ul class="swiper-wrapper">
             <li class="swiper-slide" v-if="imgArray.length>0" v-for="item in imgArray">
@@ -78,7 +75,7 @@
   import Cookies from 'js-cookie'
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
-
+  import Swiper from 'swiper'
 
   // import wx from 'weixin-js-sdk'
 
@@ -115,6 +112,7 @@
         // stateCode:''
         userSchoolName: '',
         isVoted: false,
+<<<<<<< HEAD
         swiperInstance:{},
         imgArray: [
           { url: '../static/banner_popoking.png',
@@ -124,6 +122,19 @@
             advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
           }
         ],
+=======
+        timer: null, //定时器
+        mark: 0, //比对图片索引的变量
+        imgArray: [
+          { url: './static/banner_popoking.png',
+            advurl:'https://mall.jd.com/index-159978.html'
+          } ,
+          { url: './static/banner_tongceng.png',
+            advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
+          }
+        ],
+        swiperInstance: {}
+>>>>>>> 69f1fa8b78c03ee20d0e9b6ac71be50348aedaeb
       }
     },
     computed: {
@@ -225,11 +236,20 @@
       this.initSwiper();
     },
     methods: {
-      initSwiper(){
+      initSwiper() {
         this.swiperInstance = new Swiper('.swiper-container', {
           autoplay: 2000,
           loop: true
         })
+      },
+      autoPlay () {
+        this.mark++;
+        if (this.mark === 2) {
+          this.mark = 0
+        }
+      },
+      play () {
+        this.timer = setInterval(this.autoPlay, 2000)
       },
       reInitializePage() {
         let stateCode = this.stateCode;
@@ -320,7 +340,7 @@
       },
       share() {
         console.log(this.$checkEnvironment());
-        if (this.$checkEnvironment() !== 'wechat') {
+        // if (this.$checkEnvironment() !== 'wechat') {
           let stateCode = `loginId=${this.loginId}$userActivityId=${this.userActivityId}`;
 
           this.fnvalleySdkInstance.openAPPShare({
@@ -329,14 +349,14 @@
             // "weburl": this.$shareDomainUrl + '?routeto=shareredirect&state=' + stateCode
             "weburl": this.$shareDomainUrl + '?state=' + stateCode
           })
-        } else {
-          this.$vux.confirm.show({
-            showCancelButton: false,
-            title: '请点击右上角按钮分享',
-            onConfirm() {
-            }
-          });
-        }
+        // } else {
+        //   this.$vux.confirm.show({
+        //     showCancelButton: false,
+        //     title: '请点击右上角按钮分享',
+        //     onConfirm() {
+        //     }
+        //   });
+        // }
 
       },
       initJSSDK() {

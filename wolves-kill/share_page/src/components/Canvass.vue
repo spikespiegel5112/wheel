@@ -54,6 +54,7 @@
             <a @click="share">分享</a>
           </li>
         </ul>
+<<<<<<< HEAD
         <!--<div class="advertise">-->
         <!--<transition-group tag="ul" name="image">-->
         <!--<li v-for="(item, index) in imgArray" v-show="index===mark" :key="index">-->
@@ -63,6 +64,8 @@
         <!--</li>-->
         <!--</transition-group>-->
         <!--</div>-->
+=======
+>>>>>>> 69f1fa8b78c03ee20d0e9b6ac71be50348aedaeb
         <div class="advertise swiper-container">
           <ul class="swiper-wrapper">
             <li class="swiper-slide" v-if="imgArray.length>0" v-for="item in imgArray">
@@ -85,7 +88,10 @@
   import FnvalleySdk from '../js/FnvalleySdk'
   import Confirm from './Confirm.vue'
   import Swiper from 'swiper'
+<<<<<<< HEAD
 
+=======
+>>>>>>> 69f1fa8b78c03ee20d0e9b6ac71be50348aedaeb
 
   // import wx from 'weixin-js-sdk'
 
@@ -233,8 +239,12 @@
 
         }
       }
+<<<<<<< HEAD
       // this.play ();
       this.initSwiper()
+=======
+      this.initSwiper();
+>>>>>>> 69f1fa8b78c03ee20d0e9b6ac71be50348aedaeb
     },
     methods: {
       initSwiper() {
@@ -243,7 +253,11 @@
           loop: true
         })
       },
+<<<<<<< HEAD
       autoPlay() {
+=======
+      autoPlay () {
+>>>>>>> 69f1fa8b78c03ee20d0e9b6ac71be50348aedaeb
         this.mark++;
         if (this.mark === 2) {
           this.mark = 0
