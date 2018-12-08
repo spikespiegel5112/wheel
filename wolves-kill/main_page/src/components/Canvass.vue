@@ -112,17 +112,6 @@
         // stateCode:''
         userSchoolName: '',
         isVoted: false,
-<<<<<<< HEAD
-        swiperInstance:{},
-        imgArray: [
-          { url: '../static/banner_popoking.png',
-            advurl:'https://mall.jd.com/index-159978.html'
-          } ,
-          { url: '../static/banner_tongceng.png',
-            advurl:'https://www.ly.com/scenery/zhuanti/hongbao2018#/?refid=543698112'
-          }
-        ],
-=======
         timer: null, //定时器
         mark: 0, //比对图片索引的变量
         imgArray: [
@@ -134,7 +123,6 @@
           }
         ],
         swiperInstance: {}
->>>>>>> 69f1fa8b78c03ee20d0e9b6ac71be50348aedaeb
       }
     },
     computed: {
