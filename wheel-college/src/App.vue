@@ -16,10 +16,10 @@ body {
 }
 </style>
 
-<style lang="scss">
+<style lang="sass">
   @import 'sass/reset.scss';
   @import 'sass/common.scss';
-  @import 'sass/wheel';
+  @import 'sass/wheel.scss';
 
 
   body {
